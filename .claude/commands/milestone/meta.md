@@ -1,21 +1,22 @@
-1. Read `@docs/milestones/MILESTONE_MANAGER.md`
-2. List all milestones in `@docs/milestones/`
-3. Update `@docs/milestones/MILESTONE_MANAGER.md` by:
-    - adding new milestones to the end of the list in this format:
-      ```markdown
-      i. [@docs/tasks/MX_DESCRIPTION.md](MX_DESCRIPTION.md) - [ ]
-      ```
-      where `i` is the number of the milestones in the list and `MX_DESCRIPTION` is the milestone name.
-    - removing milestones, marked as `DONE` or no longer existing as file.
+---
+description: Sync milestone manager with existing milestone files
+model: claude-3-5-haiku-latest
+---
 
-There should also be a legend with the possible values for the status:
+# Sync Milestone Manager
 
-   ```markdown
-   ## Milestone Status Legend
+## Context
 
-- [ ] Not started
-- [WIP] In progress
-- [DONE] Completed
-- [BLOCKED] Blocked/Waiting
-- [CANCELLED] Cancelled
-   ```
+- Milestone structure: !`.claude/scripts/create-milestones.sh`
+- Current files: !`ls -1 docs/milestones/ 2>/dev/null | grep -E "^M[0-9]+_.*\.md$" || echo "No milestones found"`
+
+## Task
+
+1. Check @docs/MILESTONE_MANAGER.md
+2. Scan @docs/milestones/ for all M*_*.md files
+3. Update manager:
+   - Add missing milestones as: `i. [@docs/milestones/MX_DESCRIPTION.md](MX_DESCRIPTION.md) - [ ]`
+   - Remove entries marked `[DONE]` or with missing files
+4. Maintain sequential numbering
+
+If missing files: "Error: Milestone structure not found. Run create-milestones.sh first"

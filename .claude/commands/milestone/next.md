@@ -1,19 +1,33 @@
-1. Read `@docs/milestones/MILESTONE_MANAGER.md`
-2. Take next open `$MILESTONE_NAME` from the list and mark it as [WIP]
-3. Understand the milestone (use architecture-planner sub agent)
-    - Read `$MILESTONE_NAME`
-    - Check what's already implemented
-    - Check if the milestone requires refinements through changes between creation of the milestone and now
-    - If you need to clarify questions, ask for more context and information and STOP
-    - Update the `$MILESTONE_NAME` with the new plan if needed
-4. Implement the milestone (use implementation-specialist sub agent)
-    - Read `$MILESTONE_NAME`
-    - Implement the milestone step by step
-    - Mark completed steps in `$MILESTONE_NAME` with `[X]`
-    - Review all changes
-      - Check, if everything of `$MILESTONE_NAME` is implemented - Read `$MILESTONE_NAME` again if needed
-      - start over (with `3. Understand the milestone`) if needed
-5. Update `@docs/milestones/MILESTONE_MANAGER.md` - mark the milestone as [DONE]
-6. Commit by
-    - Adding the changes to git
-    - Committing the changes using conventional commit message
+---
+argument-hint: [milestone_name]
+description: Execute next milestone from planning to completion
+model: claude-sonnet-4-0
+---
+
+# Execute Next Milestone
+
+## Context
+- Manager: @docs/MILESTONE_MANAGER.md
+- Status: !`git status --porcelain --branch && find . -name "M[0-9]*_*.md" -type f | head -5`
+
+## Task
+Execute milestone lifecycle:
+
+1. **Select**: $ARGUMENTS > first [WIP] > next open (include sub-milestones)
+   - Mark [WIP] if starting new
+   - Error: "No milestones available" and exit if none found
+
+2. **Analyze**: Read @$MILESTONE_NAME
+   - Verify deliverables vs current implementation
+   - STOP if unclear: "Need clarification on: [specific issue]"
+
+3. **Implement**: Complete uncompleted deliverables
+   - Mark [X] when done
+   - Validate against criteria
+
+4. **Complete**: 
+   - Verify all [X] marked
+   - Update manager: [DONE]
+   - Commit: "feat(milestone): complete $MILESTONE_NAME"
+
+If complex planning needed: Use architecture-planner subagent for milestone breakdown.

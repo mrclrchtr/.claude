@@ -17,10 +17,6 @@ Brief description of the milestone and its purpose.
 - Milestone dependencies
 - External dependencies
 
-## Tasks
-- [T1_TASK_NAME.md](../tasks/M{num}_T1_TASK_NAME.md) - [ ]
-- [T2_TASK_NAME.md](../tasks/M{num}_T2_TASK_NAME.md) - [ ]
-
 ## Technical Specifications
 Detailed technical requirements and implementation notes.
 
