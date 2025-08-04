@@ -7,7 +7,7 @@ model: claude-3-5-haiku-latest
 
 ## Context
 
-- Milestone structure: !`.claude/scripts/create-milestones.sh`
+- Milestone structure: !`.claude/scripts/create-milestone-structure.sh`
 - Current files: !`ls -1 docs/milestones/ 2>/dev/null | grep -E "^M[0-9]+_.*\.md$" || echo "No milestones found"`
 
 ## Task
@@ -18,4 +18,4 @@ model: claude-3-5-haiku-latest
    - Add missing milestones as: `i. [@docs/milestones/MX_DESCRIPTION.md](MX_DESCRIPTION.md) - [ ]`
 4. Maintain sequential numbering
 
-If missing files: "Error: Milestone structure not found. Run create-milestones.sh first"
+If missing files: "Error: Milestone structure not found. Run create-milestone-structure.sh first"

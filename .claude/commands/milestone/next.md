@@ -26,6 +26,16 @@ Execute milestone lifecycle:
    - Validate against criteria
 
 4. **Complete**: 
+   - Update all relevant docs
+      - **CLAUDE.md**: Add/Update/Remove essential information about the project (no status updates)
+      - **docs/MILESTONE_MANAGER.md**: Track the status
+      - **docs/IMPLEMENTATION_PLAN.md**: Only add/update information if really required
+      - **docs/IMPLEMENTATION_LOG.md**: Fill the log with all relevant information from the implementation
+         - Add entry to Implementation Timeline with date and brief description
+         - Document technical details under the milestone section
+         - Record any technical debt discovered
+         - Capture lessons learned from challenges
+         - Note action items for follow-up
    - Verify all [X] marked
    - Update manager: [DONE]
    - Commit: "feat(milestone): complete $MILESTONE_NAME"

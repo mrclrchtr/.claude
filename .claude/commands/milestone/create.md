@@ -15,7 +15,7 @@ model: claude-opus-4-0
 
 ## Task
 
-Create milestone **$ARGUMENTS** using the architecture-planner subagent.
+Create milestone **$ARGUMENTS** using the milestone-planner subagent.
 
 ### Process
 
@@ -23,7 +23,7 @@ Create milestone **$ARGUMENTS** using the architecture-planner subagent.
    - If no $ARGUMENTS: "Error: Milestone identifier required (e.g. M1, M2, phase1)" and exit
    - If plan < 50 chars: "Error: Implementation plan too short" and exit
 
-2. **Use architecture-planner to extract milestone**
+2. **Use @agent-milestone-planner to extract milestone**
    - Find $ARGUMENTS in implementation plan
    - If not found: "Error: Milestone '$ARGUMENTS' not found. Available: [list]" and exit
    - Extract complete milestone content with dependencies
