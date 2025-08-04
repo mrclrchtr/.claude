@@ -1,7 +1,6 @@
 ---
 name: architecture-planner
 description: Use this agent when you need to transform high-level vision documents into detailed implementation plans or break down implementation plans into specific milestone documents. Examples: <example>Context: User has a vision document and needs a comprehensive implementation plan. user: 'I have this vision document for a new feature. Can you create a detailed implementation plan?' assistant: 'I'll use the architecture-planner agent to analyze your vision document and create a comprehensive implementation plan with technical specifications, dependencies, and timeline.' <commentary>Since the user needs to transform a vision document into an implementation plan, use the architecture-planner agent.</commentary></example> <example>Context: User has an implementation plan and needs specific milestone breakdowns. user: 'Here's my implementation plan. I need detailed milestone documents for each phase.' assistant: 'Let me use the architecture-planner agent to break down your implementation plan into detailed milestone documents with specific deliverables and technical requirements.' <commentary>The user needs milestone documents created from an implementation plan, which is exactly what the architecture-planner agent specializes in.</commentary></example>
-tools: Glob, Grep, LS, ExitPlanMode, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, Edit, MultiEdit, Write, NotebookEdit
 color: cyan
 ---
 
