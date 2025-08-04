@@ -16,7 +16,6 @@ model: claude-3-5-haiku-latest
 2. Scan @docs/milestones/ for all M*_*.md files
 3. Update manager:
    - Add missing milestones as: `i. [@docs/milestones/MX_DESCRIPTION.md](MX_DESCRIPTION.md) - [ ]`
-   - Remove entries marked `[DONE]` or with missing files
 4. Maintain sequential numbering
 
 If missing files: "Error: Milestone structure not found. Run create-milestones.sh first"
