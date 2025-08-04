@@ -1,5 +1,6 @@
 ---
 description: Transform VISION.md into detailed IMPLEMENTATION_PLAN.md using architecture-planner agent
+argument-hint: [additional context or focus areas]
 model: claude-opus-4-0
 ---
 
@@ -9,17 +10,23 @@ model: claude-opus-4-0
 
 - Vision document: !`test -f docs/VISION.md && echo "✓ Found" || echo "✗ Not found"`
 
+## Additional context
+
+```
+$ARGUMENTS
+```
+
+This is an IMPORTANT context provided by the user that should get passed to the agent.
+You may analyze and enrich this context before sending it to the agent.
+
 ## Task
 
-Use the architecture-planner agent to analyze @docs/VISION.md and create IMPLEMENTATION_PLAN.md.
+Use the architecture-planner agent to analyze @docs/VISION.md and create a comprehensive @docs/IMPLEMENTATION_PLAN.md inside @docs.
 
-Architecture-planner should:
-1. Extract objectives and requirements
-2. Ask clarifying questions for ambiguities
-3. Design system architecture with tech stack
-4. Create milestone-based strategy with dependencies
-5. Define measurable deliverables per milestone
-6. Include risk assessment and mitigation
-7. Save as @docs/IMPLEMENTATION_PLAN.md
+**IMPORTANT**: 
+The agent MUST start by asking clarifying questions about the vision before creating the plan.
+It should NOT create the implementation plan until questions are answered by the **user**.
+This ensures the plan addresses real constraints and unknowns.
 
-IMPORTANT: Must ask for clarification on unclear requirements before proceeding.
+**IMPORTANT**:
+Give the **complete** and **unmodified** questions asked by the agent to the user.
