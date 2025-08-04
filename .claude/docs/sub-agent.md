@@ -68,7 +68,7 @@ Subagents are defined as Markdown files with YAML frontmatter:
 name: your-sub-agent-name
 description: Description of when this subagent should be invoked
 tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
-model: claude-3-5-sonnet-20241022  # Optional - specify Claude model
+model: claude-sonnet-4-0  # Optional - specify Claude model
 ---
 
 Your subagent's system prompt goes here. This can be multiple paragraphs
