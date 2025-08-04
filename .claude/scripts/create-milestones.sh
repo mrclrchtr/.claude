@@ -29,6 +29,13 @@ _To be defined after Phase 1 completion_
 ## Milestone Dependencies
 _Dependencies between milestones will be documented here_
 
+## Milestone Status Legend
+- [ ] -> Not started
+- [WIP] -> In progress
+- [DONE] -> Completed
+- [BLOCKED] -> Blocked/Waiting
+- [CANCELLED] -> Cancelled
+
 ## Progress Summary
 - **Total Milestones**: 0
 - **Completed**: 0
