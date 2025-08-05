@@ -21,12 +21,6 @@ _Dependencies between milestones will be documented here_
 - [BLOCKED] -> Blocked/Waiting
 - [CANCELLED] -> Cancelled
 
-## Progress Summary
-- **Total Milestones**: 0
-- **Completed**: 0
-- **In Progress**: 0
-- **Pending**: 0
-
 ## Notes
 - Milestones are extracted from the [Implementation Plan](IMPLEMENTATION_PLAN.md)
 - Each milestone follows the template in `.claude/templates/milestone-template.md`

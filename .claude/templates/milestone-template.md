@@ -114,3 +114,9 @@ Brief description of the milestone's purpose and its role in the larger project 
 - **Token Budget**: {lightweight <3K / medium 10-15K / heavy 25K+}
 - **Integration Multipliers Applied**: {2x CLI, 3x complex API, 1.5x documented library, 2x blocker resolution}
 - **Parallel Execution Notes**: {Specific coordination requirements}
+
+# Outcomes
+> To be updated after milestone completion with important information about the milestone's outcome, like:
+> - Implementation Details
+> - Learning Takeaways
+> - Possible improvements
