@@ -2,6 +2,7 @@
 argument-hint: [milestone_name]
 description: Critically analyze milestone implementation and documentation
 model: claude-opus-4-0
+allowed-tools: Bash(git log:*), Bash(git diff:*), Bash(find:*)
 ---
 
 # Critical Milestone Review
