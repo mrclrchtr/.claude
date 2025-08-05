@@ -9,7 +9,7 @@ allowed-tools: Bash(git log:*), Bash(git diff:*), Bash(find:*)
 
 ## Context
 - Manager: @docs/MILESTONE_MANAGER.md
-- Available milestones: !`find docs/milestones -name "M[0-9]*_*.md" -type f | sort`
+- Available milestones: !`find docs/milestones -name "M[0-9]*-*.md" -o -name "M[0-9]*_[0-9]*-*.md" -type f | sort`
 - Implementation status: !`git log --oneline --grep="[Mm]ilestone\|M[0-9]_" -10`
 - Recent changes: !`git diff --stat HEAD~5..HEAD`
 

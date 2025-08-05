@@ -2,18 +2,19 @@
 argument-hint: [milestone_name]
 description: Execute next milestone from planning to completion
 model: claude-sonnet-4-0
+allowed-tools: Bash(git status:*), Bash(find:*)
 ---
 
 # Execute Next Milestone
 
 ## Context
 - Manager: @docs/MILESTONE_MANAGER.md
-- Status: !`git status --porcelain --branch && find . -name "M[0-9]*_*.md" -type f | head -5`
+- Status: !`git status --porcelain --branch && find . -name "M[0-9]*-*.md" -o -name "M[0-9]*_[0-9]*-*.md" -type f | head -5`
 
 ## Task
 Execute milestone lifecycle:
 
-1. **Select**: $ARGUMENTS > first [WIP] > next open (include sub-milestones)
+1. **Select**: $ARGUMENTS > first [WIP] > next open (include sub-milestones with format `M{major}_{sub}-{Short_Title}.md`)
    - Mark [WIP] if starting new
    - Error: "No milestones available" and exit if none found
 

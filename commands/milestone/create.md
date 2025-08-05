@@ -30,12 +30,12 @@ Create milestone **$ARGUMENTS** using the milestone-planner subagent.
    - Extract complete milestone content with dependencies
 
 3. **Create milestone document**
-   - Filename: `M{number}_{DESCRIPTION}.md`
+   - Filename: `M{major}-{Short_Title}.md` (main milestones), `M{major}_{sub}-{Short_Title}.md` (sub-milestones)
    - If exists: "Warning: {filename} already exists" and exit
    - Apply template structure with extracted content
 
 4. **Update MILESTONE_MANAGER.md**
-   - Insert in sequence: `i. [M{number}_{DESCRIPTION}.md](M{number}_{DESCRIPTION}.md) - [ ]`
+   - Insert in sequence: `i. [M{major}-{Short_Title}.md](M{major}-{Short_Title}.md) - [ ]` or `i. [M{major}_{sub}-{Short_Title}.md](M{major}_{sub}-{Short_Title}.md) - [ ]`
    - Update counts and dependencies
 
 5. **Complete**
