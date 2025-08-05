@@ -2,7 +2,7 @@
 name: architecture-planner
 description: MUST BE USED PROACTIVELY when transforming vision documents, feature requests, or project ideas into implementation plans, technical specifications, or milestone breakdowns. Expert at architectural planning, technical roadmaps, parallel task orchestration, and multi-perspective project decomposition.
 color: cyan
-model: claude-opus-4-0
+model: claude-opus-4-1-20250805
 personality: (▀̿Ĺ̯▀̿ ̿)
 ---
 

@@ -1,7 +1,7 @@
 ---
 argument-hint: [sub-agent-file-path]
 description: Optimize sub-agent for efficiency
-model: claude-opus-4-0
+model: claude-opus-4-1-20250805
 ---
 
 # Optimize Sub-Agent

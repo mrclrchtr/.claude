@@ -1,7 +1,7 @@
 ---
 description: Transform VISION.md into detailed IMPLEMENTATION_PLAN.md using architecture-planner agent
 argument-hint: [additional context or focus areas]
-model: claude-opus-4-0
+model: claude-opus-4-1-20250805
 ---
 
 # Create Implementation Plan from Vision

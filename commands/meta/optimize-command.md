@@ -1,7 +1,7 @@
 ---
 argument-hint: [command-file-path]
 description: Optimize slash command for efficiency
-model: claude-opus-4-0
+model: claude-opus-4-1-20250805
 ---
 
 # Optimize Command
@@ -39,7 +39,7 @@ See @.claude/docs/command.md for complete slash command documentation and struct
 3. **Model selection**:
    - `claude-3-5-haiku-latest`: Simple operations, standard commits
    - `claude-sonnet-4-0`: Complex analysis, multi-file refactoring
-   - `claude-opus-4-0`: Architecture planning, Implementation planning, Milestone planning
+   - `claude-opus-4-1-20250805`: Architecture planning, Implementation planning, Milestone planning
 
 4. **Sub-agent references**:
    - Use sub-agent references if applicable.

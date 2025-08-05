@@ -1,7 +1,7 @@
 ---
 description: Create a specific milestone from IMPLEMENTATION_PLAN.md
 argument-hint: [milestone identifier (e.g. M1, M2, phase1)]
-model: claude-opus-4-0
+model: claude-opus-4-1-20250805
 ---
 
 # Create Milestone from Implementation Plan
