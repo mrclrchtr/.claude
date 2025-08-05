@@ -9,6 +9,7 @@ model: claude-opus-4-0
 ## Context
 
 - Implementation plan: @docs/IMPLEMENTATION_PLAN.md
+- Implementation log: @docs/IMPLEMENTATION_LOG.md
 - Template: @.claude/templates/milestone-template.md
 - Manager: @docs/MILESTONE_MANAGER.md
 - Existing: @docs/milestones/
