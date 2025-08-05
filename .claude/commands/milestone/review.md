@@ -37,4 +37,9 @@ Critically analyze milestone implementation ($ARGUMENTS or last [DONE]):
    - What routine but critical tasks might have been skipped?
    - Where did scope creep or perfectionism waste effort?
 
+5. **Documentation compliance**:
+   - Verify updates to @docs/IMPLEMENTATION_PLAN.md reflect current state
+   - Confirm @docs/IMPLEMENTATION_LOG.md contains detailed technical decisions following the "How to Update This Log" guidelines (timeline entries, milestone sections, technical debt, lessons learned)
+   - Check related milestone document has complete status updates
+
 Be direct, objective, and brutally honest. No sugar-coating allowed.
