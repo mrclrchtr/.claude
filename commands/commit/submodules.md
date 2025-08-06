@@ -16,7 +16,7 @@ allowed-tools: Bash(git:*)
 - Submodule history: !`git submodule foreach --quiet 'echo "=== $displaypath ===" && git --no-pager log --oneline -3'`
 
 ## Task
-1. Based on the provided context, for each submodule with changes span a sub agent in the submodule that:
+1. Based on the provided context, for each submodule **with changes detected** span a sub agent in the submodule that:
    - Analyze changes for safety issues (secrets, large files, generated content)
    - Stage changes: `git add -A`
    - Generate appropriate conventional commit message

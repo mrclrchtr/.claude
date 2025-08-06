@@ -28,11 +28,10 @@ allowed-tools: Bash(git show:*), Bash(git diff:*), Bash(git log:*), Bash(git rev
 ## Task
 Critically analyze commit `${ARGUMENTS:-HEAD}`:
 
-1. **Quick checks**:
+1. **Smart review based on change size**:
    - **Stats**: !`git --no-pager show --stat --no-patch ${ARGUMENTS:-HEAD}`
-   - **Full diff**: !`git --no-pager show ${ARGUMENTS:-HEAD}`
-   - **Tests pass**: Run appropriate test command as described in @CLAUDE.md
-   - **Linting clean**: Check style compliance if applicable
+   - If < 100 lines: !`git --no-pager show ${ARGUMENTS:-HEAD}`
+   - If > 100 lines: Show stats, then review key files with Read tool
 
 2. **Core review** (focus here):
    - **Atomic**: Does this do ONE thing well?
@@ -40,18 +39,27 @@ Critically analyze commit `${ARGUMENTS:-HEAD}`:
    - **Complete**: Any TODOs, FIXMEs, or commented code?
    - **Quality**: Obvious bugs, code duplication, performance issues?
    - **Testing**: Do tests verify the actual behavior changes?
+   - **Security**: Exposed secrets, unsafe operations, missing validation?
 
 3. **Impact assessment**:
    - **Breaking changes**: APIs, configs, dependencies?
    - **Hidden risks**: Edge cases, production scenarios?
+   - **File type risks**: Config (high), Core (high), Test (low), Docs (minimal)
    - **Project compliance**: Commit format (feat/fix/docs/chore), milestone tag (M0, M1, etc)?
    - **CLAUDE.md updates** @CLAUDE.md up to date? (check against `CLAUDE.md rules` in @CLAUDE.md)
    - **Documentation sync**: @docs up to date?
 
+4. **Test verification** (if code changes detected):
+   - Run tests as described in @CLAUDE.md
+   - Verify no regressions introduced
+   - Check test coverage for changed code
+
 ## Output format
 1. **PASS/FAIL verdict** with reasoning
-2. **Critical issues** that must be fixed
-3. **Minor issues** that should be addressed
-4. **Questions** for the author
+2. **Risk assessment** (high/medium/low) with file type analysis
+3. **Critical issues** that must be fixed
+4. **Minor issues** that should be addressed
+5. **Questions** for the author
+6. **Suggested follow-up commits** (if issues need separate fixes)
 
 No sugar-coating. Be the reviewer everyone needs but nobody wants.
