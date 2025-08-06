@@ -16,51 +16,40 @@ allowed-tools: Bash(git:*)
 - **Unstaged**: !`git --no-pager diff --stat --summary`
 - **Untracked**: !`git ls-files --others --exclude-standard | head -10`
 
-## Review Depth Guide
-- **Documentation-only changes** (*.md, *.txt): Skip sections 3-4
-- **< 10 line changes**: Focus on core review, quick test check
-- **Config/dependency changes**: Emphasize security, compatibility, breaking changes
-- **Feature/refactor changes**: Full comprehensive review required
-- **Test-only changes**: Focus on test quality and coverage
-
 ## Task
-Critically analyze uncommitted changes:
+Analyze uncommitted changes and provide actionable feedback:
 
-1. **Smart review based on change size**:
+1. **Get changes**:
    - If < 100 lines: !`git --no-pager diff --color=never && git --no-pager diff --cached --color=never`
    - If > 100 lines: Show stats, then review key files with Read tool
 
-2. **Core review** (focus here):
-   - **Atomic changes**: Are changes grouped logically for clean commits?
-   - **Completeness**: Any TODOs, FIXMEs, commented code, debugging artifacts?
-   - **Code quality**: Obvious bugs, code duplication, performance issues?
-   - **Accuracy**: Will commit messages accurately describe these changes?
-   - **Test coverage**: Do tests verify the actual behavior changes?
-   - **Security**: Exposed secrets, unsafe operations, missing validation?
-   - **Project compliance**: Follows patterns in @CLAUDE.md?
-   - **CLAUDE.md updates**: Is @CLAUDE.md up to date? (check against `CLAUDE.md rules` in @CLAUDE.md)
-   - **Documentation sync**: Are @docs files updated for any architecture/API changes?
+2. **Focus areas** (prioritize actual problems):
+   - **Path accuracy**: All file paths in configs/CI match actual locations?
+   - **Import issues**: Verbose debug output or missing dependencies?
+   - **Duplicate files**: Redundant files that should be consolidated?
+   - **Completeness**: TODOs, FIXMEs, commented code, debug artifacts?
+   - **Test coverage**: Tests actually verify the behavior changes?
+   - **Breaking changes**: API/config/dependency compatibility issues?
+   - **CLAUDE.md updates** @CLAUDE.md up to date? (check against `CLAUDE.md rules` in @CLAUDE.md)
+   - **Documentation sync**: @docs up to date?
 
-3. **Impact assessment** (critical for large changes):
-   - **Breaking changes**: APIs, configs, dependencies?
-   - **Hidden risks**: Edge cases, production scenarios?
-   - **File type risks**: Config (high), Core (high), Test (low), Docs (minimal)
-
-4. **Test verification** (if code changes detected):
-   - Test as described in @CLAUDE.md
-   - Check test coverage for new code
-   - Verify no regressions in existing tests
+3. **Test verification** (only if code changes detected):
+   - Run tests as described in @CLAUDE.md
+   - Verify no test regressions
 
 ## Output Format
-1. **PASS/FAIL verdict** with one-line summary
-2. **Risk assessment** per change group (high/medium/low) with file type analysis
-3. **Critical issues** (must fix before commit)
-4. **Improvements** (should address)
-5. **Suggested commit structure** (based on atomic changes principle):
-   - Commit type (feat/fix/docs/test/refactor/chore)
-   - Commit message recommendation
-   - Files to group together
-   - Order of commits if multiple needed
-6. **Follow-up actions** (if issues found that need separate commits)
 
-Be direct. Find real problems, not style nitpicks. Focus on the Core review section for maximum value.
+**Summary**
+- 2-3 lines describing the changes and overall assessment
+- No verbose risk categories or theoretical analysis
+
+**Critical Issues**
+- Only blocking problems that MUST be fixed (e.g., broken CI paths, missing files)
+- Include specific line numbers and files
+
+**Improvements (Should Address)**  
+- Non-blocking but important issues (e.g., duplicate files, verbose imports)
+- Be specific and actionable
+
+Provide direct, unfiltered feedback. Be the thorough reviewer everyone needs but nobody wants.
+Focus on actual problems, not hypothetical edge cases. Keep feedback specific and actionable.
