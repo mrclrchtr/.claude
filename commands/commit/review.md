@@ -29,9 +29,9 @@ allowed-tools: Bash(git show:*), Bash(git diff:*), Bash(git log:*), Bash(git rev
 Critically analyze commit `${ARGUMENTS:-HEAD}`:
 
 1. **Quick checks**:
-   - **Stats**: !`git show --stat --no-patch ${ARGUMENTS:-HEAD}`
-   - **Full diff**: !`git show ${ARGUMENTS:-HEAD}`
-   - **Tests pass**: Run appropriate test command based on project
+   - **Stats**: !`git --no-pager show --stat --no-patch ${ARGUMENTS:-HEAD}`
+   - **Full diff**: !`git --no-pager show ${ARGUMENTS:-HEAD}`
+   - **Tests pass**: Run appropriate test command as described in @CLAUDE.md
    - **Linting clean**: Check style compliance if applicable
 
 2. **Core review** (focus here):

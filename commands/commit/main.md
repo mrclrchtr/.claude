@@ -6,6 +6,9 @@ allowed-tools: Bash(git:*)
 
 # Commit Parent
 
+> Note: This commits parent repository changes and submodule pointer updates.
+Commit submodule internal changes separately using the `.claude/commands/commit/submodules.md` command.
+
 ## Context
 - Current branch: !`git branch --show-current`
 - Staged changes: !`git --no-pager diff --stat --cached --summary`
@@ -23,6 +26,3 @@ allowed-tools: Bash(git:*)
 3. If submodule pointers changed, include them in staging: `git add .submodules/`
 4. Generate conventional commit message and commit (mention the milestone, if applicable)
 5. Report results
-
-> Note: This commits parent repository changes and submodule pointer updates.
-Commit submodule internal changes separately using the `.claude/commands/commit/submodules.md` command.

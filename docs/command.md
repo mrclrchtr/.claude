@@ -91,6 +91,7 @@ Review all files in @src/components/
 | `argument-hint` | Arguments shown in auto-complete | `[message]` or `add [tagId] \| remove [tagId]` | None                       |
 | `description`   | Brief command description        | `Create a git commit`                          | First line of prompt       |
 | `model`         | Model to use for command         | `opus`, `sonnet`, `haiku`                      | Inherits from conversation |
+| `allowed-tools` | Restrict available tools         | `Bash(git:*)` for git-only operations          | All tools available        |
 
 ## Design Principles
 
@@ -127,23 +128,30 @@ Search for TODO comments in the codebase and list them with file locations.
 argument-hint: [optional commit message]
 description: Stage all changes and create intelligent commit
 model: haiku
+allowed-tools: Bash(git:*)
 ---
 
 # Commit All Changes
 
 ## Context
 
-- Git status: !`git status --porcelain`
-- Staged changes: !`git diff --cached`
-- Unstaged changes: !`git diff`
 - Current branch: !`git branch --show-current`
+- Staged changes: !`git --no-pager diff --stat --cached --summary`
+- Unstaged changes: !`git --no-pager diff --stat --summary`
+- Recent commit history for context: !`git --no-pager log --oneline -10 --graph`
+- Submodule pointer status: !`git --no-pager diff --submodule=log`
+- Submodule status: !`git submodule foreach --recursive --quiet 'git status --porcelain 2>/dev/null | grep -q . && echo "UNCOMMITTED: $displaypath" || true'`
+
+## Preflight Check
+**Based on the provided context without further analysis:** determine if submodules have uncommitted changes, if so STOP and warn the user to commit submodule changes first
 
 ## Task
 
-1. Stage all changes with `git add .`
-2. Analyze changes to create appropriate commit message
-3. Use provided argument as message or generate intelligent one
-4. Execute commit and verify success
+1. Analyze parent repo changes for safety issues (secrets, large files, generated content)
+2. Stage parent repo changes: `git add -A`
+3. If submodule pointers changed, include them in staging
+4. Generate conventional commit message and commit
+5. Report results
 ```
 
 ## Best Practices
@@ -153,3 +161,55 @@ model: haiku
 - **Handle Errors**: Include error handling for common failure scenarios
 - **Use Namespaces**: Organize related commands in subdirectories
 - **Test Arguments**: Verify `$ARGUMENTS` handling works correctly
+
+## Git Context Gathering
+
+### Critical: Always Use --no-pager
+
+Git commands in slash commands **must** use `--no-pager` to prevent interactive pagers from blocking execution.
+
+### Essential Git Commands
+
+```markdown
+# Core Status Commands
+- Current branch: !`git branch --show-current`
+- Status (machine-readable): !`git status --porcelain`
+- Staged changes: !`git --no-pager diff --stat --cached --summary`
+- Unstaged changes: !`git --no-pager diff --stat --summary`
+
+# History & Context
+- Recent commit history: !`git --no-pager log --oneline -10 --graph`
+- Full diff details: !`git --no-pager diff --color=never`
+
+# Submodule Management
+- Submodule pointer status: !`git --no-pager diff --submodule=log`
+- Check uncommitted changes: !`git submodule foreach --recursive --quiet 'git status --porcelain 2>/dev/null | grep -q . && echo "UNCOMMITTED: $displaypath" || true'`
+```
+
+### Best Practices
+- Use `--stat` with `--summary` for comprehensive change overviews
+- Add `--color=never` to avoid ANSI escape sequences
+- Limit history with `-n` flags (e.g., `-10` for last 10 commits)
+- Use `--porcelain` for machine-readable output
+
+### Preflight Checks
+
+Include early validation steps to prevent wasted work:
+
+```markdown
+## Preflight Check
+**Based on the provided context without further analysis:** 
+determine if conditions are met, if not STOP and warn the user
+```
+
+### Tool Restrictions with allowed-tools
+
+Commands can restrict which tools Claude can use via the `allowed-tools` frontmatter field:
+
+```markdown
+---
+allowed-tools: Bash(git:*)
+---
+```
+
+This prevents accidental file modifications when only git operations are intended.
