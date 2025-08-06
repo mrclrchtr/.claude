@@ -19,7 +19,9 @@ allowed-tools: Bash(git:*)
 ## Task
 
 1. Based on the provided context, for each submodule **with changes detected** span a sub agent in the submodule that:
-    - `pwd` again to get context
+    - in separate commands (DO NOT COMBINE):
+        - `cd` into the submodule
+        - `pwd` again to get context
     - Analyze changes for safety issues (secrets, large files, generated content)
     - Stage changes: `git add -A`
     - Generate appropriate conventional commit message
