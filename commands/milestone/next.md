@@ -19,7 +19,8 @@ Execute milestone lifecycle:
    - Error: "No milestones available" and exit if none found
 
 2. **Analyze**: Read @$MILESTONE_NAME
-   - Verify deliverables vs current implementation
+   - Verify with sub agents: deliverables vs current implementation (analyze the project/code)
+   - Consolidate the output from the sub-agents
    - STOP if unclear: "Need clarification on: [specific issue]"
 
 3. **Implement**: Complete uncompleted deliverables
