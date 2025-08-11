@@ -31,7 +31,7 @@ Analyze uncommitted changes and provide actionable feedback:
    - **Test coverage**: Tests actually verify the behavior changes?
    - **Breaking changes**: API/config/dependency compatibility issues?
    - **CLAUDE.md updates** @CLAUDE.md up to date? (check against `CLAUDE.md rules` in @CLAUDE.md)
-   - **Documentation sync**: @docs up to date?
+   - **Documentation sync**: @docs (especially @docs/IMPLEMENTATION_LOG.md, @docs/MILESTONE_MANAGER.md, @docs/TECHNICAL_DEBT.md, @docs/milestones, @docs/architecture) up to date?
 
 3. **Test verification** (only if code changes detected):
    - Run tests as described in @CLAUDE.md
