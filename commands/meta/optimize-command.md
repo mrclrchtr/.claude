@@ -2,6 +2,7 @@
 argument-hint: [command-file-path]
 description: Optimize slash command for efficiency
 model: claude-opus-4-1-20250805
+allowed-tools: Bash(find:*)
 ---
 
 # Optimize Command
@@ -10,7 +11,7 @@ model: claude-opus-4-1-20250805
 
 - Command path: $ARGUMENTS
 - Command content: @$ARGUMENTS
-- Existing commands: !`find .claude/commands ~/.claude/commands -name "*.md" -type f 2>/dev/null | head -20`
+- Existing commands: !`find .claude/commands -name "*.md" -type f 2>/dev/null | head -20`
 
 ## Task
 
@@ -80,3 +81,5 @@ Provide optimized command with:
 3. Clear, direct task description and sub-agent usage, if applicable
 4. Preserved error handling
 5. Report: improvements made, elements preserved, word count change
+
+Ultrathink!
