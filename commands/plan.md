@@ -1,32 +1,39 @@
 ---
-description: Transform VISION.md into detailed IMPLEMENTATION_PLAN.md using architecture-planner agent
-argument-hint: [additional context or focus areas]
+description: Transform input files into detailed IMPLEMENTATION_PLAN.md
+argument-hint: [file1.md file2.md ...]
+allowed-tools: Bash(eza:*), Bash(find:*)
 model: claude-opus-4-1-20250805
 ---
 
-# Create Implementation Plan from Vision
+# Create Implementation Plan from Input Files
 
 ## Context
 
-- Vision document: !`test -f docs/VISION.md && echo "✓ Found" || echo "✗ Not found"`
+- Current project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn"`
+- Existing architecture docs: !`find ./docs/architecture`
 
-## Additional context
+## Input Files
 
+Space-separated list of files to analyze:
 ```
 $ARGUMENTS
 ```
 
-This is an IMPORTANT context provided by the user that should get passed to the agent.
-You may analyze and enrich this context before sending it to the agent.
-
 ## Task
 
-Use the architecture-planner agent to analyze @docs/VISION.md and create a comprehensive @docs/IMPLEMENTATION_PLAN.md inside @docs.
+Transform the specified input files into a comprehensive @docs/IMPLEMENTATION_PLAN.md:
 
-**IMPORTANT**: 
-The agent MUST start by asking clarifying questions about the vision before creating the plan.
-It should NOT create the implementation plan until questions are answered by the **user**.
-This ensures the plan addresses real constraints and unknowns.
+### Analysis Process:
+1. **Repository Context Scan**: First use a sub agent to understand the project structure, technology stack, and existing architecture from the context above
+2. **File Analysis**: Analyze with a sub agent each specified input file for requirements, constraints, and technical details
+3. **Clarifying Questions**: Ask targeted questions to resolve:
+   - Ambiguous technical choices where multiple valid approaches exist
+   - Missing constraints (technology restrictions, performance requirements)
+   - Integration unknowns (external systems, APIs, dependencies)  
+   - Unclear success criteria and acceptance conditions
+4. **Implementation Plan Creation**: Only after questions are answered, create the final structured plan
 
-**IMPORTANT**:
-Give the **complete** and **unmodified** questions asked by the agent to the user.
+**CRITICAL WORKFLOW**: 
+- MUST complete repository scan and file analysis BEFORE asking questions
+- Questions should be specific to discovered gaps and ambiguities from the analysis
+- Do NOT create implementation plan until ALL clarifying questions are answered
