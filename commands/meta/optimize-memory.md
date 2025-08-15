@@ -9,13 +9,13 @@ argument-hint: [path/to/CLAUDE.md to optimize]
 
 ## Context
 - Path to the CLAUDE.md to optimize: $ARGUMENTS
-- The CLAUDE.md to optimize: @$ARGUMENTS
-- Current project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn"`
-- Existing documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn)/'`
+- All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
+- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)'`
+- Project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
 
 ## Task
 
-Comprehensively analyze and optimize CLAUDE.md using best practices: @docs/claude-md.md
+Comprehensively analyze and optimize @$ARGUMENTS using best practices: @docs/claude-md.md
 Ultrathink!
 
 ### Optimization Criteria
