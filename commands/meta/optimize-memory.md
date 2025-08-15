@@ -13,25 +13,10 @@ argument-hint: [path/to/CLAUDE.md to optimize]
 - Current project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn"`
 - Existing documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn)/'`
 
-## Rules
-
-- Ultrathink!
-- Keep `.md` suffix on calling URLs with `.md` suffix
-
 ## Task
 
-Comprehensively analyze and optimize CLAUDE.md using Anthropic's best practices:
-
-1. **Memory best practices** from https://docs.anthropic.com/en/docs/claude-code/memory.md
-    - Structured information hierarchy
-    - Clear command references
-    - Workflow documentation
-    - No state tracking
-
-2. **Prompt engineering**: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices.md
-    - Clear task boundaries
-    - Explicit success criteria
-    - Tool usage patterns
+Comprehensively analyze and optimize CLAUDE.md using best practices: @docs/claude-md.md
+Ultrathink!
 
 ### Optimization Criteria
 
