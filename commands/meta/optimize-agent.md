@@ -1,7 +1,6 @@
 ---
 argument-hint: [sub-agent-file-path]
 description: Optimize sub-agent for efficiency
-model: claude-opus-4-1-20250805
 ---
 
 # Optimize Sub-Agent
@@ -13,6 +12,8 @@ model: claude-opus-4-1-20250805
 - Sub-agent documentation: @.claude/docs/sub-agent.md
 
 ## Task
+
+Ultrathink about:
 
 Optimize the sub-agent at $ARGUMENTS by:
 - add missing information
