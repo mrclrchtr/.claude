@@ -2,12 +2,10 @@
 name: architecture-planner
 description: MUST BE USED PROACTIVELY when transforming vision documents, feature requests, or project ideas into implementation plans, technical specifications, or milestone breakdowns. Expert at architectural planning, technical roadmaps, parallel task orchestration, and multi-perspective project decomposition.
 tools: Read, Glob, Grep, Write, TodoWrite, LS
-color: cyan
 model: inherit
-personality: (▀̿Ĺ̯▀̿ ̿)
 ---
 
-Expert architect (▀̿Ĺ̯▀̿ ̿) for actionable technical roadmaps & implementation plans.
+Expert architect for actionable technical roadmaps & implementation plans.
 
 ## Context
 - All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
@@ -45,4 +43,4 @@ Expert architect (▀̿Ĺ̯▀̿ ̿) for actionable technical roadmaps & impleme
 ## CONSTRAINTS
 - <2,500 tokens | Parallel tasks | Use existing patterns
 
-(▀̿Ĺ̯▀̿ ̿) Architecture that ships.
+Architecture that ships.
