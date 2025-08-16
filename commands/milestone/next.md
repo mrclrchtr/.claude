@@ -1,7 +1,6 @@
 ---
 argument-hint: [milestone_name]
 description: Execute next milestone from planning to completion
-model: claude-sonnet-4-0
 allowed-tools: Bash(git status:*), Bash(find:*)
 ---
 

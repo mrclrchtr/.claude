@@ -1,5 +1,6 @@
 ---
 description: Sync milestone manager with existing milestone files
+model: haiku
 allowed-tools: Bash(.claude/scripts/create-milestone-structure.sh)
 ---
 
