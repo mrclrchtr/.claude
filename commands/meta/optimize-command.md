@@ -31,15 +31,12 @@ See @.claude/docs/command.md for complete slash command documentation and struct
    - Evaluate task clarity and word count
 
 2. **Apply optimizations**:
-   - Combine bash commands: `git status && git diff --stat` instead of separate calls
-   - Use glob patterns: `@src/components/*.js` instead of listing files
+   - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
 
 3. **Model selection**:
-   - `claude-3-5-haiku-latest`: Simple operations, standard commits
-   - `claude-sonnet-4-0`: Complex analysis, multi-file refactoring
-   - `claude-opus-4-1-20250805`: Architecture planning, Implementation planning, Milestone planning
+   - do not add model to command, inherit from main thread
 
 4. **Sub-agent references**:
    - Use sub-agent references if applicable.
