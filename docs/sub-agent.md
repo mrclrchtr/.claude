@@ -4,11 +4,14 @@
 
 **Subagents** are specialized AI assistants within Claude Code that handle specific types of tasks with their own dedicated context windows, custom system prompts, and configurable tool access.
 
-Subagents are pre-configured AI personalities that operate independently from the main Claude Code conversation, featuring:
-- Specific expertise areas
-- Isolated context windows
-- Configurable tool access
+Subagents represent a paradigm shift in AI workflows from manual orchestration to automatic delegation, from project-specific solutions to portable specialist tools. They are pre-configured AI personalities that operate independently from the main Claude Code conversation, featuring:
+
+- Specific expertise areas with focused responsibilities
+- Isolated context windows preventing token bloat
+- Configurable tool access for surgical precision
 - Custom system prompts that guide behavior and approach
+- Automatic activation based on task matching
+- Portability across projects (single .md file)
 
 ## Configuration & Setup
 
@@ -40,10 +43,10 @@ to solving problems.
 
 ### Configuration Fields
 
-- **`name`** (Required): Unique identifier using lowercase letters and hyphens
-- **`description`** (Required): Natural language description of the subagent's purpose. Include phrases like "use PROACTIVELY" or "MUST BE USED" for more proactive use
-- **`tools`** (Optional): Comma-separated list of specific tools. If omitted, inherits all tools from the main thread
-- **`model`** (Optional): Specify which Claude model the agent should use (https://docs.anthropic.com/en/docs/about-claude/models/overview.md)
+- **`name`** (Required): Unique identifier using lowercase letters and hyphens. Consider short nicknames for frequently used agents (e.g., "a1" for quick invocation)
+- **`description`** (Required): Natural language description of the subagent's purpose. Include phrases like "use PROACTIVELY" or "MUST BE USED" for more reliable automatic activation (Tool SEO)
+- **`tools`** (Optional): Comma-separated list of specific tools. If omitted, inherits all tools from the main thread. Minimize tool count for better token efficiency
+- **`model`** (Optional): Specify which Claude model the agent should use (https://docs.anthropic.com/en/docs/about-claude/models/overview.md). Match model to task complexity for optimal cost/performance
 
 ### Tool Configuration Options
 
@@ -80,6 +83,15 @@ For complex workflows, chain multiple subagents:
 > First use the code-analyzer subagent to find issues, then use the optimizer subagent to fix them
 ```
 
+### Nickname Usage
+
+Configure short nicknames for efficiency:
+```
+> ask a1 to review the navigation UX
+> ask s1 to check for security issues
+> ask p1, c1, a1 to review the changes (multi-agent invocation)
+```
+
 ### Example Subagents
 
 #### Code Reviewer
@@ -96,20 +108,63 @@ For complex workflows, chain multiple subagents:
 
 ## Best Practices
 
+### Token-First Design
+- **Optimize initialization cost**: Each agent invocation has a token cost based on tool count and configuration
+- **Lightweight agents** (< 3k tokens): Ideal for frequent tasks, maximum composability
+- **Medium agents** (10-15k tokens): Balanced for moderate complexity
+- **Heavy agents** (25k+ tokens): Reserve for complex analysis requiring deep reasoning
+
+### Configuration Best Practices
 - **Start with Claude-generated agents**: Generate initial subagent with Claude, then customize
 - **Design focused subagents**: Create subagents with single, clear purposes and responsibilities
 - **Write detailed system prompts**: Include specific instructions, examples, and constraints
-- **Limit tool access**: Only grant necessary tools for security and focus
-- **Make descriptions action-oriented**: Write specific, actionable description fields
-- **Test thoroughly**: Verify subagent behavior before deploying widely
+- **Limit tool access**: Only grant necessary tools - fewer tools mean faster initialization
+- **Make descriptions action-oriented**: Write specific, actionable description fields with trigger phrases
+- **Test thoroughly**: Verify subagent behavior and automatic activation reliability
 - **Version control**: Check project subagents into version control for team collaboration
+
+### Model Selection Strategy
+- **Haiku + Lightweight agents**: Frequent, simple tasks with minimal cost
+- **Sonnet + Medium agents**: Balanced approach for moderate complexity
+- **Opus + Heavy agents**: Complex analysis requiring maximum reasoning
+- **Experiment freely**: Test unconventional model/agent combinations for breakthrough discoveries
 
 ## Performance Considerations
 
-- **Context preservation**: Helps preserve main conversation context
-- **Latency**: May add slight latency during initial context gathering
+### Token Usage by Tool Count
+Approximate token costs for agent initialization:
+- **0 tools**: ~640 tokens (best case with empty CLAUDE.md)
+- **1-3 tools**: 2.6k - 3.2k tokens
+- **4-6 tools**: 3.4k - 4.1k tokens
+- **7-10 tools**: 5k - 7.9k tokens
+- **15+ tools**: 13.9k - 25k+ tokens
+
+### Optimization Strategies
+- **Context preservation**: Isolated contexts prevent token bloat in main conversation
+- **Chainability**: Lightweight agents enable fluid multi-agent workflows
+- **Latency management**: Tool count directly impacts initialization time (2.6s - 7s+)
 - **Parallel execution**: Multiple subagents can work simultaneously on independent tasks
+- **Cost efficiency**: Match agent weight to task frequency for optimal token usage
+
+## Advanced Features
+
+### No CLAUDE.md Inheritance
+Subagents do not automatically inherit the project's CLAUDE.md configuration, preventing context pollution and ensuring consistent behavior across projects.
+
+### Visual Distinction
+Subagents can be visually distinguished through terminal color formatting in their indicator, making it easier to track which agent is responding during complex workflows.
+
+### Tool SEO
+Configuring automatic delegation is a form of "Tool SEO" - optimize your agent's name, description, and trigger phrases to improve Claude's reliability in invoking your agent automatically.
+
+## Getting Started
+
+1. **Foundation First**: Start with one simple, focused agent that solves a specific problem
+2. **Token Optimization**: Begin with lightweight agents (minimal tools) for maximum composability
+3. **Test Reliability**: Verify automatic activation before expanding functionality
+4. **Iterate Based on Data**: Let empirical results guide optimization, not assumptions
+5. **Share Discoveries**: Contribute findings to expand collective knowledge
 
 ## Summary
 
-Subagents are specialized AI assistants that handle specific tasks with their own context windows and configurable tool access. They can be created at project level (`.claude/agents/`) or user level (`~/.claude/agents/`) and are configured using Markdown files with YAML frontmatter. The `/agents` command provides an easy interface for creating and managing subagents.
+Subagents represent the evolution from prompt engineering to agent engineering - specialized, portable, and efficient AI assistants that automatically handle specific tasks. They offer isolated contexts, surgical tool selection, and can be optimized for different performance profiles based on token usage and model selection. The key to success is starting simple, optimizing for tokens, and experimenting with different configurations to find breakthrough combinations.
