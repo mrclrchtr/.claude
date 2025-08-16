@@ -36,9 +36,10 @@ tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
 model: claude-sonnet-4-0  # Optional - specify Claude model
 ---
 
-Your subagent's system prompt goes here. This can be multiple paragraphs
-and should clearly define the subagent's role, capabilities, and approach
-to solving problems.
+You are a [role/specialty description]. Your subagent's system prompt 
+should start with "You are a" to clearly establish the agent's identity.
+This can be multiple paragraphs and should clearly define the subagent's 
+role, capabilities, and approach to solving problems.
 ```
 
 ### Configuration Fields
@@ -118,6 +119,7 @@ Configure short nicknames for efficiency:
 - **Start with Claude-generated agents**: Generate initial subagent with Claude, then customize
 - **Design focused subagents**: Create subagents with single, clear purposes and responsibilities
 - **Write detailed system prompts**: Include specific instructions, examples, and constraints
+- **Use "You are a" pattern**: Begin system prompts with "You are a [role]" for clarity and consistency (e.g., "You are an expert architect", "You are a systematic debugging specialist")
 - **Limit tool access**: Only grant necessary tools - fewer tools mean faster initialization
 - **Make descriptions action-oriented**: Write specific, actionable description fields with trigger phrases
 - **Test thoroughly**: Verify subagent behavior and automatic activation reliability
