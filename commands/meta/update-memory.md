@@ -2,7 +2,6 @@
 description: Update CLAUDE.md with important learnings from current coding session
 allowed-tools: Bash(find:*)
 argument-hint: [path/to/CLAUDE.md to update]
-model: claude-opus-4-1-20250805
 ---
 
 # Update CLAUDE.md with Session Learnings

@@ -1,7 +1,6 @@
 ---
 argument-hint: [command-file-path]
 description: Optimize slash command for efficiency
-model: claude-opus-4-1-20250805
 allowed-tools: Bash(find:*)
 ---
 

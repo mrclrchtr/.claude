@@ -1,6 +1,5 @@
 ---
 description: Optimize CLAUDE.md following Anthropic's memory best practices
-model: claude-opus-4-1-20250805
 allowed-tools: Bash(eza:*)
 argument-hint: [path/to/CLAUDE.md to optimize]
 ---

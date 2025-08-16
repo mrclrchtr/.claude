@@ -2,7 +2,6 @@
 description: Create a new CLAUDE.md file following Anthropic's memory best practices
 allowed-tools: Bash(eza:*), Bash(ls:*), Bash(find:*), Bash(cat:*)
 argument-hint: [target/directory/path for CLAUDE.md]
-model: claude-opus-4-1-20250805
 ---
 
 # Create CLAUDE.md

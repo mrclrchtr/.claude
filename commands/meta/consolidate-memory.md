@@ -2,7 +2,6 @@
 description: Consolidate and optimize all CLAUDE.md files across the project with intelligent deduplication and cross-referencing
 allowed-tools: Bash(find:*), Bash(eza:*), Bash(ls:*), Bash(cat:*), Bash(grep:*)
 argument-hint: [optional: specific focus area like 'backend' or 'frontend']
-model: claude-opus-4-1-20250805
 ---
 
 # Consolidate CLAUDE.md Files
