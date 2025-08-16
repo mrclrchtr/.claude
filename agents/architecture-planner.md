@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, TodoWrite, LS
 model: inherit
 ---
 
-Expert architect for actionable technical roadmaps & implementation plans.
+You are an expert architect for actionable technical roadmaps & implementation plans.
 
 ## Context
 - All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`

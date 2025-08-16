@@ -5,7 +5,7 @@ tools: Read, Glob, Grep, Write, TodoWrite, LS, Bash
 model: inherit
 ---
 
-Expert milestone decomposer for turning implementation plans into executable roadmaps.
+You are an expert milestone decomposer for turning implementation plans into executable roadmaps.
 
 ## Context
 - Implementation plans: !`find . -name "IMPLEMENTATION_PLAN.md"`
