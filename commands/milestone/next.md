@@ -1,30 +1,33 @@
 ---
 argument-hint: [milestone_name]
 description: Execute next milestone from planning to completion
-allowed-tools: Bash(git status:*), Bash(find:*)
+allowed-tools: Bash(git:*), Bash(find:*), Task
 ---
 
 # Execute Next Milestone
 
 ## Context
 - Manager: @docs/MILESTONE_MANAGER.md
-- Status: !`git status --porcelain --branch && find . -name "M[0-9]*-*.md" -o -name "M[0-9]*_[0-9]*-*.md" -type f | head -5`
+- Status: !`git status --porcelain --branch && find docs/milestones -name "M*.md" -type f 2>/dev/null | head -5`
 
 ## Task
-Execute milestone lifecycle:
+
+Execute milestone lifecycle. Ultrathink!
+
+### Process
 
 1. **Select**: $ARGUMENTS > first [WIP] > next open (include sub-milestones with format `M{major}_{sub}-{Short_Title}.md`)
    - Mark [WIP] if starting new
    - Error: "No milestones available" and exit if none found
 
 2. **Analyze**: Read @$MILESTONE_NAME
-   - Verify with sub agents: deliverables vs current implementation (analyze the project/code)
-   - Consolidate the output from the sub-agents
-   - STOP if unclear: "Need clarification on: [specific issue]"
+   - Use subagents to verify deliverables vs current implementation (analyze the project/code)
+   - Consolidate subagent outputs
+   - If unclear: "Need clarification on: [specific issue]" and exit
 
 3. **Implement**: Complete uncompleted deliverables
    - Mark [X] when done
-   - Validate against criteria
+   - Validate against acceptance criteria
 
 4. **Complete**: 
    - Update all relevant docs
@@ -41,4 +44,6 @@ Execute milestone lifecycle:
    - Update manager: [DONE]
    - Commit: "feat(milestone): complete $MILESTONE_NAME"
 
-If complex planning needed: Use architecture-planner subagent for milestone breakdown.
+### Error Handling
+- If complex planning needed: Use architecture-planner subagent
+- Validate all changes before commit

@@ -1,6 +1,7 @@
 ---
 description: Create a specific milestone from IMPLEMENTATION_PLAN.md
 argument-hint: [milestone identifier (e.g. M1, M2, phase1)]
+allowed-tools: Bash(find:*), Task
 ---
 
 # Create Milestone from Implementation Plan
@@ -8,7 +9,6 @@ argument-hint: [milestone identifier (e.g. M1, M2, phase1)]
 ## Context
 
 - Implementation plan: @docs/IMPLEMENTATION_PLAN.md
-- Implementation log: @docs/IMPLEMENTATION_LOG.md
 - Template: @.claude/templates/milestone-template.md
 - Manager: @docs/MILESTONE_MANAGER.md
 - Existing: @docs/milestones/
@@ -29,18 +29,18 @@ Create milestone **$ARGUMENTS** using the milestone-planner subagent.
    - Extract complete milestone content with dependencies
 
 3. **Create milestone document**
-   - Filename: `M{major}-{Short_Title}.md` (main milestones), `M{major}_{sub}-{Short_Title}.md` (sub-milestones)
+   - Filename: `M{major}-{Short_Title}.md` or `M{major}_{sub}-{Short_Title}.md`
    - If exists: "Warning: {filename} already exists" and exit
    - Apply template structure with extracted content
 
 4. **Update MILESTONE_MANAGER.md**
-   - Insert in sequence: `i. [M{major}-{Short_Title}.md](M{major}-{Short_Title}.md) - [ ]` or `i. [M{major}_{sub}-{Short_Title}.md](M{major}_{sub}-{Short_Title}.md) - [ ]`
+   - Insert in sequence: `i. [M{major}-{Short_Title}.md](M{major}-{Short_Title}.md) - [ ]`
    - Update counts and dependencies
 
 5. **Complete**
    - "Created: @docs/milestones/{filename}"
    - "Next: Use /milestone/next to start work"
 
-### Error handling
+### Error Handling
 - Keep backups during manager updates
 - Restore on failure with clear error message

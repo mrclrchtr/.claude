@@ -1,19 +1,21 @@
 ---
 argument-hint: [milestone_name]
 description: Critically analyze milestone implementation and documentation
-allowed-tools: Bash(git --no-pager log:*), Bash(git --no-pager diff:*), Bash(find:*)
+allowed-tools: Bash(git --no-pager:*), Bash(find:*)
 ---
 
 # Critical Milestone Review
 
 ## Context
 - Manager: @docs/MILESTONE_MANAGER.md
-- Available milestones: !`find docs/milestones -name "M[0-9]*-*.md" -o -name "M[0-9]*_[0-9]*-*.md" -type f | sort`
-- Implementation status: !`git --no-pager log --oneline --grep="[Mm]ilestone\|M[0-9]_" -10`
-- Recent changes: !`git --no-pager diff --stat HEAD~5..HEAD`
+- Available milestones: !`find docs/milestones -name "M*.md" -type f 2>/dev/null | sort`
+- Implementation status: !`git --no-pager log --oneline --grep="[Mm]ilestone\|M[0-9]" -10 && git --no-pager diff --stat HEAD~5..HEAD`
 
 ## Task
-Critically analyze milestone implementation ($ARGUMENTS or last [DONE]):
+
+Critically analyze milestone implementation ($ARGUMENTS or last [DONE]). Ultrathink!
+
+### Analysis Process
 
 1. **Locate milestone**
    - If no argument: find last [DONE] milestone
@@ -42,4 +44,8 @@ Critically analyze milestone implementation ($ARGUMENTS or last [DONE]):
    - Confirm @docs/IMPLEMENTATION_LOG.md contains detailed technical decisions following the "How to Update This Log" guidelines (timeline entries, milestone sections, technical debt, lessons learned)
    - Check related milestone document has complete status updates
 
-Be direct, objective, and brutally honest. No sugar-coating allowed.
+### Output Format
+Be direct, objective, brutally honest. No sugar-coating.
+
+### Error Handling
+If milestone structure missing: "Error: No milestone structure found" and exit
