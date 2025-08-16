@@ -6,22 +6,31 @@
 
 Subagents are pre-configured AI personalities that operate independently from the main Claude Code conversation, featuring specific expertise areas, isolated context windows, configurable tool access, and custom system prompts that guide behavior and approach.
 
+### Evolution of Subagent Usage
+
+Subagent usage in Claude Code has evolved from manual orchestration to intelligent automation ([Source](https://claudelog.com/mechanics/sub-agents/)):
+
+1. **Manual Sub-agents**: The original approach using the Task tool for explicit parallel processing
+2. **Custom Agents**: Specialized agents with isolated contexts and automatic activation
+3. **Agent Engineering**: The current paradigm focusing on token efficiency, model optimization, and community sharing ([Source](https://claudelog.com/mechanics/agent-engineering/))
+
 ## Core Architecture & Philosophy
 
 ### Architecture Principles
 
-- **Parallel Task Delegation**: Subagents operate like programming threads, performing independent operations simultaneously for improved execution efficiency
-- **Explicit Orchestration**: The main agent coordinates subagent activities with careful task delegation and explicit instructions
+- **Parallel Task Delegation**: Subagents operate like programming threads, performing independent operations simultaneously for improved execution efficiency. "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results" ([Source](https://claudelog.com/mechanics/task-agent-tools/))
+- **Explicit Orchestration**: The main agent coordinates subagent activities with careful task delegation and explicit instructions. Claude uses Task agents cautiously unless you provide detailed delegation instructions
 - **Context Isolation**: Each subagent maintains its own context window, preventing pollution and enabling focused problem-solving
 - **Pattern Extension**: Beyond simple task execution, subagents recognize and creatively extend patterns to generate new value
 
 ### Agent-First Philosophy
 
-Subagents embody the agent-first design philosophy by:
+Subagents embody the agent-first design philosophy by ([Source](https://claudelog.com/mechanics/agent-first-design/)):
 - Moving beyond human task automation to enabling agents as creative partners
 - Building modular, templatable experiences that agents can systematically vary
-- Enabling mass customization and personalization at scale
+- Enabling mass customization and personalization at scale without linear resource scaling
 - Creating systems where agents can generate infinite variations from finite foundations
+- Identifying fundamental product patterns that AI agents can meaningfully extend, customize, and scale for individual users
 
 ### Operational Architecture
 
@@ -79,9 +88,9 @@ to solving problems.
 ### Configuration Fields
 
 - **`name`** (Required): Unique identifier using lowercase letters and hyphens
-- **`description`** (Required): Natural language description of the subagent's purpose
+- **`description`** (Required): Natural language description of the subagent's purpose. Include phrases like "use PROACTIVELY" or "MUST BE USED" for more proactive use ([Source](https://claudelog.com/mechanics/custom-agents/))
 - **`tools`** (Optional): Comma-separated list of specific tools. If omitted, inherits all tools from the main thread
-- **`model`** (Optional): Specify which Claude model the agent should use
+- **`model`** (Optional): Specify which Claude model the agent should use (sonnet, opus, or haiku)
 
 ### Tool Configuration Options
 
@@ -97,7 +106,11 @@ Claude Code proactively delegates tasks based on:
 - The `description` field in subagent configurations
 - Current context and available tools
 
-*Tip: Include phrases like "use PROACTIVELY" or "MUST BE USED" in your description field for more proactive use.*
+This automatic delegation represents a form of "Tool SEO" - configuring your agent to be promptly utilized by Claude ([Source](https://claudelog.com/mechanics/custom-agents/)). If you need to improve reliability:
+- Update your agent's name for clarity
+- Refine the description field with action-oriented language
+- Include "use PROACTIVELY" or "MUST BE USED" in descriptions
+- Test and iterate based on invocation patterns
 
 ### Explicit Invocation
 
@@ -106,6 +119,12 @@ Request specific subagents by mentioning them:
 > Use the test-runner subagent to fix failing tests
 > Have the code-reviewer subagent look at my recent changes
 > Ask the debugger subagent to investigate this error
+```
+
+**Explicit Parallel Control** ([Source](https://claudelog.com/mechanics/sub-agent-tactics/)):
+```
+> Use 3 sub-agents to handle this task
+> Create a sub-agent for each file that needs updating
 ```
 
 ### Example Subagents
@@ -137,17 +156,19 @@ Request specific subagents by mentioning them:
 
 #### The 7-Parallel-Task Method
 
-For maximum efficiency when dealing with multiple related tasks:
+For maximum efficiency when dealing with multiple related tasks ([Source](https://claudelog.com/mechanics/task-agent-tools/)):
 
 1. **Identify Parallelizable Tasks**: Find operations that don't depend on each other
-2. **Group by Resource Type**: Batch similar operations (file reads, searches, etc.)
-3. **Launch Up to 7 Tasks Simultaneously**: This represents the optimal balance
-4. **Explicit Orchestration**: Like programming with threads, explicit coordination yields best results
+2. **Group by Resource Type**: Batch similar operations (file reads, searches, etc.) to improve token efficiency
+3. **Launch Up to 7 Tasks Simultaneously**: This represents the optimal balance between parallel processing and context management
+4. **Explicit Orchestration**: Provide detailed delegation instructions for each parallel task
 5. **Consolidate Results**: Gather outputs and proceed with sequential dependencies
-6. **Verify Integration**: Run tests and builds after parallel completion
+6. **Verify Integration**: Run tests, linting, and builds after parallel completion
 7. **Iterate Based on Results**: Use findings to inform next parallel batch
 
 **Key Principle**: "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results."
+
+**Token Optimization Strategy**: Strip comments when reading code for analysis, minimize context transfer between agents, and batch similar operations to prevent over-splitting
 
 #### Structured Workflow Example
 
@@ -174,16 +195,40 @@ For complex workflows, chain multiple subagents:
 > First use the code-analyzer subagent to find performance issues, then use the optimizer subagent to fix them
 ```
 
+### Task Type Analysis for Subagent Selection
+
+([Source](https://claudelog.com/mechanics/sub-agent-tactics/))
+
+#### Perfect Parallelizable Tasks
+Tasks ideal for immediate sub-agent parallelization:
+- **Non-destructive operations**: Research, analysis, comparison matrices
+- **Isolated workflows**: Each agent works independently without interference
+- **Consolidatable outputs**: Results can be merged by the main agent
+
+*Example*: "Research 8 different MCPs and write pros/cons for each" - perfect for parallel sub-agents as they don't interfere with each other or the codebase.
+
+#### The Consolidation Strategy
+For tasks requiring coordination:
+1. **Enter Plan Mode** for non-destructive execution
+2. **Deploy parallel sub-agents** for different perspectives (redundancy, security, factuality, time-complexity)
+3. **Consolidate suggestions** in the main agent
+4. **Clear context if needed** to action suggestions from a fresh start
+
+#### Developing an Itch for Parallelism
+"Day by day, week by week I find myself learning to utilise sub-agents in more and more creative ways!" Start with obvious parallel tasks, then progressively identify more opportunities for parallelization.
+
 ### Split-Role Sub-Agents Pattern
 
-Split-role sub-agents enable multiple specialized agent perspectives to analyze a single task simultaneously, providing comprehensive insights through parallel analysis.
+Split-role sub-agents enable multiple specialized agent perspectives to analyze a single task simultaneously, providing comprehensive insights through parallel analysis ([Source](https://claudelog.com/mechanics/split-role-sub-agents/)).
+
+This mechanic delivers exceptional value by maximizing Claude Sonnet's capabilities through strategic orchestration. Rather than reaching for the 5x more expensive Opus model, split role sub-agents combined with ultrathink unlock sophisticated analysis at Sonnet pricing.
 
 #### Implementation Strategy
 1. **Activate Plan Mode** for safe exploration and experimentation
 2. **Enable ultrathink** for enhanced reasoning capabilities
-3. **Define specific, non-overlapping role perspectives**
-4. **Launch sub-agents to analyze tasks concurrently**
-5. **Consolidate findings from all perspectives**
+3. **Define specific, non-overlapping role perspectives** that naturally gravitate toward different tools
+4. **Launch sub-agents to analyze tasks concurrently** using their specialized approaches
+5. **Consolidate findings from all perspectives** for comprehensive analysis
 
 #### Common Role Divisions
 
@@ -231,20 +276,45 @@ Split-role sub-agents enable multiple specialized agent perspectives to analyze 
 3. **Quality Metrics**: Output accuracy, relevance score, error rates
 4. **User Satisfaction**: Task success rate, rework frequency, subjective quality
 
+#### Cost-Performance Optimization
+
+**Current Pricing Reality (2025)** ([Source](https://claudelog.com/mechanics/rev-the-engine/)):
+- Premium Models: Claude Opus ($15/$75 per million tokens)
+- Mid-Tier Options: Claude Sonnet ($3/$15 per million tokens)
+- Budget-Friendly: Claude Haiku ($0.25/$1.25 per million tokens)
+
+**"Rev the Engine" Technique**: Maximize single-model performance before escalating to expensive models:
+1. **Round 1**: Use ultrathink + Plan Mode for initial planning
+2. **Round 2**: Critique and refine, identify edge cases and redundancies
+3. **Round 3**: Final optimization and validation before execution
+
+This approach can push Claude Sonnet far beyond base capabilities, often eliminating the need for the 5x more expensive Opus model.
+
 #### Agent Weight Classifications
 
-Agents are categorized by token usage to optimize performance and cost:
+Agents are categorized by token usage to optimize performance and cost ([Source](https://claudelog.com/mechanics/agent-engineering/)):
 
-| Weight Class | Token Range | Use Cases | Recommended Model |
-|--------------|-------------|-----------|-------------------|
-| **Lightweight** | <3,000 tokens | Simple, frequent tasks like file operations, basic searches | Haiku |
-| **Medium-weight** | 10,000-15,000 tokens | Balanced complexity with moderate reasoning | Sonnet |
-| **Heavy** | 25,000+ tokens | Complex analysis, deep reasoning, sophisticated problem-solving | Opus |
+| Weight Class | Token Range | Use Cases | Recommended Model | Initialization Impact |
+|--------------|-------------|-----------|-------------------|----------------------|
+| **Lightweight** | <3,000 tokens | Simple, frequent tasks like file operations, basic searches | Haiku | Low cost, high composability |
+| **Medium-weight** | 10,000-15,000 tokens | Balanced complexity with moderate reasoning | Sonnet | Moderate cost, balanced performance |
+| **Heavy** | 25,000+ tokens | Complex analysis, deep reasoning, sophisticated problem-solving | Opus | High cost, workflow bottlenecks |
+
+**Critical Insight**: Lightweight agents are the most composable and effortless to use. They enable fluid orchestration in multi-agent workflows, while heavy agents create bottlenecks due to startup time and token usage
 
 **Strategic Model-Agent Pairing:**
-- **Haiku + Lightweight Agents**: Maximize speed for simple operations
-- **Sonnet + Medium Agents**: Balance capability with efficiency
-- **Opus + Heavy Agents**: Leverage maximum intelligence for complex tasks
+
+*Conventional Pairings (Starting Points):*
+- **Haiku + Lightweight Agents**: Maximize speed for simple operations like commit messages, basic validation
+- **Sonnet + Medium Agents**: Balance capability with efficiency for moderate complexity tasks
+- **Opus + Heavy Agents**: Leverage maximum intelligence for complex analysis and deep reasoning
+
+*Cross-Experimentation Opportunities ([Source](https://claudelog.com/mechanics/agent-engineering/)):*
+- **Opus + Lightweight Agent**: Might unlock surprising depth in simple tasks
+- **Haiku + Heavy Agent**: Could reveal new efficiency breakthroughs ("Slot Machine" approach)
+- **Model Rotation**: Same agent with different models for A/B testing performance
+
+**A.B.E. (Always Be Experimenting) Methodology**: Challenge assumptions about model-task pairings, test unconventional combinations, and share breakthrough discoveries with the community
 
 #### Trade-offs
 - **Latency**: Subagents start with clean slate and may add latency while gathering required context
@@ -255,16 +325,19 @@ Agents are categorized by token usage to optimize performance and cost:
 
 #### Optimization Strategies
 1. **Agent Selection**: Choose lightweight agents for simple tasks, reserve complex agents for high-value operations
-2. **Parallel Processing**: Batch related tasks for concurrent execution, balance parallelism with context constraints
-3. **Model Optimization**: Match model capabilities to agent requirements, experiment with unconventional pairings
+2. **Parallel Processing**: Batch related tasks for concurrent execution, balance parallelism with context constraints. "Think like a CPU scheduler for AI agents" ([Source](https://claudelog.com/mechanics/sub-agent-tactics/))
+3. **Model Optimization**: Match model capabilities to agent requirements, experiment with unconventional pairings. Build proficiency across the cost spectrum to avoid the "Proficiency Trap" ([Source](https://claudelog.com/mechanics/rev-the-engine/))
 4. **Resource Management**: Monitor tool access, prevent context pollution, implement smart routing
+5. **Strategic Escalation**: Use "Rev the Engine" technique to maximize single-agent performance before escalating to multi-agent workflows or premium models
 
 ### Best Practices & Engineering
 
 #### Design Principles
 - **Start with Claude-generated agents**: Generate initial subagent with Claude, then customize
+- **Separation of Concerns**: Like with programming, better separation leads to better performance, maintainability, inspectability, and shareability ([Source](https://claudelog.com/mechanics/custom-agents/))
 - **Design focused subagents**: Create subagents with single, clear responsibilities
-- **Write detailed prompts**: Include specific instructions, examples, and constraints
+- **Write detailed prompts**: Include specific instructions, positive/negative examples, and constraints. LLMs excel at pattern recognition
+- **Progressive Tool Expansion**: Begin with a carefully scoped set of tools and expand as you validate behavior ([Source](https://claudelog.com/mechanics/custom-agents/))
 - **Limit tool access**: Only grant necessary tools for security and focus
 - **Consider personality**: Match agent personality to function for enhanced collaboration
 
@@ -281,7 +354,7 @@ Transform mechanical interactions into natural, personalized collaborations by:
 - **Using expressive elements**: Implement text-faces and nicknames for distinct personalities
 - **Balancing intensity**: Adjust personality expression based on professional context
 
-**Text-Face Personality System:**
+**Text-Face Personality System ([Source](https://claudelog.com/mechanics/humanising-agents/)):**
 
 A systematic approach to agent personalities organized by development roles:
 
@@ -293,6 +366,8 @@ A systematic approach to agent personalities organized by development roles:
 | **Development & Refactoring**     | Gentle, friendly, focused                    | (◕‿◕), (´･ω･`), ♪(´▽｀)         | Code improvement, restructuring           |
 | **Documentation & Communication** | Loving, sweet, intense                       | (♥‿♥), ✿◕ ‿ ◕✿, (づ｡◕‿‿◕｡)づ     | Clarity, accessibility, user guidance     |
 | **Operations & Management**       | Cool, protective, observant                  | (⌐■_■), ಠ╭╮ಠ, (╯︵╰,)           | System stability, monitoring, oversight   |
+
+**Advanced Nicknames**: Configure short nicknames for efficiency (e.g., "UX agent" → "A1", "Security agent" → "S1"), enabling rapid multi-agent invocation: `ask A1, P2, C1 to review the changes`
 
 **Implementation Guidelines:**
 1. **Start Conservative**: Begin with subtle personalities and increase based on team reception
@@ -322,12 +397,12 @@ A systematic approach to agent personalities organized by development roles:
 
 #### Advanced Engineering Patterns
 
-**Always Be Experimenting (A.B.E.) Methodology:**
+**Always Be Experimenting (A.B.E.) Methodology ([Source](https://claudelog.com/mechanics/agent-engineering/)):**
 - **Challenge Assumptions**: Question conventional wisdom about model-task pairings
-- **Cross-Model Experimentation**: Test unexpected combinations (e.g., Haiku for complex reasoning)
-- **Systematic Benchmarking**: Measure performance across different configurations
-- **Community Sharing**: Contribute discoveries to collective knowledge base
-- **Iterative Learning**: Continuously refine based on empirical results
+- **Cross-Model Experimentation**: Test unexpected combinations (e.g., Haiku for complex reasoning). This is "frontier territory" with unexplored possibilities
+- **Systematic Benchmarking**: Measure actual performance vs. theoretical predictions across token usage, speed, quality, and user satisfaction
+- **Community Sharing**: Contribute discoveries to collective knowledge base. "What works for one use case might revolutionize another"
+- **Discovery-Oriented Lifecycle**: Start with conventional pairing → Cross-experiment → Measure everything → Share breakthroughs → Iterate based on real data
 
 **Technical Implementation Patterns:**
 - **No CLAUDE.md Inheritance**: Avoid inheriting default behaviors that may conflict with specialized roles
@@ -444,3 +519,16 @@ Claude Code intelligently selects subagents based on context and task requiremen
 Subagents represent a powerful way to extend Claude Code's capabilities through specialized, reusable AI assistants. They provide context isolation, task-specific expertise, and flexible tool management while maintaining the efficiency and focus of the main conversation. The combination of automatic delegation and explicit invocation makes them suitable for both proactive assistance and directed task execution.
 
 The agent-first philosophy enables mass customization, parallel processing, and creative pattern extension, transforming how we approach complex software engineering tasks. Through careful design, optimization, and humanization, subagents become valuable collaborative partners in the development process.
+
+## Additional Resources
+
+- [Task/Agent Tools](https://claudelog.com/mechanics/task-agent-tools/) - Parallel processing and orchestration strategies
+- [Sub-Agents Overview](https://claudelog.com/mechanics/sub-agents/) - Manual vs custom agents comparison
+- [Sub-Agent Tactics](https://claudelog.com/mechanics/sub-agent-tactics/) - Task type analysis and consolidation strategies
+- [Rev the Engine](https://claudelog.com/mechanics/rev-the-engine/) - Performance maximization before model escalation
+- [Agent Engineering](https://claudelog.com/mechanics/agent-engineering/) - Token optimization and model selection
+- [Humanising Agents](https://claudelog.com/mechanics/humanising-agents/) - Personality systems and text-faces
+- [Custom Agents](https://claudelog.com/mechanics/custom-agents/) - Configuration and automatic delegation
+- [Split Role Sub-Agents](https://claudelog.com/mechanics/split-role-sub-agents/) - Multi-perspective analysis
+- [Agent-First Design](https://claudelog.com/mechanics/agent-first-design/) - Product architecture principles
+- [r/ClaudeAI](https://www.reddit.com/r/ClaudeAI/) - Community sharing and collaboration
