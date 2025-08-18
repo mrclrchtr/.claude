@@ -19,3 +19,4 @@ Optimize the sub-agent at $ARGUMENTS by:
 - add missing information
 - compress existing information without loosing important details
 - remove information, that the agent knows by default
+- test and optimize each bash command, that the agent executes
