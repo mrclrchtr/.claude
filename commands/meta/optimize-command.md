@@ -47,14 +47,17 @@ See @.claude/docs/command.md for complete slash command documentation and struct
      ```
    - See available agents in @.claude/agents directory.
 
-5. **Script handling**:
+5. **Bash command handling**:
+   - test and optimize each bash command, that the command executes
+   - Use `docs/context.md` as reference for context gathering (if applicable)
+
+6. **Script handling**:
    - Check script contents
    - Keep initialization scripts that create templates
-   - Inline simple commands (mkdir, touch) if clearer
    - Preserve complex logic in scripts
    - Create scripts if applicable
 
-6. **Error patterns to preserve**:
+7. **Error patterns to preserve**:
    ```markdown
    # Keep specific error messages
    If missing, show error: "Error: File not found at path" and exit
