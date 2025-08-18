@@ -14,6 +14,8 @@ Update the current development session by:
    - Any issues encountered
    - Solutions implemented
    - Code changes made
+   - Documentation updates
+   - Online resources or references used
 
 Keep updates concise but comprehensive for future reference.
 
