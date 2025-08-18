@@ -13,6 +13,17 @@ Subagents represent a paradigm shift in AI workflows from manual orchestration t
 - Automatic activation based on task matching
 - Portability across projects (single .md file)
 
+## Core Architecture & Philosophy
+
+### Parallel Task Delegation
+Subagents operate like programming threads, performing independent operations simultaneously for improved execution efficiency. "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results."
+
+### Key Architectural Principles
+- **Explicit Orchestration**: The main agent coordinates subagent activities with careful task delegation
+- **Context Isolation**: Each subagent maintains its own context window, preventing pollution
+- **Pattern Extension**: Beyond simple task execution, subagents recognize and creatively extend patterns
+- **Agent-First Design**: Moving beyond human task automation to enabling agents as creative partners
+
 ## Configuration & Setup
 
 ### File Locations & Priority
@@ -53,6 +64,17 @@ role, capabilities, and approach to solving problems.
 
 1. **Omit the `tools` field**: Inherit all tools from main thread (default), including MCP tools
 2. **Specify individual tools**: Comma-separated list for granular control
+
+## Quick Start Guide
+
+1. **Open the subagents interface**: Run `/agents`
+2. **Select 'Create New Agent'**: Choose project-level or user-level subagent
+3. **Define the subagent**:
+   - Generate with Claude first, then customize (recommended approach)
+   - Describe the subagent in detail and when it should be used
+   - Select tools to grant access to (or leave blank to inherit all tools)
+   - Edit system prompt in your preferred editor by pressing `e`
+4. **Save and use**: Subagent becomes available automatically or via explicit invocation
 
 ## Usage Methods
 
@@ -107,6 +129,76 @@ Configure short nicknames for efficiency:
 - **Purpose**: Data analysis expert for SQL queries and insights
 - **Tools**: Bash, Read, Write
 
+## Advanced Patterns & Workflows
+
+### The 7-Parallel-Task Method
+
+For maximum efficiency when dealing with multiple related tasks:
+
+1. **Identify Parallelizable Tasks**: Find operations that don't depend on each other
+2. **Group by Resource Type**: Batch similar operations (file reads, searches, etc.) to improve token efficiency
+3. **Launch Up to 7 Tasks Simultaneously**: This represents the optimal balance between parallel processing and context management
+4. **Explicit Orchestration**: Provide detailed delegation instructions for each parallel task
+5. **Consolidate Results**: Gather outputs and proceed with sequential dependencies
+6. **Verify Integration**: Run tests, linting, and builds after parallel completion
+7. **Iterate Based on Results**: Use findings to inform next parallel batch
+
+**Key Principle**: "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results."
+
+### Split-Role Sub-Agents Pattern
+
+Enable multiple specialized agent perspectives to analyze a single task simultaneously:
+
+#### Implementation Strategy
+1. **Activate Plan Mode** for safe exploration
+2. **Enable ultrathink** for enhanced reasoning capabilities
+3. **Define specific, non-overlapping role perspectives**
+4. **Launch sub-agents to analyze tasks concurrently**
+5. **Consolidate findings from all perspectives**
+
+#### Common Role Divisions
+
+**Code Review Roles:**
+- Factual Analyst: Objective code correctness
+- Senior Engineer: Architectural decisions and best practices
+- Security Expert: Vulnerability identification
+- Consistency Reviewer: Code style and pattern adherence
+
+**Benefits**: Comprehensive analysis, cost-effective intelligence, parallel processing, enhanced problem-solving
+
+### Task Type Analysis for Subagent Selection
+
+#### Perfect Parallelizable Tasks
+Tasks ideal for immediate sub-agent parallelization:
+- **Non-destructive operations**: Research, analysis, comparison matrices
+- **Isolated workflows**: Each agent works independently without interference
+- **Consolidatable outputs**: Results can be merged by the main agent
+
+*Example*: "Research 8 different MCPs and write pros/cons for each" - perfect for parallel sub-agents.
+
+#### The Consolidation Strategy
+For tasks requiring coordination:
+1. **Enter Plan Mode** for non-destructive execution
+2. **Deploy parallel sub-agents** for different perspectives
+3. **Consolidate suggestions** in the main agent
+4. **Clear context if needed** to action suggestions from a fresh start
+
+## Advanced Debugging & Quality Patterns
+
+### Systematic Testing Approach
+1. **Isolation Testing**: Test each agent independently before integration
+2. **Edge Case Validation**: Explicitly test boundary conditions and error scenarios
+3. **Performance Benchmarking**: Measure response time, token usage, and accuracy
+4. **Integration Testing**: Verify agent interactions in composed workflows
+
+### Common Issues and Solutions
+| Issue | Symptoms | Solution |
+|-------|----------|----------|
+| **Context Loss** | Agent forgets previous information | Ensure proper context preservation in prompts |
+| **Tool Misuse** | Agent uses wrong tools | Refine tool descriptions and constraints |
+| **Over-delegation** | Too many sub-tasks created | Add explicit limits in system prompts |
+| **Token Overflow** | Responses cut off | Implement chunking strategies |
+
 ## Best Practices
 
 ### Token-First Design
@@ -133,6 +225,18 @@ Configure short nicknames for efficiency:
 
 ## Performance Considerations
 
+### Agent Weight Classifications
+
+Agents are categorized by token usage to optimize performance and cost:
+
+| Weight Class | Token Range | Use Cases | Recommended Model | Initialization Impact |
+|--------------|-------------|-----------|-------------------|----------------------|
+| **Lightweight** | <3,000 tokens | Simple, frequent tasks like file operations, basic searches | Haiku | Low cost, high composability |
+| **Medium-weight** | 10,000-15,000 tokens | Balanced complexity with moderate reasoning | Sonnet | Moderate cost, balanced performance |
+| **Heavy** | 25,000+ tokens | Complex analysis, deep reasoning, sophisticated problem-solving | Opus | High cost, workflow bottlenecks |
+
+**Critical Insight**: Lightweight agents are the most composable and effortless to use. They enable fluid orchestration in multi-agent workflows.
+
 ### Token Usage by Tool Count
 Approximate token costs for agent initialization:
 - **0 tools**: ~640 tokens (best case with empty CLAUDE.md)
@@ -141,12 +245,22 @@ Approximate token costs for agent initialization:
 - **7-10 tools**: 5k - 7.9k tokens
 - **15+ tools**: 13.9k - 25k+ tokens
 
+### Cost-Performance Optimization
+
+**Current Pricing Reality (2025)**:
+- Premium Models: Claude Opus ($15/$75 per million tokens)
+- Mid-Tier Options: Claude Sonnet ($3/$15 per million tokens)
+- Budget-Friendly: Claude Haiku ($0.25/$1.25 per million tokens)
+
+**"Rev the Engine" Technique**: Maximize single-model performance before escalating to expensive models.
+
 ### Optimization Strategies
 - **Context preservation**: Isolated contexts prevent token bloat in main conversation
 - **Chainability**: Lightweight agents enable fluid multi-agent workflows
 - **Latency management**: Tool count directly impacts initialization time (2.6s - 7s+)
 - **Parallel execution**: Multiple subagents can work simultaneously on independent tasks
 - **Cost efficiency**: Match agent weight to task frequency for optimal token usage
+- **A.B.E. (Always Be Experimenting)**: Test unconventional model/agent combinations for breakthrough discoveries
 
 ## Advanced Features
 
@@ -159,6 +273,23 @@ Subagents can be visually distinguished through terminal color formatting in the
 ### Tool SEO
 Configuring automatic delegation is a form of "Tool SEO" - optimize your agent's name, description, and trigger phrases to improve Claude's reliability in invoking your agent automatically.
 
+### Humanizing Agents with Personality
+
+Transform mechanical interactions into natural, personalized collaborations using the Text-Face Personality System:
+
+| Role Category | Personality Traits | Text-Face Examples | Focus Areas |
+|---|---|---|---|
+| **Debugging & Testing** | Playful, aggressive, skeptical | (ง'̀-'́)ง, ಠ_ಠ, (╯°□°)╯ | Finding bugs, breaking things, edge cases |
+| **Code Review & Quality** | Laid-back, detail-oriented, security-focused | ( ͡° ͜ʖ ͡°), (▀̿Ĺ̯▀̿ ̿), ʕ•ᴥ•ʔ | Architecture, security, best practices |
+| **Performance & Optimization** | High-energy, efficiency-driven | ⚡(ﾉ◕ヮ◕)ﾉ⚡, (⌐■_■), ༼ つ ◕_◕ ༽つ | Speed, efficiency, resource usage |
+| **Development & Refactoring** | Gentle, friendly, focused | (◕‿◕), (´･ω･`), ♪(´▽｀) | Code improvement, restructuring |
+| **Documentation & Communication** | Loving, sweet, intense | (♥‿♥), ✿◕ ‿ ◕✿, (づ｡◕‿‿◕｡)づ | Clarity, accessibility, user guidance |
+
+**Implementation Guidelines:**
+- Start conservative and increase based on team reception
+- Match personality to function for enhanced collaboration
+- Consider team dynamics and professional context
+
 ## Getting Started
 
 1. **Foundation First**: Start with one simple, focused agent that solves a specific problem
@@ -167,6 +298,32 @@ Configuring automatic delegation is a form of "Tool SEO" - optimize your agent's
 4. **Iterate Based on Data**: Let empirical results guide optimization, not assumptions
 5. **Share Discoveries**: Contribute findings to expand collective knowledge
 
+## Management & Integration
+
+### Using /agents Command (Recommended)
+
+The `/agents` command provides a comprehensive interface for:
+- Viewing all available subagents (built-in, user, and project)
+- Creating new subagents with guided setup
+- Editing existing custom subagents and their tool access
+- Deleting custom subagents
+- Managing tool permissions with complete tool listings
+
+### Team Collaboration
+- Share subagents through version control
+- Standardize workflows across team members
+- Maintain consistent code quality and practices
+
 ## Summary
 
-Subagents represent the evolution from prompt engineering to agent engineering - specialized, portable, and efficient AI assistants that automatically handle specific tasks. They offer isolated contexts, surgical tool selection, and can be optimized for different performance profiles based on token usage and model selection. The key to success is starting simple, optimizing for tokens, and experimenting with different configurations to find breakthrough combinations.
+Subagents represent the evolution from prompt engineering to agent engineering - specialized, portable, and efficient AI assistants that automatically handle specific tasks. They offer isolated contexts, surgical tool selection, and can be optimized for different performance profiles based on token usage and model selection.
+
+The combination of automatic delegation and explicit invocation makes them suitable for both proactive assistance and directed task execution. Through careful design, optimization, and humanization, subagents become valuable collaborative partners in the development process.
+
+Key success factors:
+- Start simple with lightweight agents for maximum composability
+- Optimize for tokens to control costs and performance
+- Experiment with unconventional model/agent combinations (A.B.E. methodology)
+- Use parallel processing patterns like the 7-Parallel-Task Method
+- Leverage advanced patterns like Split-Role Sub-Agents for comprehensive analysis
+- Share discoveries with the community to advance collective knowledge
