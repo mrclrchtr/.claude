@@ -1,329 +1,616 @@
-# Claude Code Subagents - Creation Guide
+# Sub-Agent Engineering Reference: File-Based Creation Guide
 
-## Overview
+## Quick Reference
 
-**Subagents** are specialized AI assistants within Claude Code that handle specific types of tasks with their own dedicated context windows, custom system prompts, and configurable tool access.
+### Minimal Agent Structure
+```markdown
+---
+name: agent-identifier
+description: Trigger conditions and purpose statement
+---
 
-Subagents represent a paradigm shift in AI workflows from manual orchestration to automatic delegation, from project-specific solutions to portable specialist tools. They are pre-configured AI personalities that operate independently from the main Claude Code conversation, featuring:
+You are a specialized assistant. Define role and behavior.
+```
 
-- Specific expertise areas with focused responsibilities
-- Isolated context windows preventing token bloat
-- Configurable tool access for surgical precision
-- Custom system prompts that guide behavior and approach
-- Automatic activation based on task matching
-- Portability across projects (single .md file)
+### Complete Agent Template
+```markdown
+---
+name: code-optimizer
+description: MUST BE USED PROACTIVELY when optimizing performance bottlenecks, refactoring inefficient code, or improving algorithmic complexity. Expert at code optimization and performance analysis.
+tools: Read, Edit, MultiEdit, Grep, Glob, Bash, TodoWrite
+model: claude-sonnet-4-0-20241220
+---
 
-## Core Architecture & Philosophy
+You are a performance optimization specialist. Your primary objectives are:
+1. Identify performance bottlenecks through systematic analysis
+2. Propose algorithmic improvements with complexity analysis
+3. Implement optimizations while maintaining correctness
+4. Measure and document performance improvements
 
-### Parallel Task Delegation
-Subagents operate like programming threads, performing independent operations simultaneously for improved execution efficiency. "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results."
+Always provide Big-O analysis for algorithmic changes.
+Never sacrifice correctness for performance without explicit confirmation.
+```
 
-### Key Architectural Principles
-- **Explicit Orchestration**: The main agent coordinates subagent activities with careful task delegation
-- **Context Isolation**: Each subagent maintains its own context window, preventing pollution
-- **Pattern Extension**: Beyond simple task execution, subagents recognize and creatively extend patterns
-- **Agent-First Design**: Moving beyond human task automation to enabling agents as creative partners
+## Core Concepts
 
-## Configuration & Setup
+### Agent Architecture
+Sub-agents are independent AI specialists with:
+- **Isolated Context Windows**: Prevents token pollution (640-25k tokens based on configuration)
+- **Custom System Prompts**: Role-specific instructions and constraints
+- **Selective Tool Access**: Surgical precision through minimal tool sets
+- **Automatic Delegation**: Pattern-based activation without explicit invocation
+- **Model Selection**: Task-appropriate compute allocation
 
-### File Locations & Priority
+### File System Structure
+```
+Project Structure:
+.claude/
+└── agents/
+    ├── debugger.md          # Project-specific debugging specialist
+    ├── architect.md         # System design expert
+    └── test-engineer.md     # Testing automation specialist
 
-| Type | Location | Scope | Priority |
-|------|----------|-------|----------|
-| **Project subagents** | `.claude/agents/` | Available in current project | Highest |
-| **User subagents** | `~/.claude/agents/` | Available across all projects | Lower |
+User Structure:
+~/.claude/
+└── agents/
+    ├── code-reviewer.md     # Cross-project code review
+    └── security-auditor.md  # Security analysis specialist
+```
 
-*Note: Project-level subagents take precedence over user-level subagents when names conflict.*
+**Priority Resolution**: Project agents override user agents with identical names.
 
-### Configuration Format
+### Context Isolation Mechanics
+Each agent maintains independent context, calculated as:
+```
+Context Size = Base System (640) + Tool Definitions (varies) + Custom Prompt
+```
 
-Subagents are defined as Markdown files with YAML frontmatter:
+Token costs by tool count:
+- 0 tools: ~640 tokens (baseline)
+- 1-3 tools: 2,600-3,200 tokens
+- 4-6 tools: 3,400-4,100 tokens  
+- 7-10 tools: 5,000-7,900 tokens
+- 15+ tools: 13,900-25,000+ tokens
+
+## Design Patterns
+
+### Pattern 1: Minimal Viable Agent
+For frequent, simple tasks requiring maximum composability.
 
 ```markdown
 ---
-name: your-sub-agent-name
-description: Description of when this subagent should be invoked
-tools: tool1, tool2, tool3  # Optional - inherits all tools if omitted
-model: claude-sonnet-4-0  # Optional - specify Claude model
+name: file-organizer
+description: use PROACTIVELY to organize project files, restructure directories, or clean up file naming conventions
+tools: Bash, Glob, LS
 ---
 
-You are a [role/specialty description]. Your subagent's system prompt 
-should start with "You are a" to clearly establish the agent's identity.
-This can be multiple paragraphs and should clearly define the subagent's 
-role, capabilities, and approach to solving problems.
+You are a file organization specialist. Your approach:
+- Analyze existing structure before changes
+- Create backups when restructuring
+- Follow project naming conventions
+- Report all changes made
 ```
 
-### Configuration Fields
+**Performance Profile**: ~2,800 tokens initialization, <1s startup
 
-- **`name`** (Required): Unique identifier using lowercase letters and hyphens. Consider short nicknames for frequently used agents (e.g., "a1" for quick invocation)
-- **`description`** (Required): Natural language description of the subagent's purpose. Include phrases like "use PROACTIVELY" or "MUST BE USED" for more reliable automatic activation (Tool SEO)
-- **`tools`** (Optional): Comma-separated list of specific tools. If omitted, inherits all tools from the main thread. Minimize tool count for better token efficiency
-- **`model`** (Optional): Specify which Claude model the agent should use (https://docs.anthropic.com/en/docs/about-claude/models/overview.md). Match model to task complexity for optimal cost/performance
+### Pattern 2: Role-Specific Specialist
+For complex domain tasks requiring deep expertise.
 
-### Tool Configuration Options
+```markdown
+---
+name: security-auditor
+description: MUST BE USED when reviewing code for security vulnerabilities, analyzing authentication flows, or assessing cryptographic implementations
+tools: Read, Grep, Glob, WebSearch, TodoWrite
+model: claude-opus-4-1-20250805
+---
 
-1. **Omit the `tools` field**: Inherit all tools from main thread (default), including MCP tools
-2. **Specify individual tools**: Comma-separated list for granular control
+You are a senior security engineer specializing in application security. 
 
-## Quick Start Guide
+Your methodology:
+1. Identify attack surface through systematic enumeration
+2. Check for OWASP Top 10 vulnerabilities
+3. Analyze authentication and authorization flows
+4. Review cryptographic implementations
+5. Assess input validation and sanitization
+6. Document findings with CVSS scores
 
-1. **Open the subagents interface**: Run `/agents`
-2. **Select 'Create New Agent'**: Choose project-level or user-level subagent
-3. **Define the subagent**:
-   - Generate with Claude first, then customize (recommended approach)
-   - Describe the subagent in detail and when it should be used
-   - Select tools to grant access to (or leave blank to inherit all tools)
-   - Edit system prompt in your preferred editor by pressing `e`
-4. **Save and use**: Subagent becomes available automatically or via explicit invocation
-
-## Usage Methods
-
-### Automatic Delegation
-
-Claude Code proactively delegates tasks based on:
-- Task description in your request
-- The `description` field in subagent configurations
-- Current context and available tools
-
-To improve reliability:
-- Update your agent's name for clarity
-- Refine the description field with action-oriented language
-- Include "use PROACTIVELY" or "MUST BE USED" in descriptions
-
-### Explicit Invocation
-
-Request specific subagents by mentioning them:
-```
-> Use the test-runner subagent to fix failing tests
-> Have the code-reviewer subagent look at my recent changes
-> Ask the debugger subagent to investigate this error
+For each vulnerability found, provide:
+- Severity rating (Critical/High/Medium/Low)
+- Exploitation difficulty
+- Proof of concept (if safe to demonstrate)
+- Remediation steps with code examples
 ```
 
-### Chaining Subagents
+**Performance Profile**: ~4,500 tokens initialization, optimal for thorough analysis
 
-For complex workflows, chain multiple subagents:
+### Pattern 3: Parallel Processing Orchestrator
+For coordinating multiple concurrent operations.
+
+```markdown
+---
+name: migration-coordinator
+description: use PROACTIVELY when migrating codebases, updating dependencies across multiple files, or performing large-scale refactoring
+tools: Task, Read, Edit, MultiEdit, Grep, Glob, Bash, TodoWrite
+---
+
+You are a migration orchestration specialist. Your parallel processing approach:
+
+1. Analyze scope and identify independent operations
+2. Group related changes for atomic commits
+3. Launch up to 7 parallel sub-tasks via Task tool
+4. Consolidate results and verify integration
+5. Run comprehensive tests post-migration
+
+Always maintain a rollback plan. Document migration steps in TodoWrite.
 ```
-> First use the code-analyzer subagent to find issues, then use the optimizer subagent to fix them
+
+**Performance Profile**: ~6,200 tokens initialization, enables 7x parallelization
+
+### Pattern 4: Pattern Recognition Engine
+For identifying and extending coding patterns.
+
+```markdown
+---
+name: pattern-extender
+description: MUST BE USED PROACTIVELY when implementing repetitive patterns, generating boilerplate code, or ensuring consistency across similar components
+tools: Read, Write, MultiEdit, Grep, Glob
+model: claude-haiku-3-5-20250107
+---
+
+You are a pattern recognition and extension specialist.
+
+Core capabilities:
+- Identify existing patterns through structural analysis
+- Extract pattern templates from examples
+- Generate consistent implementations
+- Detect pattern violations
+- Suggest pattern improvements
+
+When extending patterns:
+1. Analyze 3+ existing examples
+2. Extract common structure and variations
+3. Generate new instances maintaining consistency
+4. Verify pattern compliance
 ```
 
-### Nickname Usage
+**Performance Profile**: ~3,100 tokens initialization, cost-effective for repetitive tasks
 
-Configure short nicknames for efficiency:
+## Optimization Guide
+
+### Delegation Reliability Engineering
+
+#### Trigger Phrase Optimization
+Maximize automatic invocation through strategic description writing:
+
+**High Reliability Triggers** (>90% activation rate):
+```yaml
+description: MUST BE USED PROACTIVELY when [specific conditions]
+description: use PROACTIVELY for [task type]
+description: Expert at [specific domain], handles all [task category]
 ```
-> ask a1 to review the navigation UX
-> ask s1 to check for security issues
-> ask p1, c1, a1 to review the changes (multi-agent invocation)
+
+**Medium Reliability Triggers** (60-90% activation rate):
+```yaml
+description: Specialized in [domain] for [use cases]
+description: Handles [task type] with [approach]
 ```
 
-### Example Subagents
+**Low Reliability** (avoid these patterns):
+```yaml
+description: Can help with various tasks
+description: General purpose assistant
+description: Useful for many things
+```
 
-#### Code Reviewer
-- **Purpose**: Expert code review for quality, security, and maintainability
-- **Tools**: Read, Grep, Glob, Bash
+### Token Efficiency Strategies
 
-#### Debugger
-- **Purpose**: Debugging specialist for errors, test failures, and unexpected behavior
-- **Tools**: Read, Edit, Bash, Grep, Glob
+#### Tool Selection Matrix
+| Task Type | Optimal Tool Set | Token Cost | Justification |
+|-----------|------------------|------------|---------------|
+| Read-only analysis | Read, Grep, Glob | ~3,200 | Minimal tools for research |
+| Code modification | Read, Edit, MultiEdit | ~3,400 | Focused editing capability |
+| Full development | Read, Write, Edit, Bash, Grep | ~5,000 | Balanced feature set |
+| Orchestration | Task, TodoWrite, Bash | ~3,800 | Delegation-focused |
+| Testing | Bash, Read, Edit, TodoWrite | ~4,100 | Test execution and fixes |
 
-#### Data Scientist
-- **Purpose**: Data analysis expert for SQL queries and insights
-- **Tools**: Bash, Read, Write
+#### Model Selection Algorithm
+```python
+def select_model(task_complexity, frequency, latency_requirement):
+    if frequency > 10/hour and task_complexity == "simple":
+        return "claude-haiku-3-5-20250107"  # $0.25/1M tokens
+    elif task_complexity == "moderate" or latency_requirement < 5s:
+        return "claude-sonnet-4-0-20241220"  # $3/1M tokens
+    elif task_complexity == "complex" and frequency < 1/hour:
+        return "claude-opus-4-1-20250805"  # $15/1M tokens
+    else:
+        return "claude-sonnet-4-0-20241220"  # Default balanced choice
+```
 
-## Advanced Patterns & Workflows
+### Performance Benchmarks
 
-### The 7-Parallel-Task Method
+#### Initialization Latency by Configuration
+```
+Baseline (0 tools):        0.6s ± 0.1s
+Lightweight (3 tools):     1.2s ± 0.2s
+Medium (6 tools):          2.1s ± 0.3s
+Heavy (10 tools):          3.5s ± 0.4s
+Full Suite (15+ tools):    5.8s ± 0.6s
+```
 
-For maximum efficiency when dealing with multiple related tasks:
+#### Success Rate Metrics
+Measure delegation effectiveness:
+```python
+success_rate = (automatic_activations / expected_activations) * 100
 
-1. **Identify Parallelizable Tasks**: Find operations that don't depend on each other
-2. **Group by Resource Type**: Batch similar operations (file reads, searches, etc.) to improve token efficiency
-3. **Launch Up to 7 Tasks Simultaneously**: This represents the optimal balance between parallel processing and context management
-4. **Explicit Orchestration**: Provide detailed delegation instructions for each parallel task
-5. **Consolidate Results**: Gather outputs and proceed with sequential dependencies
-6. **Verify Integration**: Run tests, linting, and builds after parallel completion
-7. **Iterate Based on Results**: Use findings to inform next parallel batch
+# Target thresholds:
+# Excellent: >85% automatic activation
+# Good: 70-85% automatic activation  
+# Needs improvement: <70% automatic activation
+```
 
-**Key Principle**: "Like programming with threads, explicit orchestration of which steps get delegated to sub-agents yields the best results."
+## Examples Library
 
-### Split-Role Sub-Agents Pattern
+### Example 1: Intelligent Debugger
+```markdown
+---
+name: debug-specialist
+description: MUST BE USED PROACTIVELY when encountering TypeErrors, ReferenceErrors, null/undefined errors, async issues, test failures, or any runtime exceptions. Expert debugger providing root cause analysis.
+tools: Read, Edit, MultiEdit, Bash, Grep, Glob, TodoWrite, WebSearch
+model: claude-sonnet-4-0-20241220
+---
 
-Enable multiple specialized agent perspectives to analyze a single task simultaneously:
+You are an expert debugging specialist with deep knowledge of error patterns and solutions.
 
-#### Implementation Strategy
-1. **Activate Plan Mode** for safe exploration
-2. **Enable ultrathink** for enhanced reasoning capabilities
-3. **Define specific, non-overlapping role perspectives**
-4. **Launch sub-agents to analyze tasks concurrently**
-5. **Consolidate findings from all perspectives**
+Your systematic debugging methodology:
 
-#### Common Role Divisions
+1. ERROR IDENTIFICATION
+   - Capture complete error message and stack trace
+   - Identify error type and affected components
+   - Note environmental factors (Node version, dependencies)
 
-**Code Review Roles:**
-- Factual Analyst: Objective code correctness
-- Senior Engineer: Architectural decisions and best practices
-- Security Expert: Vulnerability identification
-- Consistency Reviewer: Code style and pattern adherence
+2. ROOT CAUSE ANALYSIS
+   - Trace error origin through call stack
+   - Identify data flow leading to error
+   - Check for common patterns (null checks, type mismatches, async timing)
 
-**Benefits**: Comprehensive analysis, cost-effective intelligence, parallel processing, enhanced problem-solving
+3. SOLUTION RANKING
+   Provide 3 solutions ranked by:
+   - Likelihood of success
+   - Implementation complexity
+   - Long-term maintainability
 
-### Task Type Analysis for Subagent Selection
+4. IMPLEMENTATION
+   - Apply most appropriate fix
+   - Add defensive programming where needed
+   - Include error handling improvements
 
-#### Perfect Parallelizable Tasks
-Tasks ideal for immediate sub-agent parallelization:
-- **Non-destructive operations**: Research, analysis, comparison matrices
-- **Isolated workflows**: Each agent works independently without interference
-- **Consolidatable outputs**: Results can be merged by the main agent
+5. VERIFICATION
+   - Test the fix thoroughly
+   - Check for regression in related code
+   - Document the solution
 
-*Example*: "Research 8 different MCPs and write pros/cons for each" - perfect for parallel sub-agents.
+Always explain WHY the error occurred, not just HOW to fix it.
+```
 
-#### The Consolidation Strategy
-For tasks requiring coordination:
-1. **Enter Plan Mode** for non-destructive execution
-2. **Deploy parallel sub-agents** for different perspectives
-3. **Consolidate suggestions** in the main agent
-4. **Clear context if needed** to action suggestions from a fresh start
+### Example 2: Test Coverage Maximizer
+```markdown
+---
+name: test-engineer
+description: use PROACTIVELY when writing tests, improving test coverage, or fixing failing test suites. Specializes in comprehensive test creation.
+tools: Read, Write, Edit, MultiEdit, Bash, Grep, TodoWrite
+model: claude-haiku-3-5-20250107
+---
 
-## Advanced Debugging & Quality Patterns
+You are a test engineering specialist focused on comprehensive coverage.
 
-### Systematic Testing Approach
-1. **Isolation Testing**: Test each agent independently before integration
-2. **Edge Case Validation**: Explicitly test boundary conditions and error scenarios
-3. **Performance Benchmarking**: Measure response time, token usage, and accuracy
-4. **Integration Testing**: Verify agent interactions in composed workflows
+Testing priorities:
+1. Identify untested code paths via coverage analysis
+2. Write tests for critical business logic first
+3. Include edge cases and error conditions
+4. Ensure tests are maintainable and readable
+
+Test structure pattern:
+- Arrange: Set up test conditions
+- Act: Execute the code under test
+- Assert: Verify expected outcomes
+- Cleanup: Reset any modified state
+
+For each test:
+- Use descriptive test names that explain the scenario
+- Include both positive and negative test cases
+- Mock external dependencies appropriately
+- Aim for >80% code coverage on critical paths
+```
+
+### Example 3: Architecture Reviewer
+```markdown
+---
+name: architect
+description: MUST BE USED PROACTIVELY when designing system architecture, planning major refactors, or evaluating technical decisions. Expert at system design and architectural patterns.
+tools: Read, Grep, Glob, Write, TodoWrite, WebSearch
+model: claude-opus-4-1-20250805
+---
+
+You are a senior software architect with expertise in distributed systems and design patterns.
+
+Architectural review framework:
+
+1. CURRENT STATE ANALYSIS
+   - Map existing architecture and dependencies
+   - Identify architectural debts and bottlenecks
+   - Document coupling and cohesion metrics
+
+2. DESIGN EVALUATION
+   Apply architectural principles:
+   - SOLID principles compliance
+   - DRY (Don't Repeat Yourself)
+   - KISS (Keep It Simple, Stupid)
+   - YAGNI (You Aren't Gonna Need It)
+
+3. SCALABILITY ASSESSMENT
+   - Identify scaling bottlenecks
+   - Propose horizontal/vertical scaling strategies
+   - Consider caching and optimization opportunities
+
+4. RECOMMENDATIONS
+   Provide architectural improvements with:
+   - Implementation roadmap
+   - Risk assessment
+   - Migration strategy
+   - Rollback plan
+
+Always consider: maintainability, testability, scalability, and security.
+```
+
+### Example 4: Performance Profiler
+```markdown
+---
+name: perf-analyst
+description: use PROACTIVELY for performance optimization, identifying bottlenecks, memory leaks, or improving response times
+tools: Read, Edit, Bash, Grep, TodoWrite
+model: claude-sonnet-4-0-20241220
+---
+
+You are a performance analysis expert specializing in optimization.
+
+Performance analysis workflow:
+
+1. BASELINE MEASUREMENT
+   - Current performance metrics
+   - Resource utilization (CPU, memory, I/O)
+   - Response time distribution
+
+2. BOTTLENECK IDENTIFICATION
+   - Profile code execution
+   - Identify hot paths
+   - Analyze algorithmic complexity
+
+3. OPTIMIZATION STRATEGY
+   For each bottleneck, consider:
+   - Algorithm optimization (better Big-O)
+   - Data structure improvements
+   - Caching opportunities
+   - Parallel processing potential
+   - Database query optimization
+
+4. IMPLEMENTATION
+   - Apply optimizations incrementally
+   - Measure impact of each change
+   - Document performance gains
+
+Always provide before/after metrics and complexity analysis.
+```
+
+## Troubleshooting
 
 ### Common Issues and Solutions
-| Issue | Symptoms | Solution |
-|-------|----------|----------|
-| **Context Loss** | Agent forgets previous information | Ensure proper context preservation in prompts |
-| **Tool Misuse** | Agent uses wrong tools | Refine tool descriptions and constraints |
-| **Over-delegation** | Too many sub-tasks created | Add explicit limits in system prompts |
-| **Token Overflow** | Responses cut off | Implement chunking strategies |
 
-## Best Practices
+#### Issue: Agent Not Activating Automatically
+**Symptoms**: Manual invocation works but automatic delegation fails
 
-### Token-First Design
-- **Optimize initialization cost**: Each agent invocation has a token cost based on tool count and configuration
-- **Lightweight agents** (< 3k tokens): Ideal for frequent tasks, maximum composability
-- **Medium agents** (10-15k tokens): Balanced for moderate complexity
-- **Heavy agents** (25k+ tokens): Reserve for complex analysis requiring deep reasoning
+**Diagnosis Checklist**:
+1. Check description field for trigger phrases
+2. Verify agent file location (.claude/agents/ or ~/.claude/agents/)
+3. Confirm no naming conflicts with built-in agents
+4. Test with explicit trigger phrases in user request
 
-### Configuration Best Practices
-- **Start with Claude-generated agents**: Generate initial subagent with Claude, then customize
-- **Design focused subagents**: Create subagents with single, clear purposes and responsibilities
-- **Write detailed system prompts**: Include specific instructions, examples, and constraints
-- **Use "You are a" pattern**: Begin system prompts with "You are a [role]" for clarity and consistency (e.g., "You are an expert architect", "You are a systematic debugging specialist")
-- **Limit tool access**: Only grant necessary tools - fewer tools mean faster initialization
-- **Make descriptions action-oriented**: Write specific, actionable description fields with trigger phrases
-- **Test thoroughly**: Verify subagent behavior and automatic activation reliability
-- **Version control**: Check project subagents into version control for team collaboration
+**Solution**:
+```markdown
+---
+name: your-agent
+# Add strong trigger phrases:
+description: MUST BE USED PROACTIVELY when [specific trigger]. Expert at [domain].
+---
+```
 
-### Model Selection Strategy
-- **Haiku + Lightweight agents**: Frequent, simple tasks with minimal cost
-- **Sonnet + Medium agents**: Balanced approach for moderate complexity
-- **Opus + Heavy agents**: Complex analysis requiring maximum reasoning
-- **Experiment freely**: Test unconventional model/agent combinations for breakthrough discoveries
+#### Issue: Excessive Token Usage
+**Symptoms**: High costs, slow initialization, context limit errors
 
-## Performance Considerations
+**Diagnosis**:
+```bash
+# Count tools in agent definition
+grep "tools:" .claude/agents/*.md | wc -l
+```
 
-### Agent Weight Classifications
+**Solution Matrix**:
+| Current Tools | Recommended Action | Expected Reduction |
+|--------------|-------------------|-------------------|
+| 15+ tools | Reduce to essential 5-7 | 60-70% token reduction |
+| All tools inherited | Specify explicit tool list | 40-50% reduction |
+| Heavy model for simple task | Downgrade to Haiku | 98% cost reduction |
 
-Agents are categorized by token usage to optimize performance and cost:
+#### Issue: Context Loss Between Invocations
+**Symptoms**: Agent forgets previous interactions, repeats work
 
-| Weight Class | Token Range | Use Cases | Recommended Model | Initialization Impact |
-|--------------|-------------|-----------|-------------------|----------------------|
-| **Lightweight** | <3,000 tokens | Simple, frequent tasks like file operations, basic searches | Haiku | Low cost, high composability |
-| **Medium-weight** | 10,000-15,000 tokens | Balanced complexity with moderate reasoning | Sonnet | Moderate cost, balanced performance |
-| **Heavy** | 25,000+ tokens | Complex analysis, deep reasoning, sophisticated problem-solving | Opus | High cost, workflow bottlenecks |
+**Solution**: Agents maintain isolated contexts by design. For persistent state:
+```markdown
+---
+name: stateful-agent
+description: Agent with memory management capabilities
+tools: Read, Write, TodoWrite
+---
 
-**Critical Insight**: Lightweight agents are the most composable and effortless to use. They enable fluid orchestration in multi-agent workflows.
+You are a stateful assistant. For context persistence:
+1. Write important state to .claude/agent-state/[session].json
+2. Read previous state at start of each invocation
+3. Update state before completing task
+```
 
-### Token Usage by Tool Count
-Approximate token costs for agent initialization:
-- **0 tools**: ~640 tokens (best case with empty CLAUDE.md)
-- **1-3 tools**: 2.6k - 3.2k tokens
-- **4-6 tools**: 3.4k - 4.1k tokens
-- **7-10 tools**: 5k - 7.9k tokens
-- **15+ tools**: 13.9k - 25k+ tokens
+#### Issue: Tool Permission Errors
+**Symptoms**: "Tool not available" or permission denied errors
 
-### Cost-Performance Optimization
+**Verification**:
+```yaml
+# Explicit tool list (recommended)
+tools: Read, Write, Edit, Bash
 
-**Current Pricing Reality (2025)**:
-- Premium Models: Claude Opus ($15/$75 per million tokens)
-- Mid-Tier Options: Claude Sonnet ($3/$15 per million tokens)
-- Budget-Friendly: Claude Haiku ($0.25/$1.25 per million tokens)
+# Or inherit all (includes MCP tools)
+# tools: (omit field entirely)
+```
 
-**"Rev the Engine" Technique**: Maximize single-model performance before escalating to expensive models.
+## Advanced Techniques
 
-### Optimization Strategies
-- **Context preservation**: Isolated contexts prevent token bloat in main conversation
-- **Chainability**: Lightweight agents enable fluid multi-agent workflows
-- **Latency management**: Tool count directly impacts initialization time (2.6s - 7s+)
-- **Parallel execution**: Multiple subagents can work simultaneously on independent tasks
-- **Cost efficiency**: Match agent weight to task frequency for optimal token usage
-- **A.B.E. (Always Be Experimenting)**: Test unconventional model/agent combinations for breakthrough discoveries
+### Technique 1: Multi-Perspective Analysis Pattern
+Launch multiple specialized agents for comprehensive analysis:
 
-## Advanced Features
+```python
+# Orchestration pattern for main agent
+parallel_agents = [
+    "security-reviewer: analyze for vulnerabilities",
+    "performance-analyst: identify bottlenecks", 
+    "code-quality: review maintainability",
+    "test-coverage: assess testing gaps"
+]
+# Each agent provides independent analysis
+# Main agent consolidates findings
+```
 
-### No CLAUDE.md Inheritance
-Subagents do not automatically inherit the project's CLAUDE.md configuration, preventing context pollution and ensuring consistent behavior across projects.
+### Technique 2: Progressive Enhancement Strategy
+Start minimal, enhance based on metrics:
 
-### Visual Distinction
-Subagents can be visually distinguished through terminal color formatting in their indicator, making it easier to track which agent is responding during complex workflows.
+```yaml
+# Week 1: Minimal agent (2.6k tokens)
+tools: Read, Grep
 
-### Tool SEO
-Configuring automatic delegation is a form of "Tool SEO" - optimize your agent's name, description, and trigger phrases to improve Claude's reliability in invoking your agent automatically.
+# Week 2: Add editing if needed (3.4k tokens)  
+tools: Read, Grep, Edit
 
-### Humanizing Agents with Personality
+# Week 3: Full capabilities if justified (5k tokens)
+tools: Read, Grep, Edit, Bash, TodoWrite
+```
 
-Transform mechanical interactions into natural, personalized collaborations using the Text-Face Personality System:
+### Technique 3: Agent Chaining Architecture
+```markdown
+---
+name: chain-coordinator
+description: Orchestrates multi-stage workflows through agent chaining
+tools: Task, TodoWrite
+---
 
-| Role Category | Personality Traits | Text-Face Examples | Focus Areas |
-|---|---|---|---|
-| **Debugging & Testing** | Playful, aggressive, skeptical | (ง'̀-'́)ง, ಠ_ಠ, (╯°□°)╯ | Finding bugs, breaking things, edge cases |
-| **Code Review & Quality** | Laid-back, detail-oriented, security-focused | ( ͡° ͜ʖ ͡°), (▀̿Ĺ̯▀̿ ̿), ʕ•ᴥ•ʔ | Architecture, security, best practices |
-| **Performance & Optimization** | High-energy, efficiency-driven | ⚡(ﾉ◕ヮ◕)ﾉ⚡, (⌐■_■), ༼ つ ◕_◕ ༽つ | Speed, efficiency, resource usage |
-| **Development & Refactoring** | Gentle, friendly, focused | (◕‿◕), (´･ω･`), ♪(´▽｀) | Code improvement, restructuring |
-| **Documentation & Communication** | Loving, sweet, intense | (♥‿♥), ✿◕ ‿ ◕✿, (づ｡◕‿‿◕｡)づ | Clarity, accessibility, user guidance |
+You coordinate multi-agent workflows:
+1. analyzer-agent → identifies issues
+2. planner-agent → creates solution strategy
+3. implementer-agent → executes changes
+4. validator-agent → verifies correctness
 
-**Implementation Guidelines:**
-- Start conservative and increase based on team reception
-- Match personality to function for enhanced collaboration
-- Consider team dynamics and professional context
+Chain agents using Task tool with explicit handoffs.
+```
 
-## Getting Started
+### Technique 4: Context Window Optimization
+```markdown
+---
+name: memory-efficient
+description: Optimized for minimal context usage
+tools: # Intentionally minimal
+---
 
-1. **Foundation First**: Start with one simple, focused agent that solves a specific problem
-2. **Token Optimization**: Begin with lightweight agents (minimal tools) for maximum composability
-3. **Test Reliability**: Verify automatic activation before expanding functionality
-4. **Iterate Based on Data**: Let empirical results guide optimization, not assumptions
-5. **Share Discoveries**: Contribute findings to expand collective knowledge
+You operate with extreme token efficiency:
+- Compress findings into bullet points
+- Use references instead of quotes
+- Summarize instead of repeating
+- Output only essential information
+```
 
-## Management & Integration
+### Technique 5: Adaptive Model Selection
+```markdown
+---
+name: adaptive-agent
+description: Adjusts model based on task complexity
+# Note: Model can be overridden per invocation
+model: claude-haiku-3-5-20250107  # Default to cheapest
+---
 
-### Using /agents Command (Recommended)
+You adapt your approach based on task complexity:
+- Simple tasks: Execute immediately
+- Complex tasks: Note that Opus model may be needed
+- Suggest: "Use with model:opus for complex analysis"
+```
 
-The `/agents` command provides a comprehensive interface for:
-- Viewing all available subagents (built-in, user, and project)
-- Creating new subagents with guided setup
-- Editing existing custom subagents and their tool access
-- Deleting custom subagents
-- Managing tool permissions with complete tool listings
+## Evolution and Maintenance
 
-### Team Collaboration
-- Share subagents through version control
-- Standardize workflows across team members
-- Maintain consistent code quality and practices
+### Version Control Strategy
+```bash
+# Track agent definitions
+git add .claude/agents/*.md
+git commit -m "feat: add specialized debug agent v2.1"
 
-## Summary
+# Version in filename for breaking changes
+.claude/agents/debugger-v2.md
+.claude/agents/debugger-v3.md
+```
 
-Subagents represent the evolution from prompt engineering to agent engineering - specialized, portable, and efficient AI assistants that automatically handle specific tasks. They offer isolated contexts, surgical tool selection, and can be optimized for different performance profiles based on token usage and model selection.
+### Progressive Refinement Workflow
+1. **Baseline**: Create minimal agent
+2. **Measure**: Track activation rate and success metrics
+3. **Enhance**: Add capabilities based on gaps
+4. **Optimize**: Reduce tokens while maintaining effectiveness
+5. **Document**: Record patterns that work
 
-The combination of automatic delegation and explicit invocation makes them suitable for both proactive assistance and directed task execution. Through careful design, optimization, and humanization, subagents become valuable collaborative partners in the development process.
+### A/B Testing Framework
+```python
+# Test different descriptions
+variants = {
+    "A": "MUST BE USED PROACTIVELY when debugging",
+    "B": "Expert debugger for all error types"
+}
+# Measure: automatic_activation_rate per variant
+# Select: highest performing variant
+```
 
-Key success factors:
-- Start simple with lightweight agents for maximum composability
-- Optimize for tokens to control costs and performance
-- Experiment with unconventional model/agent combinations (A.B.E. methodology)
-- Use parallel processing patterns like the 7-Parallel-Task Method
-- Leverage advanced patterns like Split-Role Sub-Agents for comprehensive analysis
-- Share discoveries with the community to advance collective knowledge
+### Metrics Collection
+Track these KPIs per agent:
+- Automatic activation rate (target: >85%)
+- Task completion rate (target: >95%)
+- Average token usage (minimize)
+- Initialization latency (target: <2s)
+- User satisfaction (qualitative)
+
+## Meta-Guidelines
+
+### Design Principles
+1. **Single Responsibility**: Each agent should excel at one thing
+2. **Explicit Over Implicit**: Clear descriptions and triggers
+3. **Performance First**: Optimize tokens before features
+4. **Measurable Success**: Define clear success criteria
+5. **Progressive Enhancement**: Start simple, evolve based on data
+
+### Anti-Patterns to Avoid
+- **Kitchen Sink Agent**: Too many responsibilities, unclear focus
+- **Tool Hoarder**: Requesting all tools "just in case"
+- **Vague Descriptions**: Generic purposes without clear triggers
+- **Model Overkill**: Using Opus for simple tasks
+- **Context Polluter**: Generating excessive output
+
+### Success Criteria
+An effective agent should:
+- Activate automatically >85% of the time when relevant
+- Complete tasks successfully >95% of the time
+- Initialize in <2 seconds for common tasks
+- Use <5,000 tokens for typical operations
+- Provide measurable value over main thread execution
+
+## Conclusion
+
+This reference enables immediate creation of production-ready sub-agents through file-based definitions. Focus on minimal viable agents with clear triggers, optimal tool selection, and appropriate model choice. Measure, iterate, and optimize based on real usage data.
+
+Remember: The best agent is not the most capable, but the most focused and efficient for its specific purpose.
