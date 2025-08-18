@@ -7,7 +7,7 @@ model: sonnet
 
 ## Context
 
-- Documentation files: !`find . -name "*.md" -not -path "./tmp.benchmarks/*" -not -path "./polyglot-benchmark/*" -not -path "./node_modules/*" | head -20`
+- Documentation files: !`find . -name "*.md" -not -path "./tmp.benchmarks/*" -not -path "./polyglot-benchmark/*" -not -path "./node_modules/*"`
 - Structure: !`find docs -type f -name "*.md" | sort && ls -la *.md 2>/dev/null`
 
 ## Task
