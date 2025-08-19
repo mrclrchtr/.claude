@@ -1,976 +1,490 @@
-# Slash Command Template and Documentation
+# Ultimate Custom Slash Command Guide for AI/LLM
 
-## Custom slash commands
+Custom slash commands are Markdown files that define reusable AI prompts with dynamic context gathering, tool restrictions, and intelligent task orchestration.
 
-Custom slash commands allow you to define frequently-used prompts as Markdown files that Claude Code can execute.
-Commands are organized by scope (project-specific or personal) and support namespacing through directory structures.
+## Core Architecture
 
-This template provides comprehensive guidance for creating custom slash commands in Claude Code.
+**Locations:**
+- `.claude/commands/` - Project-specific (version controlled)
+- `~/.claude/commands/` - Personal (all projects)
 
-## Command Locations
+**Structure:** `filename.md` → `/filename` | `dir/file.md` → `/dir:file`
 
-Commands can be stored in two locations:
-- **Project-level**: `.claude/commands/` (shared with team, version controlled)
-- **Personal-level**: `~/.claude/commands/` (personal commands across all projects)
-
-## Basic Structure
+## Essential Template
 
 ```markdown
 ---
-argument-hint: [optional arguments]
-description: Brief description of the command
-model: sonnet
----
-
-# Command Title
-
-## Context
-
-- Current system state: !`relevant bash command`
-- Additional context: !`another bash command`
-
-## Task
-
-Clear description of what the command should accomplish.
-
-1. Step one
-2. Step two
-3. Step three
-```
-
-## Features
-
-### Namespacing
-
-Organize commands in subdirectories to create namespaced commands:
-
-- File: `.claude/commands/frontend/component.md` → Command: `/frontend:component`
-- File: `.claude/commands/git/commit.md` → Command: `/git:commit`
-
-### Arguments
-
-Use `$ARGUMENTS` placeholder for dynamic values:
-
-```markdown
-Fix issue #$ARGUMENTS following our coding standards
-
-# Usage: /fix-issue 123
-```
-
-### Bash Command Execution
-
-Execute bash commands before the command runs using `!` prefix:
-
-```markdown
-## Context
-
-- Current git status: !`git status --porcelain`
-- Current branch: !`git branch --show-current`
-- Recent commits: !`git log --oneline -5`
-```
-
-### File References
-
-Include file contents using `@` prefix:
-
-```markdown
-# Single file
-Review the implementation in @src/utils/helpers.js
-
-# Multiple files  
-Compare @src/old-version.js with @src/new-version.js
-
-# Directory
-Review all files in @src/components/
-```
-
-## Frontmatter Options
-
-| Field           | Purpose                          | Example                                        | Default                    |
-|-----------------|----------------------------------|------------------------------------------------|----------------------------|
-| `argument-hint` | Arguments shown in auto-complete | `[message]` or `add [tagId] \| remove [tagId]` | None                       |
-| `description`   | Brief command description        | `Create a git commit`                          | First line of prompt       |
-| `model`         | Model to use for command         | `opus`, `sonnet`, `haiku`                      | Inherits from conversation |
-| `allowed-tools` | Restrict available tools         | `Bash(git:*)` for git-only operations          | All tools available        |
-
-## Design Principles
-
-1. **Clarity**: Every word must serve a purpose
-2. **Context**: Always include relevant system state using `!` commands
-3. **Scope**: Define exact scope and output format
-4. **Modularity**: Design for reusability across projects
-5. **Arguments**: Handle `$ARGUMENTS` only when specified
-6. **Efficiency**: Eliminate unnecessary steps and verbose language
-
-## Example Commands
-
-### Simple Command
-```markdown
----
-description: List all TODO comments in code
----
-
-# Find TODOs
-
-## Context
-
-- Current directory: !`pwd`
-- File count: !`find . -name "*.js" -o -name "*.ts" -o -name "*.py" | wc -l`
-
-## Task
-
-Search for TODO comments in the codebase and list them with file locations.
-```
-
-### Complex Command with Tools
-```markdown
----
-argument-hint: [optional commit message]
-description: Stage all changes and create intelligent commit
-model: haiku
-allowed-tools: Bash(git:*)
----
-
-# Commit All Changes
-
-## Context
-
-- Current branch: !`git branch --show-current`
-- Staged changes: !`git --no-pager diff --stat --cached --summary`
-- Unstaged changes: !`git --no-pager diff --stat --summary`
-- Recent commit history for context: !`git --no-pager log --oneline -10 --graph`
-- Submodule pointer status: !`git --no-pager diff --submodule=log`
-- Submodule status: !`git submodule foreach --recursive --quiet 'git status --porcelain 2>/dev/null | grep -q . && echo "UNCOMMITTED: $displaypath" || true'`
-
-## Preflight Check
-**Based on the provided context without further analysis:** determine if submodules have uncommitted changes, if so STOP and warn the user to commit submodule changes first
-
-## Task
-
-1. Analyze parent repo changes for safety issues (secrets, large files, generated content)
-2. Stage parent repo changes: `git add -A`
-3. If submodule pointers changed, include them in staging
-4. Generate conventional commit message and commit
-5. Report results
-```
-
-## Best Practices
-
-- **Start with Context**: Always gather current system state (see `.claude/docs/context.md` for comprehensive git commands)
-- **Be Specific**: Define exact steps and expected outcomes
-- **Handle Errors**: Include error handling for common failure scenarios
-- **Use Namespaces**: Organize related commands in subdirectories
-- **Test Arguments**: Verify `$ARGUMENTS` handling works correctly
-- **Git Commands**: Always use `--no-pager` flag to prevent blocking (detailed patterns in `.claude/docs/context.md`)
-
-## Advanced Prompting Techniques
-
-### Response Format Control
-
-Use XML tags to structure desired outputs:
-
-```markdown
----
-argument-hint: [component name]
-description: Generate React component with structured output
----
-
-# Generate Component
-
-## Task
-
-Create a React component named $ARGUMENTS.
-
-Output the component code in <component_code> tags.
-Output the test file in <test_code> tags.
-Output usage examples in <usage_examples> tags.
-```
-
-### Thinking & Reasoning Guidance
-
-Encourage deeper analysis with explicit thinking prompts:
-
-```markdown
-After examining the codebase:
-1. Carefully reflect on the architectural patterns
-2. Consider multiple implementation approaches
-3. Select the most idiomatic solution
-```
-
-### Contextual Motivation
-
-Provide rationale for specific behaviors:
-
-```markdown
-## Important
-
-We follow trunk-based development, so all changes must be backward compatible.
-This ensures zero-downtime deployments and smooth rollbacks.
-```
-
-### Explicit Encouragement
-
-For comprehensive implementations:
-
-```markdown
-Implement a fully-featured solution including:
-- Error handling
-- Loading states
-- Accessibility features
-- Performance optimizations
-Don't hold back - create production-ready code.
-```
-
-## Performance Optimization
-
-### Parallel Tool Execution
-
-Maximize efficiency with simultaneous operations:
-
-```markdown
-## Task
-
-For maximum efficiency, simultaneously:
-1. Run all test suites
-2. Check lint status
-3. Verify type safety
-4. Analyze bundle size
-
-Use parallel tool invocation for all independent operations.
-```
-
-### Context Size Management
-
-Minimize context usage:
-
-```markdown
----
-model: haiku  # Use faster models for simple tasks
----
-
-## Context
-
-# Only gather essential information
-- Changed files: !`git diff --name-only`
-- Error count: !`npm test 2>&1 | grep -c "FAIL" || echo 0`
-```
-
-### Efficient File References
-
-Use targeted file inclusions:
-
-```markdown
-# Instead of: @src/
-# Use specific patterns: @src/**/*.test.js
-# Or specific files: @src/main.js @src/utils.js
-```
-
-## CLAUDE.md Integration
-
-### Leveraging Project Context
-
-Commands automatically inherit CLAUDE.md context:
-
-```markdown
----
-description: Run project-specific quality checks
----
-
-# Quality Check
-
-## Task
-
-Run the quality checks defined in CLAUDE.md:
-1. Execute the lint command from CLAUDE.md
-2. Run the test command from CLAUDE.md
-3. Check code coverage thresholds
-4. Verify no security vulnerabilities
-```
-
-### Context Precedence
-
-1. Command-specific instructions (highest priority)
-2. CLAUDE.md project guidelines
-3. User preferences
-4. Default Claude Code behavior
-
-### Dynamic Context Loading
-
-Reference CLAUDE.md sections:
-
-```markdown
-## Task
-
-Follow the code style guidelines from CLAUDE.md while:
-1. Implementing the requested feature
-2. Ensuring consistency with existing patterns
-3. Running the verification steps from CLAUDE.md
-```
-
-## Subagent Usage
-
-### Delegating Complex Tasks
-
-Use subagents for specialized work:
-
-```markdown
----
-description: Comprehensive code review with subagent
-model: opus
----
-
-# Deep Code Review
-
-## Context
-
-- Changed files: !`git diff --name-only`
-- Complexity metrics: !`npx complexity-report src/`
-
-## Task
-
-1. Analyze the changes for potential issues
-2. Use the general-purpose subagent to:
-   - Check for security vulnerabilities
-   - Identify performance bottlenecks
-   - Suggest architectural improvements
-3. Generate a detailed review report
-```
-
-### Subagent Patterns
-
-```markdown
-## Task
-
-For thorough analysis:
-1. Initial assessment of the problem
-2. Launch general-purpose subagent for deep research
-3. Consolidate findings
-4. Implement solution based on research
-```
-
-## Testing & Debugging
-
-### Test-Driven Command Development
-
-Create commands that verify themselves:
-
-```markdown
----
-description: Self-testing command implementation
----
-
-# Command Self-Test
-
-## Validation
-
-- Command file exists: !`test -f .claude/commands/$ARGUMENTS.md && echo "✓" || echo "✗"`
-- Syntax valid: !`head -1 .claude/commands/$ARGUMENTS.md | grep -q "^---$" && echo "✓" || echo "✗"`
-
-## Task
-
-If validation passes, execute the command.
-Otherwise, report specific failures.
-```
-
-### Debug Mode
-
-Include debug information collection:
-
-```markdown
-## Debug Context (only in verbose mode)
-
-- Environment: !`env | grep -E "CLAUDE|NODE|PATH" | head -20`
-- Working directory: !`pwd`
-- Tool availability: !`which git npm node | wc -l`
-```
-
-### Error Recovery Patterns
-
-```markdown
-## Task
-
-1. Attempt primary approach
-2. If errors occur:
-   - Collect diagnostic information
-   - Try alternative approach
-   - Report detailed failure reasons
-3. Always leave system in clean state
-```
-
-## Security & Permissions
-
-### Tool Restriction Patterns
-
-```markdown
----
-allowed-tools: Read,Grep,LS  # Read-only operations
----
-
----
-allowed-tools: Bash(npm:*),Read  # Only npm commands
----
-
----
-allowed-tools: Edit(@src/**/*.js)  # Edit only JS files in src
----
-```
-
-### Security Checklist
-
-Include security validations:
-
-```markdown
-## Security Check
-
-- No secrets in staged files: !`git diff --cached | grep -iE "(api_key|password|secret|token)" && echo "WARNING: Potential secrets detected" || echo "✓ Clean"`
-- File permissions correct: !`find . -type f -perm /111 -name "*.md" | wc -l | grep "^0$" && echo "✓" || echo "✗ Executable markdown files found"`
-```
-
-### Sandboxed Execution
-
-```markdown
----
-description: Run in restricted environment
-allowed-tools: Bash(docker:*)
----
-
-## Task
-
-Execute all operations within Docker container:
-1. `docker run --rm -it -v $(pwd):/workspace node:latest bash -c "..."` 
-```
-
-## Team Collaboration
-
-### Command Documentation Standards
-
-```markdown
----
-author: @username
-created: 2024-01-15
-last-modified: 2024-01-20
-team: frontend
-tags: [react, testing, automation]
+argument-hint: [optional args]  # Shows in autocomplete
+description: Brief description   # Command summary
+model: opus|sonnet|haiku        # Model selection
+allowed-tools: Read,Edit,Bash    # Tool restrictions
 ---
 
 # Command Purpose
 
-## Overview
-Brief description for team members
+## Context
+- State: !`git status --porcelain`      # Bash execution
+- Config: @package.json                 # File inclusion
+- Branch: !`git branch --show-current`  # Dynamic values
 
-## Prerequisites
-- Required tools/setup
-- Expected project structure
-
-## Usage Examples
+## Task
+$ARGUMENTS handling and clear steps.
 ```
 
-### Versioning Commands
+## Critical Features
+
+| Feature | Syntax | Example | Purpose |
+|---------|--------|---------|----------|
+| **Arguments** | `$ARGUMENTS` | `/fix-issue 123` → `Fix issue #123` | Dynamic input |
+| **Bash Exec** | `!\`command\`` | `!\`git status --porcelain\`` | Live context |
+| **File Include** | `@path` | `@src/main.js` or `@src/` | Code context |
+| **Namespacing** | `dir/file.md` | `/git:commit`, `/test:unit` | Organization |
+
+## Frontmatter Reference
+
+```yaml
+argument-hint: [file] [options]   # Autocomplete hint
+description: Command purpose      # Brief description
+model: haiku|sonnet|opus          # Speed/quality trade-off
+allowed-tools: Read,Edit,Bash     # Tool restrictions
+  # Patterns: Bash(git:*), Edit(@src/**/*.js), Read
+author: @username                 # Metadata
+version: 1.0.0                    # Versioning
+```
+
+## Five Core Principles
+
+1. **Minimal Context** - Gather only essential state
+2. **Clear Scope** - Define exact task boundaries
+3. **Tool Efficiency** - Use fastest model/tools for task
+4. **Parallel Execution** - Batch independent operations
+5. **Measurable Success** - Include validation criteria
+
+## Power Patterns
+
+### 1. Minimal Context Command
+```markdown
+---
+description: Find all TODOs
+model: haiku  # Fast for simple tasks
+---
+Search for TODO/FIXME comments: !`rg "TODO|FIXME" --type-add 'code:*.{js,ts,py}' --type code`
+```
+
+### 2. Smart Git Commit
+```markdown
+---
+argument-hint: [message]
+model: haiku
+allowed-tools: Bash(git:*)
+---
+## Context
+- Branch: !`git branch --show-current`
+- Changes: !`git --no-pager diff --stat`
+- Submodules: !`git submodule status --recursive`
+
+## Task
+1. Check for secrets: `git diff --cached | grep -iE "(api_key|password|secret)"`
+2. Stage all: `git add -A`
+3. Commit with message or generate one
+```
+
+### 3. Parallel Analysis
+```markdown
+---
+description: Full project health check
+model: opus  # Complex coordination
+---
+Execute simultaneously (7-parallel pattern):
+1. Run tests: `npm test`
+2. Check types: `npm run typecheck`
+3. Lint code: `npm run lint`
+4. Security scan: `npm audit`
+5. Coverage: `npm run coverage`
+6. Bundle size: `npm run build --size`
+7. Performance: `npm run benchmark`
+```
+
+## Advanced Techniques
+
+### Output Structuring
+```markdown
+Generate component for $ARGUMENTS:
+<component_code>Main implementation</component_code>
+<test_code>Test suite</test_code>
+<usage_examples>Usage patterns</usage_examples>
+```
+
+### Deep Analysis Prompt
+```markdown
+Analyze codebase patterns → Consider approaches → Select idiomatic solution
+```
+
+### Context-Aware Instructions
+```markdown
+IMPORTANT: Trunk-based development requires backward compatibility for zero-downtime deployments.
+```
+
+## Optimization Strategies
+
+### Token Economy
+- **Model**: `haiku` for simple, `sonnet` for complex, `opus` for critical
+- **Context**: Limit bash output with `head -20`, use counts over full output
+- **Files**: Specific paths over directories: `@src/main.js` not `@src/`
+- **Tools**: Minimal set: `allowed-tools: Read,Edit`
+
+### Parallel Execution (7-Pattern)
+```markdown
+Simultaneously execute (max 7 for efficiency):
+- All independent operations
+- Batch similar tasks
+- Consolidate results after
+```
+
+## CLAUDE.md Integration
+
+**Context Hierarchy:** Command > CLAUDE.md > User prefs > Defaults
 
 ```markdown
 ---
-version: 2.0.0
-changelog: |
-  2.0.0: Added parallel execution
-  1.1.0: Improved error handling
-  1.0.0: Initial implementation
+description: Project quality checks
 ---
+Run quality checks from CLAUDE.md:
+1. Lint command from CLAUDE.md
+2. Test suite from CLAUDE.md
+3. Coverage thresholds
+4. Security scan
 ```
 
-### Team Command Libraries
+## Agent Orchestration
 
-Organize shared commands:
+```markdown
+---
+description: Multi-agent analysis
+allowed-tools: Task, TodoWrite
+---
+## Context
+- Changes: !`git diff --name-only | wc -l`
+
+## Task
+Route by complexity:
+- Simple (<5 files): Direct execution
+- Medium (5-20): Launch haiku agent
+- Complex (>20): Launch opus specialist
+
+Parallel agents for:
+- Security scan
+- Performance analysis
+- Architecture review
+```
+
+## Validation & Error Handling
+
+### Self-Testing Pattern
+```markdown
+## Validation
+- File exists: !`test -f $ARGUMENTS && echo "✓" || echo "✗"`
+- Syntax valid: !`head -1 $ARGUMENTS | grep -q "^---$"`
+
+If validation fails, report and exit.
+```
+
+### Error Recovery
+```markdown
+1. Try primary approach
+2. On error: Collect diagnostics → Try alternative → Report failure
+3. Always leave clean state
+```
+
+## Security Patterns
+
+### Tool Restriction Examples
+```yaml
+# Read-only operations:
+allowed-tools: Read,Grep,LS
+
+# npm commands only:
+allowed-tools: Bash(npm:*),Read
+
+# Edit specific files:
+allowed-tools: Edit(@src/**/*.js)
+
+# Sandboxed execution:
+allowed-tools: Bash(docker:*)
+```
+
+### Security Validation
+```markdown
+!`git diff --cached | grep -iE "(api_key|password|secret)" && echo "⚠️ SECRETS" || echo "✓"`
+```
+
+## Command Organization
 
 ```
 .claude/commands/
-├── team-shared/      # Shared across all projects
-│   ├── review.md
-│   ├── deploy.md
-│   └── test.md
-├── project-specific/ # This project only
-│   ├── setup.md
-│   └── migrate.md
-└── personal/        # Individual developer
-    └── shortcuts.md
+├── team/         # Shared (version controlled)
+├── project/      # Project-specific
+└── dev/          # Personal shortcuts
+
+~/.claude/commands/  # Global personal commands
+```
+
+### Metadata
+```yaml
+author: @username
+version: 2.0.0
+team: frontend
+tags: [react, testing]
 ```
 
 ## Command Composition
 
-### Chaining Commands
-
-Create workflows from multiple commands:
-
+### Chain & Conditional
 ```markdown
----
-description: Full deployment pipeline
----
+# Pipeline: /test:all → /build:prod → /deploy:staging → /test:e2e → /deploy:prod
 
-# Deploy Pipeline
-
-## Task
-
-1. Run /test:all
-2. Run /build:production
-3. Run /deploy:staging
-4. Run /test:e2e
-5. Run /deploy:production
-```
-
-### Conditional Execution
-
-```markdown
-## Task
-
-- Check build status: !`npm run build 2>&1`
-
-If build succeeds:
-  - Continue with deployment
+# Conditional:
+If !`npm run build 2>&1` succeeds:
+  Continue deployment
 Else:
-  - Run /debug:build
-  - Report failures
+  Run /debug:build
 ```
 
-## Metrics & Monitoring
-
-### Command Performance Tracking
+## Success Metrics
 
 ```markdown
-## Performance Baseline
+## Performance
+- Start: !`date +%s`
+- Memory: !`ps -o rss= -p $$`
 
-- Start time: !`date +%s`
-- Memory usage: !`ps aux | grep node | awk '{sum+=$6} END {print sum/1024 " MB"}'`
+[Task execution]
 
-[... main task ...]
-
-## Performance Report
-
-- End time: !`date +%s`
-- Files modified: !`git diff --stat | tail -1`
+## Validation
+✓ Tests pass: !`npm test 2>&1 | grep -q "failed: 0"`
+✓ No lint errors: !`npm run lint 2>&1 | grep -q "0 errors"`
+✓ Bundle < 500KB: !`du -sh dist/bundle.js | awk '{print $1}'`
 ```
 
-### Success Metrics
+## Multi-Agent Patterns
 
-Define measurable outcomes:
-
-```markdown
-## Success Criteria
-
-✓ All tests pass
-✓ No linting errors
-✓ Bundle size < 500KB
-✓ Lighthouse score > 90
-✓ No security vulnerabilities
-```
-
-## Agent Integration in Commands
-
-### Leveraging Sub-Agents from Commands
-
-Commands can delegate complex work to specialized agents:
-
+### Smart Routing
 ```markdown
 ---
-description: Comprehensive code analysis using multiple agents
 allowed-tools: Task, TodoWrite
 ---
+Complexity: !`git diff --name-only | wc -l`
 
-# Multi-Agent Code Review
+Route:
+- <5 files: Direct execution
+- 5-20: Haiku agent
+- >20: Opus specialist
 
-## Task
-
-Launch parallel agent analysis:
-1. Use security-auditor agent for vulnerability scan
-2. Use performance-analyst for bottleneck identification
-3. Use test-engineer for coverage analysis
-4. Consolidate findings into actionable report
+Parallel specialists:
+- Security scan
+- Performance analysis
+- Architecture review
 ```
 
-### Agent Delegation Patterns
+## 7-Parallel Pattern
 
+### Maximum Efficiency
 ```markdown
-## Task
+# Batch 1 (parallel, max 7):
+1. Test suites
+2. Code coverage
+3. Security scan
+4. Dependencies
+5. Documentation
+6. Lint checks
+7. Type safety
 
-For complex analysis, delegate to specialized agents:
-- If debugging errors: Launch debug-specialist agent
-- If optimizing performance: Launch perf-analyst agent
-- If reviewing architecture: Launch architect agent
+# Batch 2: Consolidate results
 
-Consolidate agent findings and present unified recommendations.
+# Dependency-aware:
+Independent (parallel): Clean, env check, config
+Dependent (sequential): Install → Build → Validate
 ```
 
-### Optimal Agent Selection
+## Token Optimization Matrix
+
+| Task Type | Model | Tools | Tokens | Pattern |
+|-----------|-------|-------|--------|----------|
+| Status | haiku | Bash | ~1.8K | `git status --short` |
+| Analysis | sonnet | Read,Grep | ~3.2K | Targeted search |
+| Edit | sonnet | Read,Edit | ~2.9K | Specific changes |
+| Refactor | opus | MultiEdit | ~4.5K | Batch edits |
+| Orchestrate | opus | Task | ~3.1K | Multi-agent |
+
+### Efficiency Rules
+1. Use `--no-pager` for git
+2. Limit output: `| head -20`
+3. Count over content: `| wc -l`
+4. Exit codes: `&& echo "✓" || echo "✗"`
+5. Progressive loading: Check size → Load if needed
+
+## Performance Tracking
 
 ```markdown
----
-description: Smart routing to appropriate specialists
----
+## Metrics
+Start: !`date +%s` Memory: !`ps -o rss= -p $$`
+[Task]
+End: !`date +%s` Changed: !`git diff --stat | tail -1`
 
-# Intelligent Task Router
-
-## Context
-
-- Task complexity: !`echo "$ARGUMENTS" | wc -w`
-- File count: !`git diff --name-only | wc -l`
-
-## Task
-
-Route based on complexity:
-- Simple (< 5 files): Execute directly
-- Medium (5-20 files): Use Haiku model agent
-- Complex (> 20 files): Use Opus model specialist
+## Validation
+✓ <5 sec: !`[ $((end-start)) -lt 5 ] && echo "✓"`
+✓ Tests: !`npm test 2>&1 | grep -q "failed: 0"`
+✓ Security: !`npm audit --audit-level=high | grep -q "0 vuln"`
 ```
 
-## Parallel Execution Patterns
+## Anti-Patterns
 
-### The 7-Parallel Pattern
-
-Maximize efficiency with optimal parallelization:
-
+### ❌ Avoid vs ✓ Use
 ```markdown
----
-description: Execute multiple operations simultaneously
----
-
-# Parallel Analyzer
-
-## Task
-
-Launch up to 7 parallel operations for maximum efficiency:
-
-1. **Parallel Batch 1** (execute simultaneously):
-   - Check all test suites
-   - Analyze code coverage
-   - Run security scan
-   - Check dependency vulnerabilities
-   - Validate documentation
-   - Lint all files
-   - Check type safety
-
-2. **Consolidation Phase**:
-   - Gather all results
-   - Prioritize critical issues
-   - Generate unified report
+❌ @src/                    ✓ @src/main.js @src/utils.js
+❌ !`git log`              ✓ !`git log --oneline -10`
+❌ allowed-tools: (all)     ✓ allowed-tools: Read,Edit,Bash
+❌ !`find .`               ✓ !`git ls-files | head -20`
 ```
 
-### Resource Grouping Strategy
+## Advanced Patterns
 
+### Visual Testing
 ```markdown
-## Task
-
-Group similar operations for parallel execution:
-
-**File Analysis Batch** (parallel):
-- Read all configuration files
-- Scan source directories
-- Check test coverage
-
-**Validation Batch** (parallel):
-- Run unit tests
-- Execute integration tests
-- Perform lint checks
-
-**Optimization Batch** (sequential):
-- Apply fixes based on analysis
-- Verify corrections
+Compare @tests/screenshots/baseline.png with current
+Report differences and update if intentional
 ```
 
-### Dependency-Aware Parallelization
-
+### Progress Tracking
 ```markdown
----
-description: Smart parallel execution with dependency management
----
-
-# Dependency-Aware Builder
-
-## Context
-
-- Dependencies: !`npm ls --depth=0 | wc -l`
-- Build targets: !`ls -1 src/*/index.* | wc -l`
-
-## Task
-
-1. **Independent Tasks** (parallel):
-   - Clean build directories
-   - Check environment variables
-   - Validate configurations
-   
-2. **Dependent Tasks** (sequential):
-   - Install dependencies
-   - Build components in dependency order
-   - Run post-build validation
+[▶] Initialize → [▶] Validate → [▶] Execute → [▶] Cleanup → [✓] Complete
 ```
 
-## Token Optimization for Commands
-
-### Minimal Context Commands
-
-For frequently-used commands, minimize token usage:
-
-```markdown
----
-model: haiku  # Use fastest, cheapest model
-allowed-tools: Bash  # Single tool only
----
-
-# Quick Status
-
-## Task
-
-!`git status --short`
-```
-
-### Progressive Context Loading
-
-Load context only when needed:
-
-```markdown
----
-description: Efficient context management
----
-
-# Smart Analyzer
-
-## Initial Context (minimal)
-
-- File count: !`ls -1 | wc -l`
-
-## Task
-
-If file count > 100:
-  Load detailed context for large project
-Else:
-  Proceed with minimal context
-
-## Detailed Context (conditional)
-
-@package.json  # Only loaded if needed
-@tsconfig.json
-```
-
-### Tool Selection Matrix for Commands
-
-| Command Type | Optimal Tools | Token Cost | Use Case |
-|-------------|--------------|------------|----------|
-| Status Check | Bash | ~1,800 | Quick queries |
-| Code Analysis | Read, Grep, Glob | ~3,200 | Research tasks |
-| Simple Edit | Read, Edit | ~2,900 | Focused changes |
-| Complex Refactor | Read, Edit, MultiEdit, Bash | ~4,500 | Major changes |
-| Orchestration | Task, TodoWrite | ~3,100 | Multi-agent coordination |
-
-### Token-Efficient Patterns
-
-```markdown
----
-description: Maximum efficiency patterns
----
-
-# Efficient Command
-
-## Optimization Strategies
-
-1. **Use --no-pager for git**: Prevents blocking
-2. **Limit output with head/tail**: !`command | head -20`
-3. **Use counts instead of full output**: !`grep -c pattern file`
-4. **Compress multi-line into single**: !`command | tr '\n' ' '`
-5. **Use exit codes for checks**: !`test -f file && echo "✓" || echo "✗"`
-```
-
-## Command Success Metrics
-
-### Tracking Command Performance
-
-```markdown
----
-description: Self-monitoring command
----
-
-# Performance-Tracked Command
-
-## Start Metrics
-
-- Start time: !`date +%s`
-- Initial memory: !`ps -o rss= -p $$`
-
-## Task
-
-[Main command logic here]
-
-## End Metrics
-
-- End time: !`date +%s`
-- Final memory: !`ps -o rss= -p $$`
-- Files changed: !`git diff --stat | tail -1`
-
-## Success Criteria
-
-✓ Completed in < 5 seconds
-✓ Memory usage < 100MB increase
-✓ All tests still pass
-✓ No new linting errors
-```
-
-### Command Effectiveness Metrics
-
-Define measurable success criteria:
-
-```markdown
-## Success Validation
-
-- Tests pass: !`npm test 2>&1 | grep -q "failed: 0" && echo "✓" || echo "✗"`
-- Coverage maintained: !`npm run coverage | grep -o "[0-9]*%" | head -1`
-- Performance baseline: !`npm run benchmark | grep "ops/sec"`
-- No security issues: !`npm audit --audit-level=high 2>&1 | grep -q "0 vulnerabilities" && echo "✓" || echo "✗"`
-```
-
-### A/B Testing Commands
-
-```markdown
----
-description: Command with variant testing
----
-
-# Optimized Command v2
-
-## Variant Selection
-
-- Random variant: !`echo $((RANDOM % 2))`
-
-## Task
-
-If variant is 0:
-  Use approach A (traditional method)
-Else:
-  Use approach B (optimized method)
-
-## Metrics Collection
-
-Log performance for analysis:
-- Variant used
-- Execution time
-- Success/failure
-- Resource usage
-```
-
-### Command Usage Analytics
-
-```markdown
----
-description: Usage tracking for optimization
----
-
-# Tracked Command
-
-## Usage Log
-
-- Command invoked: !`echo "$(date): $ARGUMENTS" >> ~/.claude/command-usage.log`
-- Previous uses: !`grep -c "$(basename $0)" ~/.claude/command-usage.log || echo 0`
-
-## Task
-
-[Main logic]
-
-## Post-Execution
-
-- Log result: !`echo "Result: success/failure" >> ~/.claude/command-usage.log`
-```
-
-## Command Anti-Patterns to Avoid
-
-### Inefficient Patterns
-
-```markdown
-# ❌ AVOID: Loading entire directories
-@src/  # Loads all files
-
-# ✓ BETTER: Load specific files
-@src/main.js @src/utils.js
-
-# ❌ AVOID: Unbounded output
-!`git log`  # Could be thousands of lines
-
-# ✓ BETTER: Limited output
-!`git log --oneline -10`
-
-# ❌ AVOID: All tools without need
-allowed-tools: # All tools available
-
-# ✓ BETTER: Specific tools
-allowed-tools: Read, Edit, Bash
-```
-
-### Context Pollution
-
-```markdown
-# ❌ AVOID: Redundant context
-- Full git history: !`git log`
-- All branches: !`git branch -a`
-- Complete file list: !`find .`
-
-# ✓ BETTER: Essential context only
-- Recent commits: !`git log --oneline -5`
-- Current branch: !`git branch --show-current`
-- Changed files: !`git diff --name-only`
-```
-
-## Visual & Interactive Commands
-
-### Screenshot Integration
-
-```markdown
----
-description: Visual regression testing
----
-
-# Visual Test
-
-## Context
-
-- Current branch: !`git branch --show-current`
-- Last screenshot: @tests/screenshots/baseline.png
-
-## Task
-
-1. Run the application
-2. Take screenshot of current state
-3. Compare with baseline image
-4. Report visual differences
-5. Update baseline if changes are intentional
-```
-
-### Progress Indicators
-
-```markdown
-## Task Progress
-
-1. [▶] Initialize environment
-2. [▶] Run validation checks
-3. [▶] Execute main task
-4. [▶] Cleanup temporary files
-5. [▶] Generate report
-
-Update progress indicators as each step completes.
-```
-
-## Command Lifecycle Management
-
-### Deprecation Handling
-
-```markdown
----
+### Lifecycle Management
+```yaml
 deprecated: true
 replacement: /new:command
-deprecation-message: This command will be removed in v3.0.0
----
+deprecation-message: Removed in v3.0.0
 ```
 
-### Migration Paths
+## Ultimate Quick Reference
 
+### Command Creation Checklist
+1. **Location**: `.claude/commands/name.md` → `/name`
+2. **Model**: haiku (fast) → sonnet (balanced) → opus (complex)
+3. **Context**: Minimal bash commands with `--no-pager`, counts over content
+4. **Tools**: Restrict to minimum needed
+5. **Validation**: Include success criteria
+
+### Essential Patterns
 ```markdown
-## Migration Notice
+---
+argument-hint: [file] [options]
+description: Purpose in 5 words
+model: haiku  # Start cheap
+allowed-tools: Read,Edit,Bash(git:*)
+---
 
-This command is deprecated. Please use:
-- For simple cases: /quick:fix
-- For complex cases: /deep:analysis
-- For legacy support: /legacy:fix --compatibility
+## Context (minimal, fast)
+- Branch: !`git branch --show-current`
+- Changes: !`git status --porcelain | wc -l`
+- Files: !`fd -e py . | wc -l`  # Use fd/rg when available
+
+## Task
+Handle $ARGUMENTS efficiently.
+
+## Validation
+✓ Tests: !`npm test 2>&1 | grep -q "failed: 0"`
+```
+
+### Context Gathering (from context.md)
+```bash
+# Core (always available)
+git branch --show-current
+git status --porcelain
+git --no-pager diff --stat --cached
+
+# Modern (3-10x faster)
+fd -e py . | wc -l  # Count files
+rg "TODO" --type py --count  # Search
+eza --tree --level=2 --git-ignore  # Structure
+```
+
+### Optimization Priority
+1. **Token Economy**: haiku + limited tools + counts
+2. **Parallel Execution**: Max 7 simultaneous operations
+3. **Progressive Loading**: Check → Load if needed
+4. **Agent Routing**: <5 files direct, 5-20 haiku, >20 opus
+5. **Security First**: Check secrets, restrict tools
+
+### Command Patterns by Use Case
+
+| Use Case | Pattern | Example |
+|----------|---------|---------|
+| Status Check | `haiku + Bash` | `/status` |
+| Code Search | `sonnet + Read,Grep` | `/find:pattern` |
+| Quick Fix | `sonnet + Read,Edit` | `/fix:typo` |
+| Refactor | `opus + MultiEdit` | `/refactor:class` |
+| Analysis | `opus + Task` | `/analyze:security` |
+| Pipeline | Chain commands | `/test → /build → /deploy` |
+
+### Power User Tips
+- **Namespace**: `/git:commit`, `/test:unit`, `/deploy:prod`
+- **Arguments**: `$ARGUMENTS` for dynamic input
+- **File Refs**: `@specific/file.js` not `@entire/directory/`
+- **Bash**: Always `--no-pager`, use `| head -20`
+- **Validation**: Exit codes `&& echo "✓" || echo "✗"`
+- **Parallel**: Batch up to 7 independent operations
+- **Context**: Inherit from CLAUDE.md automatically
+
+### Common Gotchas
+- ❌ Loading entire directories with `@src/`
+- ❌ Unbounded output without `head/tail`
+- ❌ Using all tools when subset would work
+- ❌ Sequential when parallel possible
+- ❌ Missing `--no-pager` on git commands
+
+### Performance Benchmarks
+- Simple command: ~1.8K tokens (haiku + Bash)
+- Analysis: ~3.2K tokens (sonnet + Read/Grep)
+- Refactor: ~4.5K tokens (opus + MultiEdit)
+- Multi-agent: ~3.1K tokens (opus + Task)
+
+## Command Engineering Formula
+
+```
+Efficiency = (Minimal Context + Right Model + Restricted Tools) 
+            × Parallel Execution 
+            ÷ Token Usage
+```
+
+**Remember**: Every token counts. Start minimal, expand only if needed.
+
+## Quick Command Templates
+
+### Instant Status (500 tokens)
+```markdown
+---
+model: haiku
+allowed-tools: Bash
+---
+!`git status --short && echo "---" && git branch --show-current`
+```
+
+### Smart Commit (1.8K tokens)
+```markdown
+---
+model: haiku
+allowed-tools: Bash(git:*)
+---
+Changes: !`git diff --stat | tail -1`
+Stage all → Generate message → Commit
+```
+
+### Full Analysis (3.2K tokens)
+```markdown
+---
+model: opus
+allowed-tools: Task
+---
+Launch 7 parallel specialists → Consolidate results
 ```
