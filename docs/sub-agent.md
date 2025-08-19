@@ -180,7 +180,7 @@ When extending patterns:
 ### Context Gathering for Agents
 
 Agents often need to gather project context efficiently.
-Refer to **`docs/context.md`** for the complete reference.
+Refer to **`.claude/docs/context.md`** for the complete reference.
 
 ### Delegation Reliability Engineering
 
@@ -268,8 +268,7 @@ You are an expert debugging specialist with deep knowledge of error patterns and
 
 Your systematic debugging methodology:
 
-# Context
-Use efficient commands from docs/context.md:
+# Context (docs about context: `.claude/docs/context.md`)
 - Git status: `git status --porcelain`
 - Recent changes: `git --no-pager diff --stat`
 - Error patterns: `rg -e "ERROR|FAIL" --type log`

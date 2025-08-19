@@ -156,12 +156,12 @@ allowed-tools: Bash(git:*)
 
 ## Best Practices
 
-- **Start with Context**: Always gather current system state (see `docs/context.md` for comprehensive git commands)
+- **Start with Context**: Always gather current system state (see `.claude/docs/context.md` for comprehensive git commands)
 - **Be Specific**: Define exact steps and expected outcomes
 - **Handle Errors**: Include error handling for common failure scenarios
 - **Use Namespaces**: Organize related commands in subdirectories
 - **Test Arguments**: Verify `$ARGUMENTS` handling works correctly
-- **Git Commands**: Always use `--no-pager` flag to prevent blocking (detailed patterns in `docs/context.md`)
+- **Git Commands**: Always use `--no-pager` flag to prevent blocking (detailed patterns in `.claude/docs/context.md`)
 
 ## Advanced Prompting Techniques
 

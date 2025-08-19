@@ -22,7 +22,8 @@ Optimize the slash command at $ARGUMENTS following these principles:
 3. **Name dependencies** - Keep sub-agent references visible
 
 ### Quick Reference
-See @.claude/docs/command.md for complete slash command documentation and structure.
+Command: @.claude/docs/command.md for complete slash command documentation and structure.
+Context: @.claude/docs/context.md for comprehensive git commands.
 
 ### Optimization Process
 
