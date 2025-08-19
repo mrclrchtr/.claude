@@ -156,63 +156,12 @@ allowed-tools: Bash(git:*)
 
 ## Best Practices
 
-- **Start with Context**: Always gather current system state
+- **Start with Context**: Always gather current system state (see `docs/context.md` for comprehensive git commands)
 - **Be Specific**: Define exact steps and expected outcomes
 - **Handle Errors**: Include error handling for common failure scenarios
 - **Use Namespaces**: Organize related commands in subdirectories
 - **Test Arguments**: Verify `$ARGUMENTS` handling works correctly
-
-## Git Context Gathering
-
-### Critical: Always Use --no-pager
-
-Git commands in slash commands **must** use `--no-pager` to prevent interactive pagers from blocking execution.
-
-### Essential Git Commands
-
-```markdown
-# Core Status Commands
-- Current branch: !`git branch --show-current`
-- Status (machine-readable): !`git status --porcelain`
-- Staged changes: !`git --no-pager diff --stat --cached --summary`
-- Unstaged changes: !`git --no-pager diff --stat --summary`
-
-# History & Context
-- Recent commit history: !`git --no-pager log --oneline -10 --graph`
-- Full diff details: !`git --no-pager diff --color=never`
-
-# Submodule Management
-- Submodule pointer status: !`git --no-pager diff --submodule=log`
-- Check uncommitted changes: !`git submodule foreach --recursive --quiet 'git status --porcelain 2>/dev/null | grep -q . && echo "UNCOMMITTED: $displaypath" || true'`
-```
-
-### Best Practices
-- Use `--stat` with `--summary` for comprehensive change overviews
-- Add `--color=never` to avoid ANSI escape sequences
-- Limit history with `-n` flags (e.g., `-10` for last 10 commits)
-- Use `--porcelain` for machine-readable output
-
-### Preflight Checks
-
-Include early validation steps to prevent wasted work:
-
-```markdown
-## Preflight Check
-**Based on the provided context without further analysis:** 
-determine if conditions are met, if not STOP and warn the user
-```
-
-### Tool Restrictions with allowed-tools
-
-Commands can restrict which tools Claude can use via the `allowed-tools` frontmatter field:
-
-```markdown
----
-allowed-tools: Bash(git:*)
----
-```
-
-This prevents accidental file modifications when only git operations are intended.
+- **Git Commands**: Always use `--no-pager` flag to prevent blocking (detailed patterns in `docs/context.md`)
 
 ## Advanced Prompting Techniques
 
