@@ -165,6 +165,8 @@ Simultaneously execute (max 7 for efficiency):
 
 **Context Hierarchy:** Command > CLAUDE.md > User prefs > Defaults
 
+**See also:** @.claude/docs/optimization-patterns.md for efficiency rules, @docs/context.md for bash commands
+
 ```markdown
 ---
 description: Project quality checks
@@ -325,23 +327,6 @@ Independent (parallel): Clean, env check, config
 Dependent (sequential): Install → Build → Validate
 ```
 
-## Token Optimization Matrix
-
-| Task Type | Model | Tools | Tokens | Pattern |
-|-----------|-------|-------|--------|----------|
-| Status | haiku | Bash | ~1.8K | `git status --short` |
-| Analysis | sonnet | Read,Grep | ~3.2K | Targeted search |
-| Edit | sonnet | Read,Edit | ~2.9K | Specific changes |
-| Refactor | opus | MultiEdit | ~4.5K | Batch edits |
-| Orchestrate | opus | Task | ~3.1K | Multi-agent |
-
-### Efficiency Rules
-1. Use `--no-pager` for git
-2. Limit output: `| head -20`
-3. Count over content: `| wc -l`
-4. Exit codes: `&& echo "✓" || echo "✗"`
-5. Progressive loading: Check size → Load if needed
-
 ## Performance Tracking
 
 ```markdown
@@ -356,15 +341,6 @@ End: !`date +%s` Changed: !`git diff --stat | tail -1`
 ✓ Security: !`npm audit --audit-level=high | grep -q "0 vuln"`
 ```
 
-## Anti-Patterns
-
-### ❌ Avoid vs ✓ Use
-```markdown
-❌ @src/                    ✓ @src/main.js @src/utils.js
-❌ !`git log`              ✓ !`git log --oneline -10`
-❌ allowed-tools: (all)     ✓ allowed-tools: Read,Edit,Bash
-❌ !`find .`               ✓ !`git ls-files | head -20`
-```
 
 ## Advanced Patterns
 
@@ -416,23 +392,12 @@ Handle $ARGUMENTS efficiently.
 ✓ Tests: !`npm test 2>&1 | grep -q "failed: 0"`
 ```
 
-### Context Gathering (from context.md)
-```bash
-# Core (always available)
-git branch --show-current
-git status --porcelain
-git --no-pager diff --stat --cached
-
-# Modern (3-10x faster)
-fd -e py . | wc -l  # Count files
-rg "TODO" --type py --count  # Search
-eza --tree --level=2 --git-ignore  # Structure
-```
+See @.claude/docs/context.md for comprehensive bash command reference and context gathering patterns.
 
 ### Optimization Priority
-1. **Token Economy**: haiku + limited tools + counts
+1. **Token Economy**: haiku + limited tools + counts (see @.claude/docs/optimization-patterns.md)
 2. **Parallel Execution**: Max 7 simultaneous operations
-3. **Progressive Loading**: Check → Load if needed
+3. **Progressive Loading**: Check → Load if needed (see @.claude/docs/context.md)
 4. **Agent Routing**: <5 files direct, 5-20 haiku, >20 opus
 5. **Security First**: Check secrets, restrict tools
 
@@ -463,11 +428,6 @@ eza --tree --level=2 --git-ignore  # Structure
 - ❌ Sequential when parallel possible
 - ❌ Missing `--no-pager` on git commands
 
-### Performance Benchmarks
-- Simple command: ~1.8K tokens (haiku + Bash)
-- Analysis: ~3.2K tokens (sonnet + Read/Grep)
-- Refactor: ~4.5K tokens (opus + MultiEdit)
-- Multi-agent: ~3.1K tokens (opus + Task)
 
 ## Command Engineering Formula
 

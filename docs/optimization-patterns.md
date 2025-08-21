@@ -2,6 +2,8 @@
 
 Quick reference for optimizing AI commands and agents for maximum efficiency.
 
+**See also:** @.claude/docs/context.md for bash commands, @docs/command.md for creation patterns
+
 ## First Principle: Clarity Over Brevity
 
 Remove bloat but NEVER sacrifice:
@@ -48,10 +50,7 @@ grep -r "TODO" .
 ```
 
 ### Context Gathering Priority
-1. **Essential only**: Branch, change count, file types
-2. **Progressive loading**: Check size → Load if needed
-3. **Parallel execution**: Max 7 simultaneous operations
-4. **Use modern tools**: fd/rg/eza (3-10x faster than find/grep/ls)
+See @docs/context.md for comprehensive command selection and modern tool usage patterns.
 
 ## Agent-Specific Patterns
 

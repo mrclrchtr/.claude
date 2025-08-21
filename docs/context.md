@@ -242,4 +242,6 @@ fd --follow -e py . | fzf --filter="test"     # Filter test files
 ```
 
 ---
+**References**: For bash optimization techniques see @.claude/docs/optimization-patterns.md.
+
 **Key**: This file optimized for Claude Code AI agents. Modern tools preferred but fallbacks always provided.
