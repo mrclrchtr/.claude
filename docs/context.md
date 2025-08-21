@@ -13,12 +13,16 @@ Essential commands for efficient project context gathering. Optimized for AI age
 7. **Respect .gitignore**: Use git-aware tools or git ls-files to honor project ignore patterns
 8. **Single Operations**: Avoid complex pipelines in slash commands - use simple, atomic operations (Claude Code has approval issues with piped/combined commands)
 9. **Fallback Strategy**: Always provide standard tool alternatives when modern tools unavailable
-10. **Context-Aware**: Commands optimized for AI agents gathering project understanding
+10. **No Artificial Limits**: Remove all head/tail/depth limits unless protecting against genuinely unbounded output. Trust semantic filtering (--type, --exclude, --git-ignore) to manage scope. Limits are a last resort, not a default.
+11. **Context-Aware**: Commands optimized for AI agents gathering project understanding
 
 ### Limiting Strategy Priority
 1. **Semantic Filtering** - Use tool-native filters (--git-ignore, --exclude, --type)
 2. **Statistical Views** - Use counts/stats for assessment (wc -l, --count, --stat)
-3. **Adaptive Limits** - Apply head/tail/depth only after filtering, based on actual size
+3. **Remove Limits by Default** - Delete head/tail/depth unless output genuinely unbounded
+   - REMOVE: `git log -5` when you need full history context
+   - REMOVE: `| head -10` after semantic filtering
+   - KEEP: `git log -5` for quick status checks only
 
 ## Context Selection Strategy
 

@@ -235,6 +235,10 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
 ❌ Unbounded git output: git log
 ✓ Limited output: git log --oneline -5
 
+❌ Keeping artificial limits: git log -5, fd . | head -20
+✓ Remove limits after filtering: git log --oneline, fd --type f --exclude node_modules
+✓ Keep limits only for sampling: git log -5 # quick check only
+
 ❌ All tools: allowed-tools: (unrestricted)
 ✓ Minimal tools: allowed-tools: Read,Edit
 

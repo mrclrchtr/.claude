@@ -79,6 +79,10 @@ Context: @.claude/docs/context.md for comprehensive git commands.
      * Filter before limiting depth (use excludes/ignore-globs first)
      * Prefer machine-readable formats (--porcelain) over human-readable
      * **Avoid combined/piped commands** - Use simple, atomic operations (Claude Code approval issues)
+     * **Remove artificial limits by default** - Delete head/tail/depth limits unless genuinely needed
+       - Remove: `git log -5` → `git log --oneline` (if checking full history)
+       - Remove: `rg "TODO" | head -10` → `rg "TODO" --count` (already filtered)
+       - Keep: Large unbounded operations that need sampling
 
 8. **Script handling**:
    - Check script contents
