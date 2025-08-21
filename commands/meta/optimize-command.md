@@ -112,7 +112,7 @@ Context: @.claude/docs/context.md for comprehensive git commands.
 
 ### Output Format
 
-Provide optimized command with:
+Update the command specification with:
 1. Updated frontmatter (minimal required fields)
 2. Efficient context gathering
 3. Clear, direct task description and sub-agent usage, if applicable
