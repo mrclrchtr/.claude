@@ -29,7 +29,14 @@ Context: @.claude/docs/context.md for comprehensive git commands.
 
 ### Optimization Process
 
-1. **Analyze current command**:
+1. **Rev the engine (self-critique)**:
+   - State initial optimization plan
+   - Challenge assumptions: "Am I about to remove something critical?"
+   - Consider alternatives: "Is there a simpler optimization approach?"
+   - Identify risks: "What could break if I remove this?"
+   - Refine approach based on internal review
+
+2. **Analyze current command**:
    - Think about the purpose of the command and keep this in mind for every decision in the optimization process
    - **STEP 1**: Use Read tool on each `@` reference in the command
    - **STEP 2**: Document what each reference provides (scope, purpose, unique content)
@@ -37,16 +44,16 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
 
-2. **Apply optimizations**:
+3. **Apply optimizations**:
    - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
    - Keep documentation references unless you can cite specific overlapping content from your analysis
 
-3. **Model selection**:
+4. **Model selection**:
    - do not add model to command, inherit from main thread
 
-4. **Sub-agent references**:
+5. **Sub-agent references**:
    - Use sub-agent references if applicable.
    - Request specific subagents by mentioning them:
      ```
@@ -55,17 +62,17 @@ Context: @.claude/docs/context.md for comprehensive git commands.
      ```
    - See available agents in @.claude/agents directory.
 
-5. **Bash command handling**:
+6. **Bash command handling**:
    - test and optimize each bash command, that the command executes
    - Use `docs/context.md` as reference for context gathering (if applicable)
 
-6. **Script handling**:
+7. **Script handling**:
    - Check script contents
    - Keep initialization scripts that create templates
    - Preserve complex logic in scripts
    - Create scripts if applicable
 
-7. **Error patterns to preserve**:
+8. **Error patterns to preserve**:
    ```markdown
    # Keep specific error messages
    If missing, show error: "Error: File not found at path" and exit
@@ -74,7 +81,7 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    If fails: "Error: [summary]. Try: npm cache clean --force"
    ```
 
-8. **Reference analysis requirement**:
+9. **Reference analysis requirement**:
    - **You MUST use Read tool on each @ reference before optimization**
    - Document each reference's unique contribution
    - Only remove if you can quote the redundant sections

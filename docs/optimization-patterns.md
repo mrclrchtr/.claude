@@ -252,6 +252,67 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
 ⚠️ Remove: "Please kindly analyze X if you would"
 ```
 
+## Rev The Engine Pattern
+
+### Core Concept
+"Rev the engine" - Critically review and challenge your own plan before execution. Generate internal critique to identify flaws, assumptions, and better approaches.
+
+### When to Apply
+- Before committing to any approach
+- When multiple solutions exist
+- Before complex multi-step operations
+- When uncertainty exists about best path
+
+### Implementation
+```markdown
+# PATTERN: Self-critique before execution
+## Rev the engine (internal review)
+1. State planned approach
+2. Challenge assumptions: "What could go wrong?"
+3. Consider alternatives: "Is there a simpler way?"
+4. Identify risks: "What am I not seeing?"
+5. Refine approach based on critique
+
+## Execute refined approach
+- Apply insights from self-review
+- Course-correct early if needed
+- Maintain skepticism during execution
+```
+
+### Examples
+```markdown
+# REV: Challenge the plan
+Initial plan: "Read all JS files to find the bug"
+Rev critique: "That's 500+ files. What if I search for error patterns first?"
+Better approach: Use grep for error signatures, then read specific files
+
+# REV: Question assumptions
+Initial plan: "Edit all test files to add new assertion"
+Rev critique: "Do ALL tests need this? Check test structure first"
+Better approach: Identify which test suites actually need updates
+
+# REV: Simplify complexity
+Initial plan: "Create elaborate multi-agent workflow"
+Rev critique: "Is this complexity necessary? What's the simplest solution?"
+Better approach: Single focused command with right tools
+```
+
+### Benefits
+- Prevents costly mistakes before they happen
+- Forces consideration of alternatives
+- Catches hidden assumptions
+- Improves solution quality through self-reflection
+- Reduces backtracking and rework
+
+### Anti-Pattern
+```markdown
+❌ Immediate execution without reflection
+❌ Sticking to first idea without critique
+❌ Ignoring doubts or concerns
+❌ Over-planning without pragmatic review
+✓ Plan → Critique → Refine → Execute
+```
+
 ## Quick Optimization Process
 
 1. **Measure current state**
@@ -260,6 +321,7 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
    - Identify: redundancies, verbose sections
 
 2. **Apply patterns**
+   - **Rev the engine**: Self-critique and challenge approach before execution
    - Compress context gathering
    - Remove filler text
    - Restrict tools to minimum
