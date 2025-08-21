@@ -33,47 +33,21 @@ When adding context to any agent or command, ALWAYS perform this analysis first:
 
 ## Quick Reference Matrix
 
-| Need           | Fast (Modern)                                           | Fallback                            | Output      |
-|----------------|---------------------------------------------------------|-------------------------------------|-------------|
-| Current branch | `git branch --show-current`                             | -                                   | `main`      |
-| Changed files  | `git status --porcelain`                                | -                                   | `M file.py` |
-| Staged changes | `git --no-pager diff --stat --cached`                   | -                                   | statistics  |
-| Unstaged diff  | `git --no-pager diff --stat`                            | -                                   | statistics  |
-| Full diff      | `git --no-pager diff --color=never`                     | -                                   | detailed    |
-| Count Python   | `fd --follow -e py . --count-only`                      | `find -L . -name "*.py" -type f -exec echo \; | wc -l` | `42`        |
-| Find TODOs     | `rg . -e "TODO" --type py --count`                      | `grep -r "TODO" . --include="*.py"` | `5`         |
-| Tree view      | `eza . --tree --level=2 --git-ignore --follow-symlinks` | `ls -LR`                            | structured  |
-| Recent files   | `eza -l --sort=modified . --follow-symlinks --limit=5`  | `ls -Llt1`                          | list        |
-| CLAUDE.md      | `find -L . -name "CLAUDE.md" -not -path "./.claude/*"`  | -                                   | paths       |
-| All docs       | `git ls-files '*.md'`                                   | `find -L . -name "*.md"`            | count       |
-| Commands       | `find -L .claude/commands -name "*.md"`                 | -                                   | list        |
-
-## Core Commands (Always Available)
-
-```bash
-# Git Essentials - Always use --no-pager
-git branch --show-current                    # Current branch
-git status --porcelain                       # Changed files (machine-readable)
-git --no-pager log --oneline -5              # Recent commits
-
-# Change Statistics
-git --no-pager diff --stat --cached --summary    # Staged changes summary
-git --no-pager diff --stat --summary             # Unstaged changes summary
-git diff --name-only                       # Changed file list
-
-# Full Diffs (ALWAYS pre-check with --stat first)
-git --no-pager diff --cached --color=never --unified=5  # Full staged diff (check scope first)
-git --no-pager diff --color=never --unified=5           # Full unstaged diff (check scope first)
-
-# Submodules (if applicable)
-git --no-pager diff --submodule=log          # Submodule changes
-git submodule status --recursive              # Submodule state
-
-# Project Structure
-pwd                                           # Working directory  
-ls *.json *.toml *.yaml 2>/dev/null          # Config files
-which npm python cargo 2>/dev/null           # Available tools
-```
+| Need               | Fast (Modern)                                            | Fallback                                                | Output     |
+|--------------------|----------------------------------------------------------|---------------------------------------------------------|------------|
+| Staged changes     | `git --no-pager diff --stat --cached --summary`          | -                                                       | statistics |
+| Unstaged diff      | `git --no-pager diff --stat --summary`                   | -                                                       | statistics |
+| Full staged diff   | `git --no-pager diff --cached --color=never --unified=5` | -                                                       | detailed   |
+| Full unstaged diff | `git --no-pager diff --color=never --unified=5`          | -                                                       | detailed   |
+| Submodule changes  | `git --no-pager diff --submodule=log`                    | -                                                       | detailed   |
+| Submodule state    | `git submodule status --recursive`                       | -                                                       | stats      |
+| Count Python       | `fd --follow -e py . --count-only`                       | `find -L . -name "*.py" -type f -exec echo \; \| wc -l` | `42`       |
+| Find TODOs         | `rg . -e "TODO" --type py --count`                       | `grep -r "TODO" . --include="*.py"`                     | `5`        |
+| Tree view          | `eza . --tree --level=2 --git-ignore --follow-symlinks`  | `ls -LR`                                                | structured |
+| Recent files       | `eza -l --sort=modified . --follow-symlinks --limit=5`   | `ls -Llt1`                                              | list       |
+| CLAUDE.md          | `find -L . -name "CLAUDE.md" -not -path "./.claude/*"`   | -                                                       | paths      |
+| All docs           | `git ls-files '*.md'`                                    | `find -L . -name "*.md"`                                | count      |
+| Commands           | `find -L .claude/commands -name "*.md"`                  | -                                                       | list       |
 
 ## Modern Tools (3-10x Faster)
 
