@@ -4,13 +4,22 @@ Quick reference for optimizing AI commands and agents for maximum efficiency.
 
 **See also:** @.claude/docs/context.md for bash commands, @docs/command.md for creation patterns
 
-## First Principle: Clarity Over Brevity
+## First Principle: Effective Commands, Not Just Short Ones
 
-Remove bloat but NEVER sacrifice:
-- Error messages with recovery guidance
-- Validation that prevents failures
-- Context that aids decision-making
-- Purpose-driven thinking: "What must this accomplish?"
+**Optimization means IMPROVEMENT, not just REDUCTION:**
+
+Priority order for optimization:
+1. Fix what's broken (always do this)
+2. Improve significant inefficiencies (>2x improvement)
+3. Clarify genuine confusion (testable improvement)
+4. Remove true redundancy (same info repeated)
+5. Reduce size IF it improves clarity (not just to hit word count)
+
+**PRESERVE these always:**
+- Error messages with recovery steps
+- Examples that demonstrate usage
+- Validation preventing failures
+- Context enabling correct decisions
 - **Instructional content**: Keep HOW-TO guidance for complex tasks
 - **Examples**: Preserve at least 1-2 concrete examples when teaching a process
 
@@ -141,6 +150,15 @@ Optimize $ARGUMENTS following these steps:
    - Sub-agent names: "Use debug-solution-engineer"
 4. Validate metrics (words, bash calls, tools)
 5. Output: optimized version + before/after metrics
+
+### The 20% Rule
+
+Only optimize if total improvement exceeds 20%:
+- Broken → Working = 100% improvement ✓
+- 4 API calls → 2 API calls = 50% improvement ✓
+- Unclear → Clear (measurable) = 30% improvement ✓
+- 800 words → 750 words = 6% improvement ✗
+- Style preferences = 0% improvement ✗
 
 # VERBOSE (avoid)
 Please kindly analyze $ARGUMENTS and carefully consider...
@@ -320,7 +338,7 @@ Better approach: Single focused command with right tools
 ## Quick Optimization Process
 
 1. **Measure current state**
-   - Count: words, lines, bash calls, tools
+   - Assess: functionality, efficiency gains, clarity improvements, then size
    - **REQUIRED**: Read each `@` reference to understand unique value
    - Identify: redundancies, verbose sections
 

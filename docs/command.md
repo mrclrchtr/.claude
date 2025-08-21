@@ -129,15 +129,30 @@ IMPORTANT: Trunk-based development requires backward compatibility for zero-down
 
 ## Optimization Strategies
 
-### Balanced Optimization
-**Target**: 
-- Simple commands: <250 words (status checks, single actions)
-- Standard commands: <500 words (most tasks)
-- Process commands: <750 words (analyze, refactor)
-- **Meta/Teaching commands**: <1000 words (optimize, guide, teach)
-  - Commands that teach HOW to do something need examples
-  - Includes: optimize-command, create-agent, write-docs
+### Command Effectiveness (Not Just Size)
+
+**Optimization Priority Order:**
+1. **Works correctly** - No broken functionality
+2. **Efficient execution** - Minimal resource waste
+3. **Clear instructions** - Unambiguous and followable
+4. **Appropriate length** - Concise but complete
+
+**Word count ranges are FLEXIBLE GUIDELINES with intentional overlap:**
+- Simple commands: 100-300 words (status checks, single actions)
+- Standard commands: 200-600 words (most development tasks)
+- Process commands: 500-1000 words (analyze, refactor, multi-step)
+- Meta/Teaching commands: 700-1200 words (optimize, guide, teach)
+
+*Ranges overlap because command complexity varies. A 400-word command could be standard (if complex) or process (if simple). Focus on effectiveness, not exact categorization.*
 - Complex workflows: <1000 words (multi-step orchestration)
+
+**Key Principle:** A 400-word command that works perfectly needs no optimization.
+A 200-word command with broken bash needs immediate fixing.
+
+Size matters only when it impacts:
+- Token limits (approaching context limits)
+- Clarity (verbosity obscures purpose)
+- Efficiency (true redundancy wastes resources)
 
 But ALWAYS preserve:
 1. **Purpose-awareness**: "Think about the purpose of the command"
@@ -439,7 +454,7 @@ Efficiency = (Minimal Context + Right Model + Restricted Tools)
             ÷ Token Usage
 ```
 
-**Remember**: Every token counts. Start minimal, expand only if needed.
+**Remember**: Effectiveness over brevity. Include what's necessary for reliable execution.
 
 ## Quick Command Templates
 

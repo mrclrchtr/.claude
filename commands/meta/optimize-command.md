@@ -1,6 +1,6 @@
 ---
 argument-hint: [command-file-path]
-description: Optimize slash command for efficiency
+description: Improve commands with significant issues or inefficiencies
 allowed-tools: Bash(find:*)
 ---
 
@@ -10,17 +10,54 @@ allowed-tools: Bash(find:*)
 
 - Command path: $ARGUMENTS
 - Command content: @$ARGUMENTS
-- Existing commands: !`find .claude/commands -name "*.md" -type f 2>/dev/null | head -20`
+- Existing commands: !`find .claude/commands -name "*.md" -type f 2>/dev/null | head -5`
 
 ## Task
 
-Optimize the slash command at $ARGUMENTS following these principles:
+Analyze the command at $ARGUMENTS to determine if optimization would provide meaningful value.
 
-### Core Optimization Principles
-1. **Clarity over brevity** - Remove bloat but keep workflow-critical details
-2. **Preserve robustness** - Keep validation, error messages, and recovery
-3. **Name dependencies** - Keep sub-agent references visible
-4. **Preserve critical references** - Keep critical documentation references
+### What Optimization Actually Means
+
+Optimization = Making commands MORE EFFECTIVE through:
+1. **Functionality** (Priority 1) - Fix broken or failing parts
+2. **Efficiency** (Priority 2) - Reduce wasted resources (unnecessary API calls, redundant operations)
+3. **Clarity** (Priority 3) - Fix genuinely confusing instructions
+4. **Conciseness** (Priority 4) - Remove TRUE redundancy (not just wordiness)
+
+### Optimization Decision Tree
+
+Ask these questions IN ORDER:
+1. Is something broken or failing? → YES: Fix it (HIGH VALUE)
+   - *Example: Broken bash command, missing error handling*
+2. Is something >2x inefficient? → YES: Improve it (HIGH VALUE)
+   - *Example: 4 separate API calls that could be 1, using `find` instead of `fd`*
+3. Are instructions genuinely unclear? → YES: Clarify (MEDIUM VALUE)
+   - *Example: "Do the thing" vs "Run npm test to validate changes"*
+4. Is there TRUE redundancy (same info repeated)? → YES: Remove it (LOW VALUE)
+   - *Example: Same bash command appears 3 times, identical instructions in 2 sections*
+5. Would changes improve effectiveness by >20%? → YES: Proceed (MEDIUM VALUE)
+6. **None of the above? → STOP: Output "Command analysis complete. No significant improvements needed."**
+
+**Examples of what NOT to optimize:**
+- Removing helpful examples = Reduces effectiveness (DON'T DO)
+- Rewording for style preferences = 0% improvement (DON'T DO)
+
+### When NOT to Optimize
+- Command works correctly
+- Word count is within 20% of typical range
+- Changes would be mostly stylistic
+- This is the 2nd or 3rd optimization pass
+- Removing content would reduce helpfulness
+
+### ⚠️ Over-Optimization Warning Signs
+If you find yourself:
+- Doing mostly rewording without functional changes
+- Unable to identify specific broken functionality
+- Focusing on word count rather than problems
+- Optimizing the same command repeatedly
+- Struggling to justify the changes
+
+**STOP** - The command doesn't need optimization.
 
 ### Quick Reference
 Command: @.claude/docs/command.md for complete slash command documentation and structure.
@@ -44,12 +81,24 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
 
-3. **Assess if optimization is needed**:
-   - Evaluate current command effectiveness based on analysis
-   - Check word count against `# Balanced Optimization` in @.claude/docs/command.md
-   - Review clarity and structure
-   - **If command is already optimal**: Report "Command is already well-optimized" and stop
-   - **Only proceed if**: Command has clear redundancy, bloat, or efficiency issues
+3. **Assess if optimization provides MEANINGFUL value**:
+   
+   **Calculate improvement value:**
+   - Fixing broken functionality = 100% improvement
+   - Reducing API calls by half = 50% improvement  
+   - Improving unclear instructions = 20-30% improvement
+   - Removing redundancy = 10-15% improvement
+   - Style/wording changes = <5% improvement (DON'T DO)
+   
+   **Decision points:**
+   - >20% total improvement → Proceed with optimization
+   - 10-20% improvement → Report minor issues but recommend keeping as-is
+   - <10% improvement → Output: "Command is effective. No optimization warranted."
+   
+   **Include in your response:**
+   - Current word count and typical range for command type
+   - Specific issues found (if any) with line numbers
+   - Estimated improvement percentage
 
 4. **Apply optimizations**:
    - Use glob patterns: `src/components/*.js` instead of listing files
@@ -106,10 +155,32 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Only remove if you can quote the redundant sections
    - Default to keeping references when unsure
 
-### Quality Metrics
-- Word count based on `# Balanced Optimization` in @.claude/docs/command.md
-- Bash calls: Maximum 3-4 unless complex analysis
-- Preserve all critical error handling
+### Optimization Value Metrics
+
+**Always Optimize:**
+- Broken bash commands or API calls
+- Missing critical error handling
+- Duplicate operations (same data gathered twice)
+- Inefficient tools providing >2x speedup (find→fd, grep→rg)
+
+**Consider Optimizing (if >20% improvement):**
+- Genuinely unclear instructions
+- TRUE redundancy (not just verbose explanations)
+- Significantly exceeds typical word count (>50% over)
+
+**Never Optimize:**
+- Working commands with <10% potential improvement
+- Style preferences with no functional impact
+- Commands already optimized once (unless newly broken)
+- Removing examples that aid understanding
+
+**Word Count Ranges (FLEXIBLE GUIDELINES with intentional overlap):**
+- Simple commands: 100-300 words (status checks, single actions)
+- Standard commands: 200-600 words (most development tasks)
+- Process commands: 500-1000 words (analyze, refactor, multi-step)
+- Meta/Teaching commands: 700-1200 words (optimize, guide, teach)
+
+*Note: Ranges overlap because command complexity varies. A 400-word command could be standard (if complex) or process (if simple). Focus on effectiveness, not exact categorization.*
 
 ### Output Format
 
