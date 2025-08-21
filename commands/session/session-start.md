@@ -1,3 +1,9 @@
+# Context
+
+- Date and Time: !`date +%Y-%m-%d\ %I:%M\ %p`
+
+# Task
+
 Start a new development session by creating a session file in `.claude/sessions/` with the format `YYYY-MM-DD-HHMM-$ARGUMENTS.md` (or just `YYYY-MM-DD-HHMM.md` if no name provided).
 
 The session file should begin with:

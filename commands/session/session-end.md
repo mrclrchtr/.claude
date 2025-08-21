@@ -1,5 +1,11 @@
 End the current development session by:
 
+# Context
+
+- Date and Time: !`date +%Y-%m-%d\ %I:%M\ %p`
+
+# Task
+
 1. Check `.claude/sessions/.current-session` for the active session
 2. If no active session, inform user there's nothing to end
 3. If session exists, append a comprehensive summary including:
