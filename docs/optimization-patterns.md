@@ -79,7 +79,7 @@ description: General purpose assistant
 ```yaml
 # MINIMAL (preferred)
 ---
-description: Clear 5-word purpose
+description: Clear, concise purpose
 model: haiku  # Only if needed
 allowed-tools: Read,Edit  # Only restrict if needed
 argument-hint: [args]  # Keep if command uses $ARGUMENTS
@@ -107,7 +107,7 @@ version: 1.0.0
 
 ### Task Structure
 ```markdown
-# SIMPLE COMMAND (status check, <100 words)
+# SIMPLE COMMAND (status check, <250 words)
 ## Context
 - Branch: !`git branch --show-current`
 - Changes: !`git status --porcelain | wc -l`
@@ -115,7 +115,7 @@ version: 1.0.0
 ## Task
 $ARGUMENTS: Direct action without preamble
 
-# PROCESS COMMAND (analysis, refactor, ~200-400 words)
+# PROCESS COMMAND (analysis, refactor, <750 words)
 ## Context
 - Target: @$ARGUMENTS
 - Reference: @docs/patterns.md
@@ -126,7 +126,7 @@ Analyze $ARGUMENTS following these steps:
 2. Apply patterns while preserving validation
 3. Output results + metrics
 
-# META/TEACHING COMMAND (optimize, guide, ~350-750 words)
+# META/TEACHING COMMAND (optimize, guide, <1000 words)
 ## Context
 - Target: @$ARGUMENTS
 - References: @docs/patterns.md @docs/context.md
@@ -169,11 +169,11 @@ Please kindly analyze $ARGUMENTS and carefully consider...
 
 ### For Commands
 ✓ Word count:
-  - Simple: <100 (status, single action)
-  - Standard: <300 (most tasks)
-  - Process: ~200-400 (analyze, refactor)
-  - Meta/Teaching: ~350-500 (optimize, guide - needs examples)
-  - Complex: <500 (multi-step orchestration)
+  - Simple: <250 (status, single action)
+  - Standard: <500 (most tasks)
+  - Process: <750 (analyze, refactor)
+  - Meta/Teaching: <1000 (optimize, guide - needs examples)
+  - Complex: <1000 (multi-step orchestration)
 ✓ Bash calls limited (3-4 typical, more if workflow requires)
 ✓ Output bounded (head/tail/wc)
 ✓ Arguments handled clearly
@@ -198,7 +198,7 @@ These patterns must survive optimization:
 - MUST preserve multiple examples showing before/after
 - MUST retain "Think about the purpose" reflection prompts
 - MUST include error pattern examples with recovery
-- Allow ~350-750 words for instructional completeness
+- Allow <1000 words for instructional completeness (meta/teaching commands)
 ```
 
 ### Error Recovery Examples

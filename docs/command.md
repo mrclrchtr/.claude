@@ -131,13 +131,13 @@ IMPORTANT: Trunk-based development requires backward compatibility for zero-down
 
 ### Balanced Optimization
 **Target**: 
-- Simple commands: <100 words (status checks, single actions)
-- Standard commands: <300 words (most tasks)
-- Process commands: ~200-400 words (analyze, refactor)
-- **Meta/Teaching commands**: ~350-750 words (optimize, guide, teach)
+- Simple commands: <250 words (status checks, single actions)
+- Standard commands: <500 words (most tasks)
+- Process commands: <750 words (analyze, refactor)
+- **Meta/Teaching commands**: <1000 words (optimize, guide, teach)
   - Commands that teach HOW to do something need examples
   - Includes: optimize-command, create-agent, write-docs
-- Complex workflows: <750 words (multi-step orchestration)
+- Complex workflows: <1000 words (multi-step orchestration)
 
 But ALWAYS preserve:
 1. **Purpose-awareness**: "Think about the purpose of the command"
@@ -377,7 +377,7 @@ deprecation-message: Removed in v3.0.0
 ```markdown
 ---
 argument-hint: [file] [options]
-description: Purpose in 5 words
+description: Clear, concise purpose
 model: haiku  # Start cheap
 allowed-tools: Read,Edit,Bash(git:*)
 ---
