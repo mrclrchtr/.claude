@@ -9,6 +9,8 @@ Remove bloat but NEVER sacrifice:
 - Validation that prevents failures
 - Context that aids decision-making
 - Purpose-driven thinking: "What must this accomplish?"
+- **Instructional content**: Keep HOW-TO guidance for complex tasks
+- **Examples**: Preserve at least 1-2 concrete examples when teaching a process
 
 ## Optimization Context Principle
 
@@ -96,7 +98,7 @@ version: 1.0.0
 
 ### Task Structure
 ```markdown
-# CONCISE
+# SIMPLE COMMAND (status check, <100 words)
 ## Context
 - Branch: !`git branch --show-current`
 - Changes: !`git status --porcelain | wc -l`
@@ -104,14 +106,21 @@ version: 1.0.0
 ## Task
 $ARGUMENTS: Direct action without preamble
 
-# VERBOSE (avoid)
+# PROCESS COMMAND (optimization, analysis, ~200-300 words)
 ## Context
-- Current git branch: !`git branch`
-- All changed files: !`git status`
-- Full diff: !`git diff`
+- Target: @$ARGUMENTS
+- Reference: @docs/patterns.md
 
 ## Task
-Please kindly analyze $ARGUMENTS and then...
+Optimize $ARGUMENTS following these steps:
+1. Analyze purpose and current structure
+2. Apply patterns while preserving:
+   - Error handling with recovery messages
+   - Validation logic
+3. Output optimized version + metrics
+
+# VERBOSE (avoid)
+Please kindly analyze $ARGUMENTS and carefully consider...
 ```
 
 ## Performance Benchmarks
@@ -145,6 +154,16 @@ Please kindly analyze $ARGUMENTS and then...
 ## Must Preserve Patterns
 
 These patterns must survive optimization:
+
+### Minimum Viable Instructions
+```markdown
+# For process commands (like optimize, analyze, refactor):
+- Keep numbered steps or bullet points
+- Preserve "Think about..." prompts
+- Maintain "Following these principles:" sections
+- Include at least one concrete example
+- Keep tool/technique recommendations (fd over find, rg over grep)
+```
 
 ### Error Recovery Examples
 ```markdown
@@ -183,11 +202,15 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
 ❌ All tools: allowed-tools: (unrestricted)
 ✓ Minimal tools: allowed-tools: Read,Edit
 
-❌ Verbose instructions: "Please carefully analyze..."
-✓ Direct: "Analyze..."
+❌ Verbose politeness: "Please carefully analyze..."
+✓ Direct language: "Analyze..."
 
 ❌ Model overkill: opus for simple grep
 ✓ Right-sized: haiku for simple tasks
+
+⚠️ IMPORTANT: "Direct" means removing politeness, NOT removing instructions!
+⚠️ Keep: "Analyze X following steps 1,2,3"
+⚠️ Remove: "Please kindly analyze X if you would"
 ```
 
 ## Quick Optimization Process

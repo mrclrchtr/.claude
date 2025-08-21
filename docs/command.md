@@ -129,16 +129,20 @@ IMPORTANT: Trunk-based development requires backward compatibility for zero-down
 
 ### Balanced Optimization
 **Target**: 
-- Simple commands: <100 words
-- Standard commands: <300 words  
-- Complex workflows: <500 words (when justified by functionality)
+- Simple commands: <100 words (status checks, single actions)
+- Standard commands: <300 words (most tasks)
+- Process commands: ~200-400 words (optimize, analyze, refactor)
+- Complex workflows: <500 words (multi-step orchestration)
 
 But ALWAYS preserve:
 1. **Purpose-awareness**: "Think about the purpose of the command"
-2. **Error recovery patterns**: Specific messages with recovery guidance
-3. **Script handling logic**: Complex initialization, templates
-4. **Sub-agent references**: Name agents explicitly
-5. **Model guidance**: "inherit from main thread"
+2. **Step-by-step instructions**: Keep numbered steps for process commands
+3. **Error recovery patterns**: Specific messages with recovery guidance
+4. **Script handling logic**: Complex initialization, templates
+5. **Sub-agent references**: Name agents explicitly
+6. **Model guidance**: "inherit from main thread"
+7. **Concrete examples**: At least 1-2 for teaching processes
+8. **Tool recommendations**: "Use fd over find, rg over grep"
 
 ### Token Economy
 - **Model**: `haiku` for simple, `sonnet` for complex, `opus` for critical
