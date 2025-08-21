@@ -2,6 +2,23 @@
 
 Quick reference for optimizing AI commands and agents for maximum efficiency.
 
+## First Principle: Clarity Over Brevity
+
+Remove bloat but NEVER sacrifice:
+- Error messages with recovery guidance
+- Validation that prevents failures
+- Context that aids decision-making
+- Purpose-driven thinking: "What must this accomplish?"
+
+## Optimization Context Principle
+
+When optimizing commands, ALWAYS start with: **"What is the core purpose of this command?"**
+- Every optimization decision must serve the original purpose
+- Preserve all error handling that protects the purpose
+- Keep validation that ensures purpose is achieved
+- Maintain recovery guidance that helps users succeed
+- Think about the purpose before every optimization decision
+
 ## Universal Optimization Rules
 
 ### Token Economy
@@ -119,11 +136,40 @@ Please kindly analyze $ARGUMENTS and then...
 ✓ Context window efficient (<5K tokens)
 
 ### For Commands
-✓ Word count (<300 words)
-✓ Bash calls limited (3-4 max)
+✓ Word count (simple <100, standard <300, complex <500 when justified)
+✓ Bash calls limited (3-4 typical, more if workflow requires)
 ✓ Output bounded (head/tail/wc)
 ✓ Arguments handled clearly
 ✓ Validation present
+
+## Must Preserve Patterns
+
+These patterns must survive optimization:
+
+### Error Recovery Examples
+```markdown
+# Keep specific error messages
+If missing, show error: "Error: File not found at $path" and exit
+Try: "Check path exists with 'ls -la'"
+
+# Keep recovery guidance  
+If fails: "Error: Build failed. Try: npm cache clean --force"
+```
+
+### Script Handling
+```markdown
+# Preserve script logic that:
+- Creates templates or boilerplate
+- Performs complex initialization
+- Has multi-step conditional flows
+```
+
+### Model Guidance
+```markdown
+# Keep important directives:
+- "inherit from main thread" (don't add model to command)
+- Sub-agent references by name: "Use debug-solution-engineer"
+```
 
 ## Anti-Patterns to Avoid
 

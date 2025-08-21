@@ -127,6 +127,19 @@ IMPORTANT: Trunk-based development requires backward compatibility for zero-down
 
 ## Optimization Strategies
 
+### Balanced Optimization
+**Target**: 
+- Simple commands: <100 words
+- Standard commands: <300 words  
+- Complex workflows: <500 words (when justified by functionality)
+
+But ALWAYS preserve:
+1. **Purpose-awareness**: "Think about the purpose of the command"
+2. **Error recovery patterns**: Specific messages with recovery guidance
+3. **Script handling logic**: Complex initialization, templates
+4. **Sub-agent references**: Name agents explicitly
+5. **Model guidance**: "inherit from main thread"
+
 ### Token Economy
 - **Model**: `haiku` for simple, `sonnet` for complex, `opus` for critical
 - **Context**: Limit bash output with `head -20`, use counts over full output
