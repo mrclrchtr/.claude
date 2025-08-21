@@ -151,7 +151,7 @@ But ALWAYS preserve:
 
 ### Token Economy
 - **Model**: `haiku` for simple, `sonnet` for complex, `opus` for critical
-- **Context**: Limit bash output with `head -20`, use counts over full output
+- **Context**: Filter semantically first, use counts for large outputs, limit only when necessary
 - **Files**: Specific paths over directories: `@src/main.js` not `@src/`
 - **Tools**: Minimal set: `allowed-tools: Read,Edit`
 
@@ -418,14 +418,14 @@ See @.claude/docs/context.md for comprehensive bash command reference and contex
 - **Namespace**: `/git:commit`, `/test:unit`, `/deploy:prod`
 - **Arguments**: `$ARGUMENTS` for dynamic input
 - **File Refs**: `@specific/file.js` not `@entire/directory/`
-- **Bash**: Always `--no-pager`, use `| head -20`
+- **Bash**: Always `--no-pager`, filter first, limit when necessary
 - **Validation**: Exit codes `&& echo "✓" || echo "✗"`
 - **Parallel**: Batch up to 7 independent operations
 - **Context**: Inherit from CLAUDE.md automatically
 
 ### Common Gotchas
 - ❌ Loading entire directories with `@src/`
-- ❌ Unbounded output without `head/tail`
+- ❌ Unbounded output without filtering
 - ❌ Using all tools when subset would work
 - ❌ Sequential when parallel possible
 - ❌ Missing `--no-pager` on git commands

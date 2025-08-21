@@ -31,7 +31,7 @@ When optimizing commands, ALWAYS start with: **"What is the core purpose of this
 | Model     | haiku (simple) → sonnet (complex) → opus (critical) | opus for everything       |
 | Tools     | 3-5 specific tools                                  | All tools or unrestricted |
 | Context   | Counts & stats                                      | Full file contents        |
-| Bash      | `head -20`, `wc -l`, `--no-pager`                   | Unbounded output          |
+| Bash      | Filter first, count when large, `head` as last resort | Unbounded output          |
 | Files     | `@specific/file.js`                                 | `@entire/directory/`      |
 
 ### Bash Command Patterns
@@ -175,7 +175,7 @@ Please kindly analyze $ARGUMENTS and carefully consider...
   - Meta/Teaching: <1000 (optimize, guide - needs examples)
   - Complex: <1000 (multi-step orchestration)
 ✓ Bash calls limited (3-4 typical, more if workflow requires)
-✓ Output bounded (head/tail/wc)
+✓ Output right-sized (filter > count > limit)
 ✓ Arguments handled clearly
 ✓ Validation present
 ✓ For meta commands: Keep "Think about..." prompts and examples

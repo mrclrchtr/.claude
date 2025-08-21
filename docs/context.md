@@ -15,6 +15,11 @@ Essential commands for efficient project context gathering. Optimized for AI age
 9. **Fallback Strategy**: Always provide standard tool alternatives when modern tools unavailable
 10. **Context-Aware**: Commands optimized for AI agents gathering project understanding
 
+### Limiting Strategy Priority
+1. **Semantic Filtering** - Use tool-native filters (--git-ignore, --exclude, --type)
+2. **Statistical Views** - Use counts/stats for assessment (wc -l, --count, --stat)
+3. **Adaptive Limits** - Apply head/tail/depth only after filtering, based on actual size
+
 ## Context Selection Strategy
 
 When adding context to any agent or command, ALWAYS perform this analysis first:
