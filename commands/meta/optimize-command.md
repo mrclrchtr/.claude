@@ -8,16 +8,15 @@ allowed-tools: Read, Edit, Grep, Bash(find:*), Bash(wc:*), Bash(grep:*), Bash(aw
 
 ## Context
 - Command: @$ARGUMENTS
-- Size: !`wc -lw "$ARGUMENTS" 2>/dev/null || echo "no file"`
-- Model: !`grep "^model:" "$ARGUMENTS" || echo "inherited"`
-- Tools: !`grep "^allowed-tools:" "$ARGUMENTS" || echo "unrestricted"`
-- Bash calls: !`grep -c "^\!\\\`" "$ARGUMENTS" || echo "0"`
-- Patterns: @.claude/docs/optimization-patterns.md
+- Optimization Patterns: @.claude/docs/optimization-patterns.md
+- Context Gathering: @.claude/docs/context.md
 
 ## Optimization Targets
 
+### Purpose of the Command
+Ultrathink about the purpose of the command and keep this in mind for every decision in the optimization process.
+
 ### Structure (<300 words)
-- Combine redundant bash commands
 - Use glob patterns over file lists
 - Remove politeness and filler text
 - Preserve error handling and validation
@@ -26,13 +25,14 @@ allowed-tools: Read, Edit, Grep, Bash(find:*), Bash(wc:*), Bash(grep:*), Bash(aw
 - Apply `optimization-patterns.md` rules
 - Model: inherit unless complexity requires specific
 - Tools: restrict to minimum needed (3-5 ideal)
-- Bash: use patterns from @.claude/docs/context.md
+- Context: use patterns from @.claude/docs/context.md
 
 ### Sub-agents (if applicable)
 - Check .claude/agents/ for available specialists
 - Reference by clear task mention, not explicit tool call
 
 ### Quality Checks
+✓ Human-readable/-usable frontmatter
 ✓ Clear $ARGUMENTS handling
 ✓ Success validation present
 ✓ Error recovery preserved
