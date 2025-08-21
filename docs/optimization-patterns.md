@@ -82,6 +82,7 @@ description: General purpose assistant
 description: Clear 5-word purpose
 model: haiku  # Only if needed
 allowed-tools: Read,Edit  # Only restrict if needed
+argument-hint: [args]  # Keep if command uses $ARGUMENTS
 ---
 
 # VERBOSE (avoid)
@@ -94,6 +95,15 @@ author: @user
 version: 1.0.0
 ---
 ```
+
+**Preservation Rules:**
+- **argument-hint**: Keep when command accepts `$ARGUMENTS` - enables autocomplete
+- **allowed-tools**: REQUIRED when using `!` commands, must include Bash with appropriate patterns
+- **description**: Always keep - shows in command list
+- **model**: Only specify if different from thread default
+- Remove: author, version, tags unless organizationally required
+
+⚠️ **CRITICAL**: Commands with `!` backtick execution MUST have `allowed-tools` with Bash permissions or they will fail
 
 ### Task Structure
 ```markdown

@@ -1,7 +1,7 @@
 # Load a session
 
 ## Context:
-- Sessions: @claude/sessions/
+- Sessions: @.claude/sessions/
 
 ## Preflight:
 - If `$ARGUMENT` is provided:

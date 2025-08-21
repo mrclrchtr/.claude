@@ -40,6 +40,8 @@ $ARGUMENTS handling and clear steps.
 | **File Include** | `@path` | `@src/main.js` or `@src/` | Code context |
 | **Namespacing** | `dir/file.md` | `/git:commit`, `/test:unit` | Organization |
 
+⚠️ **REQUIRED**: Commands using `!` bash execution MUST include `allowed-tools` with appropriate Bash patterns (e.g., `Bash(git:*)`, `Bash(fd:*)`) or the bash commands will fail to execute.
+
 ## Frontmatter Reference
 
 ```yaml
