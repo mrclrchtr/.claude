@@ -33,21 +33,24 @@ When adding context to any agent or command, ALWAYS perform this analysis first:
 
 ## Quick Reference Matrix
 
-| Need               | Fast (Modern)                                            | Fallback                                                | Output     |
-|--------------------|----------------------------------------------------------|---------------------------------------------------------|------------|
-| Staged changes     | `git --no-pager diff --stat --cached --summary`          | -                                                       | statistics |
-| Unstaged diff      | `git --no-pager diff --stat --summary`                   | -                                                       | statistics |
-| Full staged diff   | `git --no-pager diff --cached --color=never --unified=5` | -                                                       | detailed   |
-| Full unstaged diff | `git --no-pager diff --color=never --unified=5`          | -                                                       | detailed   |
-| Submodule changes  | `git --no-pager diff --submodule=log`                    | -                                                       | detailed   |
-| Submodule state    | `git submodule status --recursive`                       | -                                                       | stats      |
-| Count Python       | `fd --follow -e py . --count-only`                       | `find -L . -name "*.py" -type f -exec echo \; \| wc -l` | `42`       |
-| Find TODOs         | `rg . -e "TODO" --type py --count`                       | `grep -r "TODO" . --include="*.py"`                     | `5`        |
-| Tree view          | `eza . --tree --level=2 --git-ignore --follow-symlinks`  | `ls -LR`                                                | structured |
-| Recent files       | `eza -l --sort=modified . --follow-symlinks --limit=5`   | `ls -Llt1`                                              | list       |
-| CLAUDE.md          | `find -L . -name "CLAUDE.md" -not -path "./.claude/*"`   | -                                                       | paths      |
-| All docs           | `git ls-files '*.md'`                                    | `find -L . -name "*.md"`                                | count      |
-| Commands           | `find -L .claude/commands -name "*.md"`                  | -                                                       | list       |
+| Need               | Fast (Modern)                                                                                   | Fallback                                                | Output     |
+|--------------------|-------------------------------------------------------------------------------------------------|---------------------------------------------------------|------------|
+| Staged changes     | `git --no-pager diff --stat --cached --summary`                                                 | -                                                       | statistics |
+| Unstaged diff      | `git --no-pager diff --stat --summary`                                                          | -                                                       | statistics |
+| Full staged diff   | `git --no-pager diff --cached --color=never --unified=5`                                        | -                                                       | detailed   |
+| Full unstaged diff | `git --no-pager diff --color=never --unified=5`                                                 | -                                                       | detailed   |
+| Submodule changes  | `git --no-pager diff --submodule=log`                                                           | -                                                       | detailed   |
+| Submodule state    | `git submodule status --recursive`                                                              | -                                                       | stats      |
+| Count Python       | `fd --follow -e py . --count-only`                                                              | `find -L . -name "*.py" -type f -exec echo \; \| wc -l` | `42`       |
+| Find TODOs         | `rg . -e "TODO" --type py --count`                                                              | `grep -r "TODO" . --include="*.py"`                     | `5`        |
+| Tree view          | `eza . --tree --level=2 --git-ignore --follow-symlinks`                                         | `ls -LR`                                                | structured |
+| Recent files       | `eza -l --sort=modified . --follow-symlinks --limit=5`                                          | `ls -Llt1`                                              | list       |
+| Project structure  | `eza . --tree --all --git-ignore --ignore-glob=".idea\|.claude \|bruno \|.yarn \|node_modules"` |                                                         |            |
+| CLAUDE.md          | `find -L . -name "CLAUDE.md" -not -path "./.claude/*"`                                          | -                                                       | paths      |
+| All docs           | `git ls-files '*.md'`                                                                           | `find -L . -name "*.md"`                                | count      |
+| Commands           | `find -L .claude/commands -name "*.md"`                                                         | -                                                       | list       |
+
+(`|` needed to get escaped in the table by `\|`)
 
 ## Modern Tools (3-10x Faster)
 
