@@ -15,6 +15,22 @@ Essential commands for efficient project context gathering. Optimized for AI age
 9. **Fallback Strategy**: Always provide standard tool alternatives when modern tools unavailable
 10. **Context-Aware**: Commands optimized for AI agents gathering project understanding
 
+## Context Selection Strategy
+
+When adding context to any agent or command, ALWAYS perform this analysis first:
+
+### Three Essential Questions (Ask in Order)
+1. **What context directly enables success?** Include only information that the agent/command cannot function without
+2. **What context improves quality?** Add context that significantly enhances output quality or efficiency  
+3. **What context is noise?** Identify and remove any context that consumes tokens without providing value
+
+### Implementation Steps
+1. **Define core task** - What must this agent/command accomplish?
+2. **Identify minimum viable context** - What's the absolute minimum needed for basic functionality?
+3. **Add value-driven context** - Include only context with clear benefit-to-token ratio > 1
+4. **Remove redundant knowledge** - Exclude what AI models already know (basic syntax, common patterns, politeness)
+5. **Validate through testing** - Start minimal, add context only when errors or quality issues occur
+
 ## Quick Reference Matrix
 
 | Need           | Fast (Modern)                                           | Fallback                            | Output      |
