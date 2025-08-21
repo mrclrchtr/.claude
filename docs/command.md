@@ -167,7 +167,7 @@ Simultaneously execute (max 7 for efficiency):
 
 **Context Hierarchy:** Command > CLAUDE.md > User prefs > Defaults
 
-**See also:** @.claude/docs/optimization-patterns.md for efficiency rules, @docs/context.md for bash commands
+⚠️ **Reference Analysis**: When optimizing commands, read each `@` reference to understand its unique value before removal. References that appear similar may provide complementary, not redundant information.
 
 ```markdown
 ---

@@ -244,6 +244,9 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
 ❌ Model overkill: opus for simple grep
 ✓ Right-sized: haiku for simple tasks
 
+❌ Removing references without analysis: Assume doc1.md and doc2.md are redundant
+✓ Evidence-based decisions: Read each doc reference to understand unique value
+
 ⚠️ IMPORTANT: "Direct" means removing politeness, NOT removing instructions!
 ⚠️ Keep: "Analyze X following steps 1,2,3"
 ⚠️ Remove: "Please kindly analyze X if you would"
@@ -253,6 +256,7 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
 
 1. **Measure current state**
    - Count: words, lines, bash calls, tools
+   - **REQUIRED**: Read each `@` reference to understand unique value
    - Identify: redundancies, verbose sections
 
 2. **Apply patterns**
@@ -260,6 +264,7 @@ If fails: "Error: Build failed. Try: npm cache clean --force"
    - Remove filler text
    - Restrict tools to minimum
    - Select appropriate model
+   - Preserve references unless content analysis proves true redundancy
 
 3. **Validate**
    - Test functionality preserved

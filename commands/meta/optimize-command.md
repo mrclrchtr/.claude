@@ -31,15 +31,15 @@ Context: @.claude/docs/context.md for comprehensive git commands.
 
 1. **Analyze current command**:
    - Think about the purpose of the command and keep this in mind for every decision in the optimization process
+   - **REQUIRED**: Read each `@` reference to understand its unique value before removing
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
-   - Identify which (`@`) references provide unique, non-overlapping information
 
 2. **Apply optimizations**:
    - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
-   - Keep documentation references unless truly redundant (remove if redundant)
+   - Keep all documentation references unless content analysis proves true redundancy
 
 3. **Model selection**:
    - do not add model to command, inherit from main thread
@@ -71,6 +71,11 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    # Keep recovery guidance  
    If fails: "Error: [summary]. Try: npm cache clean --force"
    ```
+
+8. **Reference analysis principle**:
+   - Read each `@` reference to understand its scope and unique contribution
+   - References with similar names may serve different purposes
+   - Only remove after content analysis proves true redundancy
 
 ### Quality Metrics
 - Simple commands: <100 words total
