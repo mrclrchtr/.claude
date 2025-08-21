@@ -131,7 +131,10 @@ IMPORTANT: Trunk-based development requires backward compatibility for zero-down
 **Target**: 
 - Simple commands: <100 words (status checks, single actions)
 - Standard commands: <300 words (most tasks)
-- Process commands: ~200-400 words (optimize, analyze, refactor)
+- Process commands: ~200-400 words (analyze, refactor)
+- **Meta/Teaching commands**: ~350-500 words (optimize, guide, teach)
+  - Commands that teach HOW to do something need examples
+  - Includes: optimize-command, create-agent, write-docs
 - Complex workflows: <500 words (multi-step orchestration)
 
 But ALWAYS preserve:

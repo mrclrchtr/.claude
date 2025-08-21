@@ -106,18 +106,32 @@ version: 1.0.0
 ## Task
 $ARGUMENTS: Direct action without preamble
 
-# PROCESS COMMAND (optimization, analysis, ~200-300 words)
+# PROCESS COMMAND (analysis, refactor, ~200-400 words)
 ## Context
 - Target: @$ARGUMENTS
 - Reference: @docs/patterns.md
 
 ## Task
+Analyze $ARGUMENTS following these steps:
+1. Examine current structure
+2. Apply patterns while preserving validation
+3. Output results + metrics
+
+# META/TEACHING COMMAND (optimize, guide, ~350-500 words)
+## Context
+- Target: @$ARGUMENTS
+- References: @docs/patterns.md @docs/context.md
+
+## Task
 Optimize $ARGUMENTS following these steps:
-1. Analyze purpose and current structure
-2. Apply patterns while preserving:
-   - Error handling with recovery messages
-   - Validation logic
-3. Output optimized version + metrics
+1. **Think about the purpose** - Keep this in mind for every decision
+2. Analyze current structure (combine bash, remove duplicates)
+3. Apply patterns while preserving:
+   - Error handling: `If missing: "Error: File not found"`
+   - Recovery guidance: `Try: npm cache clean`
+   - Sub-agent names: "Use debug-solution-engineer"
+4. Validate metrics (words, bash calls, tools)
+5. Output: optimized version + before/after metrics
 
 # VERBOSE (avoid)
 Please kindly analyze $ARGUMENTS and carefully consider...
@@ -145,11 +159,17 @@ Please kindly analyze $ARGUMENTS and carefully consider...
 ✓ Context window efficient (<5K tokens)
 
 ### For Commands
-✓ Word count (simple <100, standard <300, complex <500 when justified)
+✓ Word count:
+  - Simple: <100 (status, single action)
+  - Standard: <300 (most tasks)
+  - Process: ~200-400 (analyze, refactor)
+  - Meta/Teaching: ~350-500 (optimize, guide - needs examples)
+  - Complex: <500 (multi-step orchestration)
 ✓ Bash calls limited (3-4 typical, more if workflow requires)
 ✓ Output bounded (head/tail/wc)
 ✓ Arguments handled clearly
 ✓ Validation present
+✓ For meta commands: Keep "Think about..." prompts and examples
 
 ## Must Preserve Patterns
 
@@ -157,12 +177,19 @@ These patterns must survive optimization:
 
 ### Minimum Viable Instructions
 ```markdown
-# For process commands (like optimize, analyze, refactor):
+# For process commands (like analyze, refactor):
 - Keep numbered steps or bullet points
 - Preserve "Think about..." prompts
 - Maintain "Following these principles:" sections
 - Include at least one concrete example
 - Keep tool/technique recommendations (fd over find, rg over grep)
+
+# For meta/teaching commands (like optimize-command, create-agent):
+- MUST keep detailed step-by-step instructions
+- MUST preserve multiple examples showing before/after
+- MUST retain "Think about the purpose" reflection prompts
+- MUST include error pattern examples with recovery
+- Allow ~350-500 words for instructional completeness
 ```
 
 ### Error Recovery Examples
