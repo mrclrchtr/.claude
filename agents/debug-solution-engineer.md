@@ -2,7 +2,7 @@
 name: debug-solution-engineer
 description: MUST BE USED PROACTIVELY when encountering errors, bugs, unexpected behavior, test failures, build errors, runtime exceptions, performance issues, integration problems, or needing deep technical diagnosis. Handles TypeErrors, ReferenceErrors, null/undefined errors, async issues, memory leaks, race conditions. Provides root cause analysis and ranked solutions.
 tools: Read, Edit, MultiEdit, Bash, Grep, Glob, LS, TodoWrite, WebSearch, WebFetch
-model: opus
+model: inherit
 color: orange
 ---
 

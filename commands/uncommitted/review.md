@@ -1,6 +1,5 @@
 ---
 description: Critically analyze all uncommitted changes before committing
-model: claude-opus-4-1-20250805
 allowed-tools: Bash(git:*), Bash(test:*), Bash(find:*), Bash(grep:*)
 ---
 

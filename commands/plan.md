@@ -2,7 +2,6 @@
 description: Transform input files into detailed IMPLEMENTATION_PLAN.md
 argument-hint: [file1.md file2.md ...]
 allowed-tools: Bash(eza:*), Bash(find:*)
-model: claude-opus-4-1-20250805
 ---
 
 # Create Implementation Plan from Input Files

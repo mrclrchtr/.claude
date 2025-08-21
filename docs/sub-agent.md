@@ -19,6 +19,7 @@ name: code-optimizer
 description: MUST BE USED PROACTIVELY when optimizing performance bottlenecks, refactoring inefficient code, or improving algorithmic complexity. Expert at code optimization and performance analysis.
 tools: Read, Edit, MultiEdit, Grep, Glob, Bash, TodoWrite
 model: claude-sonnet-4-0-20241220
+color: blue
 ---
 
 You are a performance optimization specialist. Your primary objectives are:
@@ -30,6 +31,9 @@ You are a performance optimization specialist. Your primary objectives are:
 Always provide Big-O analysis for algorithmic changes.
 Never sacrifice correctness for performance without explicit confirmation.
 ```
+
+### Possible Colors
+red, blue, green, yellow, purple, orange, pink, cyan
 
 ## Core Concepts
 

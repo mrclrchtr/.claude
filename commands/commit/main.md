@@ -1,6 +1,5 @@
 ---
 description: Commit changes in parent repository only (excluding submodule internals)
-model: claude-sonnet-4-0
 allowed-tools: Bash(git:*)
 ---
 

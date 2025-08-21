@@ -1,6 +1,5 @@
 ---
 description: Audit documentation for inconsistencies and fix them
-model: sonnet
 ---
 
 # Documentation Audit

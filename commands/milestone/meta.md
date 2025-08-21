@@ -1,6 +1,5 @@
 ---
 description: Sync milestone manager with existing milestone files
-model: claude-3-5-haiku-latest
 allowed-tools: Bash(.claude/scripts/create-milestone-structure.sh), Bash(find:*)
 ---
 

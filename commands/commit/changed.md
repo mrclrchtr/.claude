@@ -1,6 +1,5 @@
 ---
 description: Commit session changes with generated message
-model: claude-3-5-haiku-latest
 ---
 
 # Commit Changed

@@ -1,7 +1,6 @@
 ---
 argument-hint: [commit_hash]
 description: Critically analyze a single commit's changes and impact
-model: claude-opus-4-1-20250805
 allowed-tools: Bash(git show:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*)
 ---
 
