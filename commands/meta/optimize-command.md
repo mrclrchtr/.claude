@@ -1,7 +1,7 @@
 ---
 argument-hint: [command-file-path]
 description: Improve commands with significant issues or inefficiencies
-allowed-tools: Bash(find:*)
+allowed-tools: Bash(fd:*),Bash(find:*),Read
 ---
 
 # Optimize Command
@@ -10,7 +10,7 @@ allowed-tools: Bash(find:*)
 
 - Command path: $ARGUMENTS
 - Command content: @$ARGUMENTS
-- Existing commands: !`find .claude/commands -name "*.md" -type f 2>/dev/null | head -5`
+- Existing commands: !`fd . .claude/commands -e md --type f 2>/dev/null || find .claude/commands -name "*.md" -type f 2>/dev/null`
 
 ## Task
 
