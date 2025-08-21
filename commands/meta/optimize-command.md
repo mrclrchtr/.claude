@@ -20,6 +20,7 @@ Optimize the slash command at $ARGUMENTS following these principles:
 1. **Clarity over brevity** - Remove bloat but keep workflow-critical details
 2. **Preserve robustness** - Keep validation, error messages, and recovery
 3. **Name dependencies** - Keep sub-agent references visible
+4. **Preserve critical references** - Keep critical documentation references
 
 ### Quick Reference
 Command: @.claude/docs/command.md for complete slash command documentation and structure.
@@ -32,11 +33,13 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Think about the purpose of the command and keep this in mind for every decision in the optimization process
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
+   - Identify which (`@`) references provide unique, non-overlapping information
 
 2. **Apply optimizations**:
    - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
+   - Keep documentation references unless truly redundant (remove if redundant)
 
 3. **Model selection**:
    - do not add model to command, inherit from main thread
