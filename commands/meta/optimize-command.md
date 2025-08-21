@@ -44,16 +44,23 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
 
-3. **Apply optimizations**:
+3. **Assess if optimization is needed**:
+   - Evaluate current command effectiveness based on analysis
+   - Check word count against `# Balanced Optimization` in @.claude/docs/command.md
+   - Review clarity and structure
+   - **If command is already optimal**: Report "Command is already well-optimized" and stop
+   - **Only proceed if**: Command has clear redundancy, bloat, or efficiency issues
+
+4. **Apply optimizations**:
    - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
    - Keep documentation references unless you can cite specific overlapping content from your analysis
 
-4. **Model selection**:
+5. **Model selection**:
    - do not add model to command, inherit from main thread
 
-5. **Sub-agent references**:
+6. **Sub-agent references**:
    - Use sub-agent references if applicable.
    - Request specific subagents by mentioning them:
      ```
@@ -62,7 +69,7 @@ Context: @.claude/docs/context.md for comprehensive git commands.
      ```
    - See available agents in @.claude/agents directory.
 
-6. **Bash command handling**:
+7. **Bash command handling**:
    - Test and optimize each bash command that the command executes
    - Use `@.claude/docs/context.md` as reference for context gathering patterns
    - Apply context.md principles:
@@ -73,13 +80,13 @@ Context: @.claude/docs/context.md for comprehensive git commands.
      * Prefer machine-readable formats (--porcelain) over human-readable
      * **Avoid combined/piped commands** - Use simple, atomic operations (Claude Code approval issues)
 
-7. **Script handling**:
+8. **Script handling**:
    - Check script contents
    - Keep initialization scripts that create templates
    - Preserve complex logic in scripts
    - Create scripts if applicable
 
-8. **Error patterns to preserve**:
+9. **Error patterns to preserve**:
    ```markdown
    # Keep specific error messages
    If missing, show error: "Error: File not found at path" and exit
@@ -88,15 +95,14 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    If fails: "Error: [summary]. Try: npm cache clean --force"
    ```
 
-9. **Reference analysis requirement**:
+10. **Reference analysis requirement**:
    - **You MUST use Read tool on each @ reference before optimization**
    - Document each reference's unique contribution
    - Only remove if you can quote the redundant sections
    - Default to keeping references when unsure
 
 ### Quality Metrics
-- Simple commands: <100 words total
-- Complex commands: <300 words total
+- Word count based on `# Balanced Optimization` in @.claude/docs/command.md
 - Bash calls: Maximum 3-4 unless complex analysis
 - Preserve all critical error handling
 

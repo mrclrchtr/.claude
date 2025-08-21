@@ -126,7 +126,7 @@ Analyze $ARGUMENTS following these steps:
 2. Apply patterns while preserving validation
 3. Output results + metrics
 
-# META/TEACHING COMMAND (optimize, guide, ~350-500 words)
+# META/TEACHING COMMAND (optimize, guide, ~350-750 words)
 ## Context
 - Target: @$ARGUMENTS
 - References: @docs/patterns.md @docs/context.md
@@ -198,7 +198,7 @@ These patterns must survive optimization:
 - MUST preserve multiple examples showing before/after
 - MUST retain "Think about the purpose" reflection prompts
 - MUST include error pattern examples with recovery
-- Allow ~350-500 words for instructional completeness
+- Allow ~350-750 words for instructional completeness
 ```
 
 ### Error Recovery Examples
