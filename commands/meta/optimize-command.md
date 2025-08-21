@@ -31,7 +31,9 @@ Context: @.claude/docs/context.md for comprehensive git commands.
 
 1. **Analyze current command**:
    - Think about the purpose of the command and keep this in mind for every decision in the optimization process
-   - **REQUIRED**: Read each `@` reference to understand its unique value before removing
+   - **STEP 1**: Use Read tool on each `@` reference in the command
+   - **STEP 2**: Document what each reference provides (scope, purpose, unique content)
+   - **STEP 3**: Only after reading ALL references, identify true redundancies
    - Review context gathering (combine bash commands, remove duplicates)
    - Evaluate task clarity and word count
 
@@ -39,7 +41,7 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Use glob patterns: `src/components/*.js` instead of listing files
    - Remove politeness: "Analyze" not "Please analyze"
    - Preserve error handling and user guidance
-   - Keep all documentation references unless content analysis proves true redundancy
+   - Keep documentation references unless you can cite specific overlapping content from your analysis
 
 3. **Model selection**:
    - do not add model to command, inherit from main thread
@@ -72,10 +74,11 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    If fails: "Error: [summary]. Try: npm cache clean --force"
    ```
 
-8. **Reference analysis principle**:
-   - Read each `@` reference to understand its scope and unique contribution
-   - References with similar names may serve different purposes
-   - Only remove after content analysis proves true redundancy
+8. **Reference analysis requirement**:
+   - **You MUST use Read tool on each @ reference before optimization**
+   - Document each reference's unique contribution
+   - Only remove if you can quote the redundant sections
+   - Default to keeping references when unsure
 
 ### Quality Metrics
 - Simple commands: <100 words total
@@ -91,5 +94,6 @@ Provide optimized command with:
 3. Clear, direct task description and sub-agent usage, if applicable
 4. Preserved error handling
 5. Report: improvements made, elements preserved, word count change
+6. **Reference analysis**: List each @ reference examined and why it was kept/removed
 
 Ultrathink!
