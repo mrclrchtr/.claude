@@ -63,8 +63,15 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - See available agents in @.claude/agents directory.
 
 6. **Bash command handling**:
-   - test and optimize each bash command, that the command executes
-   - Use `docs/context.md` as reference for context gathering (if applicable)
+   - Test and optimize each bash command that the command executes
+   - Use `@.claude/docs/context.md` as reference for context gathering patterns
+   - Apply context.md principles:
+     * Use modern tools (fd, rg, eza) for 3-10x faster execution
+     * Always use --no-pager for git commands
+     * Pre-assess scope before full execution (e.g., `git diff --stat` before full diff)
+     * Filter before limiting depth (use excludes/ignore-globs first)
+     * Prefer machine-readable formats (--porcelain) over human-readable
+     * **Avoid combined/piped commands** - Use simple, atomic operations (Claude Code approval issues)
 
 7. **Script handling**:
    - Check script contents

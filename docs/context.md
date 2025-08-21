@@ -11,7 +11,7 @@ Essential commands for efficient project context gathering. Optimized for AI age
 5. **Filter Before Limit**: Use filters/excludes/ignore-globs first; depth limits (--level, --max-depth) only as last resort
 6. **Machine-Readable**: Prefer `--porcelain` and structured formats over human-readable output
 7. **Respect .gitignore**: Use git-aware tools or git ls-files to honor project ignore patterns
-8. **Single Operations**: Avoid complex pipelines in slash commands - use simple, atomic operations
+8. **Single Operations**: Avoid complex pipelines in slash commands - use simple, atomic operations (Claude Code has approval issues with piped/combined commands)
 9. **Fallback Strategy**: Always provide standard tool alternatives when modern tools unavailable
 10. **Context-Aware**: Commands optimized for AI agents gathering project understanding
 
@@ -40,12 +40,12 @@ When adding context to any agent or command, ALWAYS perform this analysis first:
 | Staged changes | `git --no-pager diff --stat --cached`                   | -                                   | statistics  |
 | Unstaged diff  | `git --no-pager diff --stat`                            | -                                   | statistics  |
 | Full diff      | `git --no-pager diff --color=never`                     | -                                   | detailed    |
-| Count Python   | `fd --follow -e py . \| wc -l`                          | `find -L . -name "*.py" \| wc -l`   | `42`        |
+| Count Python   | `fd --follow -e py . --count-only`                      | `find -L . -name "*.py" -type f -exec echo \; | wc -l` | `42`        |
 | Find TODOs     | `rg . -e "TODO" --type py --count`                      | `grep -r "TODO" . --include="*.py"` | `5`         |
 | Tree view      | `eza . --tree --level=2 --git-ignore --follow-symlinks` | `ls -LR`                            | structured  |
-| Recent files   | `eza -l --sort=modified . --follow-symlinks \| head -5` | `ls -Llt \| head -5`                | list        |
+| Recent files   | `eza -l --sort=modified . --follow-symlinks --limit=5`  | `ls -Llt1`                          | list        |
 | CLAUDE.md      | `find -L . -name "CLAUDE.md" -not -path "./.claude/*"`  | -                                   | paths       |
-| All docs       | `git ls-files '*.md' \| grep -v CLAUDE`                 | `find -L . -name "*.md"`            | count       |
+| All docs       | `git ls-files '*.md'`                                   | `find -L . -name "*.md"`            | count       |
 | Commands       | `find -L .claude/commands -name "*.md"`                 | -                                   | list        |
 
 ## Core Commands (Always Available)
@@ -79,8 +79,8 @@ which npm python cargo 2>/dev/null           # Available tools
 
 ```bash
 # File Discovery - respects .gitignore by default
-fd --follow -e py . | wc -l                           # Count Python files
-fd --follow -e js -e ts . | wc -l                     # Count JS/TS files
+fd --follow -e py . --count-only                      # Count Python files
+fd --follow -e js -e ts . --count-only                # Count JS/TS files
 fd --follow . --type d                       # Find directories (check count first)
 
 # Code Analysis  
@@ -92,15 +92,18 @@ rg . -e "pattern" --files-with-matches       # Only show filenames
 
 # Project Structure
 eza . --tree --level=2 --git-ignore --follow-symlinks  # Clean tree view (ALWAYS pre-check size and adapt)
-eza -l --sort=modified . --follow-symlinks | head -5           # Recently modified
+eza -l --sort=modified . --follow-symlinks --limit=5   # Recently modified
 ```
 
 ## Context Patterns for AI
 
 ### Quick Project Scan
 ```bash
-# One-liner project overview
-echo "Branch: $(git branch --show-current), Changes: $(git status --porcelain | wc -l), Python: $(fd --follow -e py . | wc -l), JS: $(fd --follow -e js . | wc -l)"
+# Project overview (use separate commands in slash commands to avoid piping issues)
+git branch --show-current                     # Current branch
+git status --porcelain                        # Changed files
+fd --follow -e py . --count-only             # Python file count
+fd --follow -e js . --count-only             # JS file count
 ```
 
 ### Pre-Commit Context
@@ -114,7 +117,7 @@ git --no-pager log --oneline -3              # Recent history
 ```bash
 rg . -e "TODO|FIXME" --type py --count       # Outstanding work
 rg . -e "def test" --type py --count         # Test coverage indicator
-ps aux | grep -v grep | grep python | wc -l  # Running processes
+pgrep -c python                               # Running Python processes (simpler than ps | grep)
 date +%s                                      # Timestamp for benchmarking
 ```
 
@@ -125,7 +128,7 @@ date +%s                                      # Timestamp for benchmarking
 find -L . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"
 
 # All documentation (excludes tool/IDE dirs and CLAUDE.md) - check count first
-git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)'
+git ls-files --cached --others --exclude-standard '*.md'  # Get all markdown files first
 
 # Clean project structure (excludes common tool directories)
 eza . --tree --all --git-ignore --follow-symlinks --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"
@@ -140,8 +143,8 @@ find -L .claude/templates -name "*.md" -type f 2>/dev/null   # Templates
 find -L .claude/agents -name "*.md" -exec grep -H "^description:" {} \; 2>/dev/null
 
 # Dependency check
-ls package.json pyproject.toml Cargo.toml 2>/dev/null | wc -l
-npm list --depth=0 2>/dev/null | head -3     # Node deps
+ls package.json pyproject.toml Cargo.toml 2>/dev/null  # Check which config files exist
+npm list --depth=0 2>/dev/null                         # Node deps (npm handles output limiting)
 ```
 
 ## Slash Command Integration
@@ -164,13 +167,15 @@ npm list --depth=0 2>/dev/null | head -3     # Node deps
 
 ## Project Context
 - Structure: !`eza . --tree --all --git-ignore --follow-symlinks --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
-- Files: !`echo "py=$(fd --follow -e py . | wc -l) js=$(fd --follow -e js . | wc -l) md=$(fd --follow -e md . | wc -l)"`
+- Python files: !`fd --follow -e py . --count-only`
+- JS files: !`fd --follow -e js . --count-only`
+- MD files: !`fd --follow -e md . --count-only`
 - TODOs: !`rg . -e "TODO|FIXME" --type py --count`
 
 ## Discovery
 - CLAUDE.md: !`find -L . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
-- All Docs: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)' | wc -l`
-- Commands: !`find -L .claude/commands -name "*.md" -type f 2>/dev/null | wc -l`
+- All Docs: !`git ls-files --cached --others --exclude-standard '*.md'`
+- Commands: !`find -L .claude/commands -name "*.md" -type f 2>/dev/null`
 - Agents: !`find -L .claude/agents -name "*.md" -exec grep -H "^description:" {} \; 2>/dev/null`
 ```
 
@@ -179,7 +184,7 @@ npm list --depth=0 2>/dev/null | head -3     # Node deps
 1. **Right-sized commands**: Use appropriate commands for expected output - avoid artificial limits
 2. **Machine-readable**: `--porcelain` over human formats
 3. **Modern tools first**: fd/rg/eza (3-10x faster)
-4. **Combine operations**: Single line, multiple insights
+4. **Simple operations**: Avoid pipes and complex combinations (Claude Code approval issues)
 5. **Respect .gitignore**: Use git ls-files or modern tools
 
 ## Advanced Patterns
@@ -191,20 +196,23 @@ git submodule foreach --recursive --quiet 'git status --porcelain 2>/dev/null | 
 
 ### Security Check
 ```bash
-git diff --cached | grep -iE "(api_key|password|secret)" && echo "⚠️ SECRETS" || echo "✓"
+# Check for secrets in staged changes (use rg for better performance)
+rg --no-filename -iU "(api_key|password|secret)" $(git diff --cached --name-only) 2>/dev/null
 ```
 
 ### Process Monitoring
 ```bash
-ps aux | grep -v grep | grep -E "python|node" | wc -l
-ps -o rss= -p $$ | awk '{print $1/1024 " MB"}'  # Memory usage
+pgrep -c "python|node"                       # Count Python/Node processes (simpler)
+ps -o rss= -p $$                            # Memory usage in KB (avoid awk pipe)
 ```
 
 ### Bash Command Permissions
 ```bash
 # Avoid multi-operation commands in slash commands - use single operations
 wc -lw file.md                    # ✓ Simple word/line count  
-wc -lw file.md | awk '{...}'       # ✗ Requires approval - multiple operations
+wc -lw file.md | awk '{...}'     # ✗ Requires approval - multiple operations
+fd -e py . --count-only          # ✓ Single tool with count flag
+fd -e py . | wc -l               # ✗ Piped command - requires approval
 ```
 
 ### Adaptive Command Patterns
@@ -212,25 +220,25 @@ wc -lw file.md | awk '{...}'       # ✗ Requires approval - multiple operations
 Commands requiring pre-assessment and size-based adaptation. **Always check scope first, filter before limiting depth.**
 
 ```bash
-# Git Diffs - Pre-check: git diff --stat | wc -l
+# Git Diffs - Pre-check: git diff --stat (check line count visually)
 # <20 files: full diff | 20-100: stat + selective | 100+: summary only
 git --no-pager diff --stat --summary    # Always start here
 git --no-pager diff --color=never --unified=5  # Full (small changes only)
 
-# Directory Discovery - Pre-check: fd --follow . --type d | wc -l  
+# Directory Discovery - Pre-check: fd --follow . --type d --count-only
 # <50: all dirs | 50-200: basic excludes | 200+: extensive excludes + depth if needed
 fd --follow . --type d --exclude="node_modules" --exclude="build" --exclude="dist"
 
-# Dependencies - Pre-check: rg . -e "^import" --type py | wc -l
+# Dependencies - Pre-check: rg . -e "^import" --type py --count
 # <50: all imports | 50-200: externals only | 200+: count + key frameworks
 rg . -e "^from [^.]*import" --type py    # External only
 rg . -e "^from (numpy|pandas|requests)" --type py  # Key frameworks
 
-# File Discovery - Pre-check: find -L . -name "*.ext" | wc -l
+# File Discovery - Pre-check: find -L . -name "*.ext" -type f 2>/dev/null | head -1
 # <100: all files | 100-500: basic excludes | 500+: extensive + focus/depth
 find -L . -name "*.md" -not -path "*/node_modules/*" -not -path "*/dist/*"
 
-# Tree Views - Pre-check: fd --follow . | wc -l
+# Tree Views - Pre-check: fd --follow . --count-only
 # <100: all | 100-1000: basic filters | 1000+: extensive filters | 5000+: max filters
 eza . --tree --all --git-ignore --follow-symlinks --ignore-glob="node_modules|dist|build|*.log|__pycache__"
 # Add --level=N only if filtering insufficient
@@ -238,7 +246,8 @@ eza . --tree --all --git-ignore --follow-symlinks --ignore-glob="node_modules|di
 
 ### Dynamic Filtering (when available)
 ```bash
-fd --follow -e py . | fzf --filter="test"     # Filter test files
+fd --follow -e py . --filter="test"          # Direct filtering with fd (if supported)
+rg --files --type py -g "*test*"             # Alternative: use rg with glob pattern
 ```
 
 ---
