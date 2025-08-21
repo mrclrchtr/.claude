@@ -4,17 +4,21 @@ Essential commands for efficient project context gathering. Optimized for AI age
 
 ## Core Principles
 
-1. **Speed & Efficiency**: Always use modern tools (fd, rg, eza) for 3-10x faster execution
+1. **Speed & Efficiency**: Use modern tools (fd, rg, eza) for 3-10x faster execution
 2. **Follow Symlinks**: All commands use symlink-following flags (-L, --follow, --follow-symlinks)
 3. **Right-Sized Commands**: Use commands that match expected output size - avoid artificial limits that can confuse AI
 4. **Pre-Assessment First**: Check scope before full execution for potentially large outputs (diffs, trees, finds, lists)
 5. **Filter Before Limit**: Use filters/excludes/ignore-globs first; depth limits (--level, --max-depth) only as last resort
 6. **Machine-Readable**: Prefer `--porcelain` and structured formats over human-readable output
 7. **Respect .gitignore**: Use git-aware tools or git ls-files to honor project ignore patterns
-8. **Single Operations**: Avoid complex pipelines in slash commands - use simple, atomic operations (Claude Code has approval issues with piped/combined commands)
-9. **Fallback Strategy**: Always provide standard tool alternatives when modern tools unavailable
-10. **No Artificial Limits**: Remove all head/tail/depth limits unless protecting against genuinely unbounded output. Trust semantic filtering (--type, --exclude, --git-ignore) to manage scope. Limits are a last resort, not a default.
-11. **Context-Aware**: Commands optimized for AI agents gathering project understanding
+8. **Smart Pipelines**: Use simple pipes for counting/filtering (`| wc -l`, `| grep pattern`). Avoid deeply nested pipes or complex awk/sed chains in slash commands
+9. **No Artificial Limits**: Remove all head/tail/depth limits unless protecting against genuinely unbounded output. Trust semantic filtering (--type, --exclude, --git-ignore) to manage scope. Limits are a last resort, not a default.
+10. **Context-Aware**: Commands optimized for AI agents gathering project understanding
+
+### Modern Tool Usage
+- Use modern tools directly: `fd -e py .`
+- Simple pipes work fine: `fd -e py . | wc -l`
+- Commands fail gracefully if tools unavailable
 
 ### Limiting Strategy Priority
 1. **Semantic Filtering** - Use tool-native filters (--git-ignore, --exclude, --type)
@@ -192,13 +196,16 @@ pgrep -c "python|node"                       # Count Python/Node processes (simp
 ps -o rss= -p $$                            # Memory usage in KB (avoid awk pipe)
 ```
 
-### Bash Command Permissions
+### Bash Command Patterns
 ```bash
-# Avoid multi-operation commands in slash commands - use single operations
-wc -lw file.md                    # ✓ Simple word/line count  
-wc -lw file.md | awk '{...}'     # ✗ Requires approval - multiple operations
-fd -e py . --count-only          # ✓ Single tool with count flag
-fd -e py . | wc -l               # ✗ Piped command - requires approval
+# Simple pipes work fine for counting/filtering
+fd -e py . | wc -l               # ✓ Count Python files
+git diff --name-only | wc -l     # ✓ Count changed files
+rg "TODO" | wc -l                # ✓ Count matches
+
+# Avoid overly complex chains
+find . | xargs grep | awk | sed  # ✗ Too complex for slash commands
+wc -lw file.md | awk '{...}'     # ✗ Complex awk processing
 ```
 
 ### Adaptive Command Patterns

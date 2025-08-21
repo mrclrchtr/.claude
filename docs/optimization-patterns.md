@@ -31,7 +31,7 @@ When optimizing commands, ALWAYS start with: **"What is the core purpose of this
 | Model     | haiku (simple) → sonnet (complex) → opus (critical) | opus for everything       |
 | Tools     | 3-5 specific tools                                  | All tools or unrestricted |
 | Context   | Counts & stats                                      | Full file contents        |
-| Bash      | Filter first, count when large, `head` as last resort | Unbounded output          |
+| Bash      | Simple pipes for counting (`| wc -l`), filter first | Unbounded output          |
 | Files     | `@specific/file.js`                                 | `@entire/directory/`      |
 
 ### Bash Command Patterns

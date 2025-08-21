@@ -74,14 +74,15 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - Use `@.claude/docs/context.md` as reference for context gathering patterns
    - Apply context.md principles:
      * Use modern tools (fd, rg, eza) for 3-10x faster execution
+     * Replace find→fd, grep→rg, ls→eza
      * Always use --no-pager for git commands
      * Pre-assess scope before full execution (e.g., `git diff --stat` before full diff)
      * Filter before limiting depth (use excludes/ignore-globs first)
      * Prefer machine-readable formats (--porcelain) over human-readable
-     * **Avoid combined/piped commands** - Use simple, atomic operations (Claude Code approval issues)
+     * **Use simple pipes** for counting/filtering (`| wc -l`, `| grep pattern`)
      * **Remove artificial limits by default** - Delete head/tail/depth limits unless genuinely needed
        - Remove: `git log -5` → `git log --oneline` (if checking full history)
-       - Remove: `rg "TODO" | head -10` → `rg "TODO" --count` (already filtered)
+       - Remove: `rg "TODO" | head -10` → `rg "TODO" | wc -l` (simple pipe for counting)
        - Keep: Large unbounded operations that need sampling
 
 8. **Script handling**:
