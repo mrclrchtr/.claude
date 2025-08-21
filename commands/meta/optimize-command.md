@@ -1,18 +1,17 @@
 ---
 argument-hint: [command-file-path]
 description: Optimize slash command for efficiency
-model: sonnet
-allowed-tools: Read,Edit,Bash(find:*,wc:*,grep:*),Grep
+allowed-tools: Read, Edit, Grep, Bash(find:*), Bash(wc:*), Bash(grep:*), Bash(awk:*), Bash(echo:*)
 ---
 
 # Optimize Command
 
 ## Context
 - Command: @$ARGUMENTS
-- Size: !`wc -lw < $ARGUMENTS | awk '{print $1" lines, "$2" words"}'`
-- Model: !`grep "^model:" $ARGUMENTS || echo "inherited"`
-- Tools: !`grep "^allowed-tools:" $ARGUMENTS || echo "unrestricted"`
-- Bash calls: !`grep -c "^\!\\\`" $ARGUMENTS || echo "0"`
+- Size: !`wc -lw "$ARGUMENTS" 2>/dev/null || echo "no file"`
+- Model: !`grep "^model:" "$ARGUMENTS" || echo "inherited"`
+- Tools: !`grep "^allowed-tools:" "$ARGUMENTS" || echo "unrestricted"`
+- Bash calls: !`grep -c "^\!\\\`" "$ARGUMENTS" || echo "0"`
 - Patterns: @.claude/docs/optimization-patterns.md
 
 ## Optimization Targets
@@ -24,13 +23,13 @@ allowed-tools: Read,Edit,Bash(find:*,wc:*,grep:*),Grep
 - Preserve error handling and validation
 
 ### Performance
-- Apply optimization-patterns.md rules
+- Apply `optimization-patterns.md` rules
 - Model: inherit unless complexity requires specific
 - Tools: restrict to minimum needed (3-5 ideal)
 - Bash: use patterns from @.claude/docs/context.md
 
 ### Sub-agents (if applicable)
-- Check @.claude/agents/ for available specialists
+- Check .claude/agents/ for available specialists
 - Reference by clear task mention, not explicit tool call
 
 ### Quality Checks
