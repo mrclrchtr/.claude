@@ -1,4 +1,4 @@
-# cc-base: Enterprise Claude Code Framework
+# .claude
 
 A Claude Code customization framework for milestone-driven project management, memory optimization, session tracking, and specialized AI agents.
 
@@ -6,14 +6,14 @@ A Claude Code customization framework for milestone-driven project management, m
 
 ```bash
 # Method 1: Quick install (auto-detects git repo)
-curl -fsSL https://raw.githubusercontent.com/mrclrchtr/cc-base/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
 
 # Method 2: Git submodule (for existing repos)
-git submodule add https://github.com/mrclrchtr/cc-base.git cc-base
+git submodule add https://github.com/mrclrchtr/.claude.git .claude
 
 # Method 3: Direct clone
-git clone https://github.com/mrclrchtr/cc-base.git
-cp -r cc-base/.claude your-project/
+git clone https://github.com/mrclrchtr/.claude.git
+cp -r .claude/.claude your-project/
 
 # Initialize milestone structure
 ./.claude/scripts/create-milestone-structure.sh
@@ -211,7 +211,7 @@ Status orchestration with:
 
 ## 🎨 Key Features & Benefits
 
-| Feature | Standard Claude Code | cc-base Framework |
+| Feature | Standard Claude Code | .claude Framework |
 |---------|---------------------|-------------------|
 | **AI Agents** | Built-in generic | 3 specialized with proactive activation |
 | **Commands** | ~10 basic | 25+ with sophisticated workflows |

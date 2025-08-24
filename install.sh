@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# cc-base Installation Script
+# .claude Installation Script
 # A comprehensive Claude Code customization framework installer
 # Handles git repository detection and provides multiple installation methods
 
@@ -14,13 +14,13 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Repository information
-REPO_URL="https://github.com/mrclrchtr/cc-base.git"
-REPO_NAME="cc-base"
+REPO_URL="https://github.com/mrclrchtr/.claude.git"
+REPO_NAME=".claude"
 
 # Utility functions
 print_header() {
     echo -e "${BLUE}================================${NC}"
-    echo -e "${BLUE}  cc-base Installation Script   ${NC}"
+    echo -e "${BLUE}  .claude Installation Script   ${NC}"
     echo -e "${BLUE}================================${NC}"
     echo ""
 }
@@ -78,7 +78,7 @@ get_current_dir_name() {
 install_direct_clone() {
     local target_dir="$1"
     
-    print_info "Cloning cc-base repository to $target_dir..."
+    print_info "Cloning .claude repository to $target_dir..."
     
     if [ -d "$target_dir" ]; then
         print_error "Directory '$target_dir' already exists."
@@ -122,7 +122,7 @@ install_direct_clone() {
 install_as_submodule() {
     local submodule_path="$1"
     
-    print_info "Adding cc-base as git submodule at $submodule_path..."
+    print_info "Adding .claude as git submodule at $submodule_path..."
     
     # Check if submodule already exists
     if git config --file .gitmodules --get-regexp path | grep -q "$submodule_path"; then
@@ -147,7 +147,7 @@ install_as_submodule() {
 install_with_symlinks() {
     local install_dir="$1"
     
-    print_info "Installing cc-base to $install_dir with symlinks..."
+    print_info "Installing .claude to $install_dir with symlinks..."
     
     # Create install directory if it doesn't exist
     mkdir -p "$(dirname "$install_dir")"
@@ -232,7 +232,7 @@ show_post_install_instructions() {
     local install_path="$2"
     
     echo ""
-    print_success "cc-base installation completed!"
+    print_success ".claude installation completed!"
     echo ""
     print_info "Installation Summary:"
     echo "  Method: $install_method"
@@ -271,13 +271,13 @@ show_installation_menu() {
         echo "Choose an installation method:"
         echo ""
         echo "1) Add as git submodule (recommended for git repos)"
-        echo "   - Adds cc-base as a submodule at './$REPO_NAME'"
-        echo "   - Keeps cc-base updatable via git"
+        echo "   - Adds .claude as a submodule at './$REPO_NAME'"
+        echo "   - Keeps .claude updatable via git"
         echo "   - Maintains separation from your codebase"
         echo ""
         echo "2) Install to separate directory with symlinks"
-        echo "   - Installs to ~/.config/cc-base"
-        echo "   - Creates symlink .claude -> ~/.config/cc-base/.claude"
+        echo "   - Installs to ~/.config/.claude"
+        echo "   - Creates symlink .claude -> ~/.config/.claude/.claude"
         echo "   - Shared installation across projects"
         echo ""
         echo "3) Copy .claude directory only"
@@ -286,7 +286,7 @@ show_installation_menu() {
         echo "   - Fully integrated with your project"
         echo ""
         echo "4) Install adjacent to current repository"
-        echo "   - Clones cc-base to ../$REPO_NAME"
+        echo "   - Clones .claude to ../$REPO_NAME"
         echo "   - Symlinks .claude directory"
         echo "   - Keeps repositories separate"
         echo ""
@@ -298,13 +298,13 @@ show_installation_menu() {
                 show_post_install_instructions "Git Submodule" "./$REPO_NAME"
                 ;;
             2)
-                local config_dir="$HOME/.config/cc-base"
+                local config_dir="$HOME/.config/.claude"
                 install_with_symlinks "$config_dir"
                 show_post_install_instructions "Separate Directory with Symlinks" "$config_dir"
                 ;;
             3)
                 # First clone to temp directory
-                local temp_dir="/tmp/cc-base-temp-$$"
+                local temp_dir="/tmp/.claude-temp-$$"
                 git clone "$REPO_URL" "$temp_dir"
                 install_copy_claude "$temp_dir"
                 rm -rf "$temp_dir"
@@ -333,7 +333,7 @@ show_installation_menu() {
         echo "Choose an installation method:"
         echo ""
         echo "1) Clone to current directory (recommended)"
-        echo "   - Clones cc-base repository to ./$REPO_NAME"
+        echo "   - Clones .claude repository to ./$REPO_NAME"
         echo "   - Full git tracking and easy updates"
         echo ""
         echo "2) Clone and copy .claude directory only"
@@ -341,8 +341,8 @@ show_installation_menu() {
         echo "   - No git tracking, manual updates required"
         echo ""
         echo "3) Install to separate directory with symlinks"
-        echo "   - Installs to ~/.config/cc-base"
-        echo "   - Creates symlink .claude -> ~/.config/cc-base/.claude"
+        echo "   - Installs to ~/.config/.claude"
+        echo "   - Creates symlink .claude -> ~/.config/.claude/.claude"
         echo ""
         read -p "Please choose installation method (1-3): " method
         
@@ -353,14 +353,14 @@ show_installation_menu() {
                 ;;
             2)
                 # Clone to temp directory and copy
-                local temp_dir="/tmp/cc-base-temp-$$"
+                local temp_dir="/tmp/.claude-temp-$$"
                 git clone "$REPO_URL" "$temp_dir"
                 install_copy_claude "$temp_dir"
                 rm -rf "$temp_dir"
                 show_post_install_instructions "Copy .claude Directory" "."
                 ;;
             3)
-                local config_dir="$HOME/.config/cc-base"
+                local config_dir="$HOME/.config/.claude"
                 install_with_symlinks "$config_dir"
                 show_post_install_instructions "Separate Directory with Symlinks" "$config_dir"
                 ;;
