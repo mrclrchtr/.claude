@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# .claude Installation Script
-# A comprehensive Claude Code customization framework installer
-# Handles git repository detection and provides multiple installation methods
+# Claude Code Customization Framework Installer
+# Installs project-specific customizations and tools for Claude Code
+# Note: This does NOT modify ~/.claude (Claude Code's global config directory)
 
 set -e  # Exit on any error
 
@@ -15,13 +15,16 @@ NC='\033[0m' # No Color
 
 # Repository information
 REPO_URL="https://github.com/mrclrchtr/.claude.git"
-REPO_NAME=".claude"
+FRAMEWORK_NAME="claude-framework"
+PROJECT_DIR_NAME=".claude"
 
 # Utility functions
 print_header() {
-    echo -e "${BLUE}================================${NC}"
-    echo -e "${BLUE}  .claude Installation Script   ${NC}"
-    echo -e "${BLUE}================================${NC}"
+    echo -e "${BLUE}===========================================${NC}"
+    echo -e "${BLUE}  Claude Code Customization Framework    ${NC}"
+    echo -e "${BLUE}===========================================${NC}"
+    echo -e "${YELLOW}Note: This installs project customizations${NC}"
+    echo -e "${YELLOW}It does NOT modify ~/.claude (Claude Code config)${NC}"
     echo ""
 }
 
@@ -78,7 +81,7 @@ get_current_dir_name() {
 install_direct_clone() {
     local target_dir="$1"
     
-    print_info "Cloning .claude repository to $target_dir..."
+    print_info "Cloning customization framework to $target_dir..."
     
     if [ -d "$target_dir" ]; then
         print_error "Directory '$target_dir' already exists."
@@ -112,7 +115,7 @@ install_direct_clone() {
     fi
     
     git clone "$REPO_URL" "$target_dir"
-    print_success "Repository cloned successfully"
+    print_success "Framework cloned successfully"
     
     # Set up required directories
     setup_directories "$target_dir"
@@ -122,7 +125,7 @@ install_direct_clone() {
 install_as_submodule() {
     local submodule_path="$1"
     
-    print_info "Adding .claude as git submodule at $submodule_path..."
+    print_info "Adding customization framework as git submodule at $submodule_path..."
     
     # Check if submodule already exists
     if git config --file .gitmodules --get-regexp path | grep -q "$submodule_path"; then
@@ -143,46 +146,14 @@ install_as_submodule() {
     setup_directories "."
 }
 
-# Install to separate directory with symlinks
-install_with_symlinks() {
-    local install_dir="$1"
-    
-    print_info "Installing .claude to $install_dir with symlinks..."
-    
-    # Create install directory if it doesn't exist
-    mkdir -p "$(dirname "$install_dir")"
-    
-    # Clone to install directory
-    if [ -d "$install_dir" ]; then
-        print_info "Updating existing installation..."
-        cd "$install_dir"
-        git pull origin main
-        cd - >/dev/null
-    else
-        git clone "$REPO_URL" "$install_dir"
-    fi
-    
-    # Create symlink to .claude directory
-    if [ -L .claude ]; then
-        print_warning "Removing existing .claude symlink"
-        rm .claude
-    elif [ -d .claude ]; then
-        print_warning "Backing up existing .claude directory to .claude.backup"
-        mv .claude .claude.backup
-    fi
-    
-    ln -s "$install_dir/.claude" .claude
-    print_success "Symlink created: .claude -> $install_dir/.claude"
-    
-    # Set up required directories
-    setup_directories "."
-}
+# This function has been removed - symlink installation was confusing
+# and interfered with Claude Code's ~/.claude directory
 
-# Copy .claude directory to current project
-install_copy_claude() {
+# Copy framework to current project
+install_copy_framework() {
     local source_dir="$1"
     
-    print_info "Copying .claude directory from $source_dir..."
+    print_info "Copying customization framework from $source_dir..."
     
     # Backup existing .claude if it exists
     if [ -d .claude ]; then
@@ -190,40 +161,54 @@ install_copy_claude() {
         mv .claude .claude.backup
     fi
     
-    # Copy .claude directory
-    cp -r "$source_dir/.claude" .
-    print_success ".claude directory copied successfully"
+    # Create .claude directory and copy framework components
+    mkdir -p .claude
+    cp -r "$source_dir/agents" .claude/
+    cp -r "$source_dir/commands" .claude/
+    cp -r "$source_dir/docs" .claude/
+    cp -r "$source_dir/scripts" .claude/
+    cp -r "$source_dir/templates" .claude/
+    
+    print_success "Framework copied successfully"
     
     # Set up required directories
     setup_directories "."
     
     print_warning "Note: This installation method won't receive automatic updates."
-    print_info "To update, you'll need to manually copy the .claude directory again."
+    print_info "To update, you'll need to manually copy the framework again."
 }
 
 # Set up required directories and configurations
 setup_directories() {
     local base_dir="$1"
     
-    print_info "Setting up required directories..."
+    print_info "Setting up project directories..."
     
-    # Create sessions directory if it doesn't exist
-    mkdir -p "$base_dir/sessions"
-    
-    # Create .claude directory if copying from external source
-    if [ "$base_dir" != "." ] && [ ! -d "$base_dir/.claude" ]; then
-        mkdir -p "$base_dir/.claude"
+    # Create sessions directory in the project root
+    if [ "$base_dir" = "." ]; then
+        mkdir -p "sessions"
     fi
     
     # Initialize milestone structure if script exists
-    if [ -f "$base_dir/.claude/scripts/create-milestone-structure.sh" ]; then
-        print_info "Initializing milestone structure..."
-        cd "$base_dir"
-        bash .claude/scripts/create-milestone-structure.sh 2>/dev/null || true
-        cd - >/dev/null
+    local claude_dir
+    if [ "$base_dir" = "." ]; then
+        claude_dir=".claude"
+    else
+        claude_dir="$base_dir/.claude"
     fi
     
-    print_success "Directory setup completed"
+    if [ -f "$claude_dir/scripts/create-milestone-structure.sh" ]; then
+        print_info "Initializing milestone structure..."
+        if [ "$base_dir" != "." ]; then
+            cd "$base_dir"
+        fi
+        bash "$claude_dir/scripts/create-milestone-structure.sh" 2>/dev/null || true
+        if [ "$base_dir" != "." ]; then
+            cd - >/dev/null
+        fi
+    fi
+    
+    print_success "Project setup completed"
 }
 
 # Show post-installation instructions
@@ -232,30 +217,32 @@ show_post_install_instructions() {
     local install_path="$2"
     
     echo ""
-    print_success ".claude installation completed!"
+    print_success "Claude Code customization framework installed!"
     echo ""
     print_info "Installation Summary:"
     echo "  Method: $install_method"
-    echo "  Path: $install_path"
+    echo "  Framework Path: $install_path"
+    echo "  Project Configuration: .claude/"
     echo ""
     print_info "Next Steps:"
     echo "  1. Start Claude Code in this directory"
     echo "  2. Create project-specific CLAUDE.md:"
-    echo "     /meta/create-memory ."
+    echo "     /meta:create-memory ."
     echo "  3. Begin with implementation planning:"
     echo "     /plan your-vision.md your-requirements.md"
     echo "  4. Start milestone-driven development:"
-    echo "     /milestone/create M1"
-    echo "     /milestone/next M1"
+    echo "     /milestone:create M1"
+    echo "     /milestone:next M1"
     echo ""
-    print_info "Available Commands:"
-    echo "  Planning: /plan, /milestone/create, /milestone/next"
-    echo "  Session: /session/start, /session/update, /session/end"
-    echo "  Memory: /meta/create-memory, /meta/optimize-memory"
-    echo "  Quality: /uncommitted/review, /docs/audit"
-    echo "  Commit: /commit/changed, /commit/main"
+    print_info "Available Custom Commands:"
+    echo "  Planning: /plan, /milestone:create, /milestone:next"
+    echo "  Session: /session:start, /session:update, /session:end"
+    echo "  Memory: /meta:create-memory, /meta:optimize-memory"
+    echo "  Quality: /uncommitted:review, /docs:audit"
+    echo "  Commit: /commit:changed, /commit:main"
     echo ""
     print_info "Documentation: Check .claude/docs/ for guides and templates"
+    print_warning "Note: Your global Claude Code config remains at ~/.claude"
 }
 
 # Main installation menu
@@ -267,61 +254,33 @@ show_installation_menu() {
     echo ""
     
     if check_git_repo; then
-        print_warning "You are currently inside a git repository."
+        print_info "You are currently inside a git repository."
         echo "Choose an installation method:"
         echo ""
-        echo "1) Add as git submodule (recommended for git repos)"
-        echo "   - Adds .claude as a submodule at './$REPO_NAME'"
-        echo "   - Keeps .claude updatable via git"
+        echo "1) Add as git submodule (recommended)"
+        echo "   - Adds framework as a submodule at './$PROJECT_DIR_NAME'"
+        echo "   - Keeps framework updatable via git"
         echo "   - Maintains separation from your codebase"
         echo ""
-        echo "2) Install to separate directory with symlinks"
-        echo "   - Installs to ~/.config/.claude"
-        echo "   - Creates symlink .claude -> ~/.config/.claude/.claude"
-        echo "   - Shared installation across projects"
-        echo ""
-        echo "3) Copy .claude directory only"
+        echo "2) Copy framework directory only"
         echo "   - Copies just the .claude directory to current project"
         echo "   - No git tracking, manual updates required"
         echo "   - Fully integrated with your project"
         echo ""
-        echo "4) Install adjacent to current repository"
-        echo "   - Clones .claude to ../$REPO_NAME"
-        echo "   - Symlinks .claude directory"
-        echo "   - Keeps repositories separate"
-        echo ""
-        read -p "Please choose installation method (1-4): " method
+        read -p "Please choose installation method (1-2): " method
         
         case $method in
             1)
-                install_as_submodule "$REPO_NAME"
-                show_post_install_instructions "Git Submodule" "./$REPO_NAME"
+                install_as_submodule "$PROJECT_DIR_NAME"
+                show_post_install_instructions "Git Submodule" "./$PROJECT_DIR_NAME"
                 ;;
             2)
-                local config_dir="$HOME/.config/.claude"
-                install_with_symlinks "$config_dir"
-                show_post_install_instructions "Separate Directory with Symlinks" "$config_dir"
-                ;;
-            3)
                 # First clone to temp directory
                 local temp_dir="/tmp/.claude-temp-$$"
                 git clone "$REPO_URL" "$temp_dir"
-                install_copy_claude "$temp_dir"
+                install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
-                show_post_install_instructions "Copy .claude Directory" "."
-                ;;
-            4)
-                local adjacent_dir="../$REPO_NAME"
-                install_direct_clone "$adjacent_dir"
-                # Create symlink to .claude
-                if [ -L .claude ]; then
-                    rm .claude
-                elif [ -d .claude ]; then
-                    mv .claude .claude.backup
-                fi
-                ln -s "$adjacent_dir/.claude" .claude
-                print_success "Symlink created: .claude -> $adjacent_dir/.claude"
-                show_post_install_instructions "Adjacent Installation with Symlink" "$adjacent_dir"
+                show_post_install_instructions "Copy Framework Directory" "."
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
@@ -332,37 +291,28 @@ show_installation_menu() {
         print_info "You are not in a git repository."
         echo "Choose an installation method:"
         echo ""
-        echo "1) Clone to current directory (recommended)"
-        echo "   - Clones .claude repository to ./$REPO_NAME"
+        echo "1) Clone framework to current directory (recommended)"
+        echo "   - Clones framework repository to ./$PROJECT_DIR_NAME"
         echo "   - Full git tracking and easy updates"
         echo ""
-        echo "2) Clone and copy .claude directory only"
+        echo "2) Copy framework directory only"
         echo "   - Copies just the .claude directory to current location"
         echo "   - No git tracking, manual updates required"
         echo ""
-        echo "3) Install to separate directory with symlinks"
-        echo "   - Installs to ~/.config/.claude"
-        echo "   - Creates symlink .claude -> ~/.config/.claude/.claude"
-        echo ""
-        read -p "Please choose installation method (1-3): " method
+        read -p "Please choose installation method (1-2): " method
         
         case $method in
             1)
-                install_direct_clone "$REPO_NAME"
-                show_post_install_instructions "Direct Clone" "./$REPO_NAME"
+                install_direct_clone "$PROJECT_DIR_NAME"
+                show_post_install_instructions "Direct Clone" "./$PROJECT_DIR_NAME"
                 ;;
             2)
                 # Clone to temp directory and copy
                 local temp_dir="/tmp/.claude-temp-$$"
                 git clone "$REPO_URL" "$temp_dir"
-                install_copy_claude "$temp_dir"
+                install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
-                show_post_install_instructions "Copy .claude Directory" "."
-                ;;
-            3)
-                local config_dir="$HOME/.config/.claude"
-                install_with_symlinks "$config_dir"
-                show_post_install_instructions "Separate Directory with Symlinks" "$config_dir"
+                show_post_install_instructions "Copy Framework Directory" "."
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."

@@ -2,24 +2,32 @@
 
 A Claude Code customization framework for milestone-driven project management, memory optimization, session tracking, and specialized AI agents.
 
+> **Note**: This framework installs project-specific customizations and does NOT modify Claude Code's global configuration directory (`~/.claude`).
+
 ## 🚀 Quick Start
 
 ```bash
-# Method 1: Quick install (auto-detects git repo)
+# Quick install (auto-detects git repo and shows appropriate options)
 curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
 
-# Method 2: Git submodule (for existing repos)
-git submodule add https://github.com/mrclrchtr/.claude.git .claude
+# Or download and run locally
+wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
+bash install.sh
+```
 
-# Method 3: Direct clone
-git clone https://github.com/mrclrchtr/.claude.git
-cp -r .claude/.claude your-project/
+### Installation Options
 
-# Initialize milestone structure
-./.claude/scripts/create-milestone-structure.sh
+**For Git Repositories:**
+- **Submodule** (recommended): Keeps framework updatable via git
+- **Copy**: Integrates framework directly into your project
 
-# Start Claude Code and create project memory
-/meta:create-memory
+**For Non-Git Directories:**
+- **Clone**: Clones framework directly into `.claude/` directory with full git tracking
+- **Copy**: Creates `.claude/` directory with framework files only (no git)
+
+```bash
+# After installation, start Claude Code and create project memory
+/meta:create-memory .
 ```
 
 ## 🎯 Core Components
@@ -140,10 +148,18 @@ Status orchestration with:
 ```
 
 #### Installation Methods
-- **Git Submodule**: Maintains separation, git-tracked updates
-- **Symlink**: Shared installation across projects
-- **Direct Copy**: Full integration, manual updates
-- **Adjacent**: Parallel repository with symlinks
+- **Git Submodule**: Maintains separation, git-tracked updates, recommended for git repos
+- **Framework Copy**: Full integration into project, manual updates required
+- **Direct Clone**: Clones framework directly into `.claude/` directory, git-tracked updates
+
+### Important: Framework vs Claude Code Directories
+
+| Directory   | Purpose                                              | Managed By     |
+|-------------|------------------------------------------------------|----------------|
+| `~/.claude` | Claude Code global configuration, settings, projects | Claude Code    |
+| `.claude/`  | Project-specific customization framework             | This framework |
+
+> ⚠️ **Never modify `~/.claude`** - This is Claude Code's global configuration directory and should not be touched by this framework.
 
 ## 🔄 Core Workflows
 
@@ -211,18 +227,18 @@ Status orchestration with:
 
 ## 🎨 Key Features & Benefits
 
-| Feature | Standard Claude Code | .claude Framework |
-|---------|---------------------|-------------------|
-| **AI Agents** | Built-in generic | 3 specialized with proactive activation |
-| **Commands** | ~10 basic | 25+ with sophisticated workflows |
-| **Memory Mgmt** | Manual CLAUDE.md | 6 optimization commands |
-| **Planning** | Ad-hoc | Structured milestone system |
-| **Session Tracking** | None | Complete lifecycle management |
-| **Quality Gates** | Basic | Comprehensive review pipeline |
-| **Documentation** | Manual | Automated audit & sync |
-| **Parallel Execution** | Manual coordination | Built-in orchestration |
-| **Risk Management** | None | Integrated matrices |
-| **Technical Debt** | Untracked | Registry with priorities |
+| Feature                | Standard Claude Code | .claude Framework                       |
+|------------------------|----------------------|-----------------------------------------|
+| **AI Agents**          | Built-in generic     | 3 specialized with proactive activation |
+| **Commands**           | ~10 basic            | 25+ with sophisticated workflows        |
+| **Memory Mgmt**        | Manual CLAUDE.md     | 6 optimization commands                 |
+| **Planning**           | Ad-hoc               | Structured milestone system             |
+| **Session Tracking**   | None                 | Complete lifecycle management           |
+| **Quality Gates**      | Basic                | Comprehensive review pipeline           |
+| **Documentation**      | Manual               | Automated audit & sync                  |
+| **Parallel Execution** | Manual coordination  | Built-in orchestration                  |
+| **Risk Management**    | None                 | Integrated matrices                     |
+| **Technical Debt**     | Untracked            | Registry with priorities                |
 
 ## 🏗️ Use Cases
 
