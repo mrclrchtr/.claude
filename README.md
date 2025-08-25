@@ -8,7 +8,7 @@ A Claude Code customization framework for milestone-driven project management, m
 
 ```bash
 # Quick install (auto-detects git repo and shows appropriate options)
-curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh)
 
 # Or download and run locally
 wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
