@@ -253,7 +253,6 @@ install_global_git() {
 !/templates/
 !/hooks/
 !/.gitignore
-!README.md
 
 # Ignore common Claude Code files/directories
 .claude-sessions/
@@ -286,7 +285,7 @@ EOF
     
     # Use modern sparse-checkout if available, fallback to legacy method
     if git sparse-checkout init --cone 2>/dev/null; then
-        git sparse-checkout set agents commands docs scripts templates hooks .gitignore 2>/dev/null || {
+        git sparse-checkout set agents commands docs scripts templates hooks 2>/dev/null || {
             # Fallback to manual sparse-checkout file
             echo "agents/" > .git/info/sparse-checkout
             echo "commands/" >> .git/info/sparse-checkout
@@ -294,7 +293,6 @@ EOF
             echo "scripts/" >> .git/info/sparse-checkout
             echo "templates/" >> .git/info/sparse-checkout
             echo "hooks/" >> .git/info/sparse-checkout
-            echo ".gitignore" >> .git/info/sparse-checkout
         }
     else
         # Fallback for older git versions
@@ -304,7 +302,6 @@ EOF
         echo "scripts/" >> .git/info/sparse-checkout
         echo "templates/" >> .git/info/sparse-checkout
         echo "hooks/" >> .git/info/sparse-checkout
-        echo ".gitignore" >> .git/info/sparse-checkout
     fi
     
     # Fetch and pull framework files
