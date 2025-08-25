@@ -392,9 +392,35 @@ EOF
     fi
 }
 
+# Check if current directory is already a .claude repository
+check_current_repo() {
+    if [ -d ".git" ]; then
+        # Get the remote URL for origin
+        local origin_url=$(git remote get-url origin 2>/dev/null || echo "")
+        local ssh_url="git@github.com:mrclrchtr/.claude.git"
+        local https_url="https://github.com/mrclrchtr/.claude.git"
+        
+        if [[ "$origin_url" == "$ssh_url" ]] || [[ "$origin_url" == "$https_url" ]]; then
+            return 0  # This is a .claude repository
+        fi
+    fi
+    return 1  # Not a .claude repository
+}
+
 # Install framework for contributor development
 install_contributor_setup() {
     print_info "Setting up framework for contributor development..."
+    
+    # Check if current directory is already the .claude repository
+    if check_current_repo; then
+        print_success "Detected existing .claude repository in current directory!"
+        print_info "Skipping clone step and setting up symlinks directly..."
+        
+        local abs_target_dir=$(pwd)
+        setup_contributor_symlinks "$abs_target_dir"
+        show_contributor_install_instructions "$abs_target_dir"
+        return 0
+    fi
     
     # Ask where to clone the framework
     echo "Where would you like to clone the framework for development?"
@@ -454,6 +480,14 @@ install_contributor_setup() {
     # Get absolute path for symlinks
     local abs_target_dir=$(cd "$target_dir" && pwd)
     
+    setup_contributor_symlinks "$abs_target_dir"
+    show_contributor_install_instructions "$abs_target_dir"
+}
+
+# Set up symlinks for contributor development
+setup_contributor_symlinks() {
+    local abs_target_dir="$1"
+    
     # Create ~/.claude directory if it doesn't exist
     local claude_dir="$HOME/.claude"
     if [ ! -d "$claude_dir" ]; then
@@ -482,11 +516,9 @@ install_contributor_setup() {
             ln -s "$source_path" "$target_path"
             print_success "Linked $dir -> $source_path"
         else
-            print_warning "Framework directory $dir not found in cloned repository"
+            print_warning "Framework directory $dir not found in repository"
         fi
     done
-    
-    show_contributor_install_instructions "$abs_target_dir"
 }
 
 # Copy framework to current project
