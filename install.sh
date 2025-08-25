@@ -392,6 +392,103 @@ EOF
     fi
 }
 
+# Install framework for contributor development
+install_contributor_setup() {
+    print_info "Setting up framework for contributor development..."
+    
+    # Ask where to clone the framework
+    echo "Where would you like to clone the framework for development?"
+    echo "1) Current directory (./.claude)"
+    echo "2) Custom path (you specify)"
+    echo ""
+    read -p "Please choose (1-2): " clone_choice
+    
+    local target_dir
+    case $clone_choice in
+        1)
+            target_dir="./.claude"
+            ;;
+        2)
+            read -p "Enter the full path where you want to clone the framework: " custom_path
+            if [ -z "$custom_path" ]; then
+                print_error "No path specified. Installation cancelled."
+                exit $EXIT_GENERAL_ERROR
+            fi
+            target_dir="$custom_path"
+            ;;
+        *)
+            print_error "Invalid choice. Installation cancelled."
+            exit $EXIT_GENERAL_ERROR
+            ;;
+    esac
+    
+    # Check if target directory exists
+    if [ -d "$target_dir" ]; then
+        if [ -d "$target_dir/.git" ]; then
+            print_warning "Directory '$target_dir' already contains a git repository."
+            read -p "Update existing repository? (y/N): " update_choice
+            if [[ $update_choice =~ ^[Yy]$ ]]; then
+                print_info "Updating existing repository..."
+                cd "$target_dir"
+                git pull origin main || {
+                    print_error "Failed to update repository."
+                    exit $EXIT_GIT_ERROR
+                }
+                cd - >/dev/null
+            fi
+        else
+            print_error "Directory '$target_dir' already exists but is not a git repository."
+            print_info "Please remove it or choose a different path."
+            exit $EXIT_GENERAL_ERROR
+        fi
+    else
+        # Clone the repository
+        print_info "Cloning framework to $target_dir..."
+        if ! git clone "$REPO_URL" "$target_dir" --quiet; then
+            print_error "Failed to clone repository. Check your internet connection."
+            exit $EXIT_NETWORK_ERROR
+        fi
+        print_success "Framework cloned successfully"
+    fi
+    
+    # Get absolute path for symlinks
+    local abs_target_dir=$(cd "$target_dir" && pwd)
+    
+    # Create ~/.claude directory if it doesn't exist
+    local claude_dir="$HOME/.claude"
+    if [ ! -d "$claude_dir" ]; then
+        print_info "Creating ~/.claude directory..."
+        mkdir -p "$claude_dir"
+    fi
+    
+    # Create symlinks for framework directories
+    print_info "Setting up symlinks for framework directories..."
+    
+    local framework_dirs=("agents" "commands" "docs" "scripts" "templates" "hooks")
+    
+    for dir in "${framework_dirs[@]}"; do
+        local source_path="$abs_target_dir/$dir"
+        local target_path="$claude_dir/$dir"
+        
+        # Check if source directory exists
+        if [ -d "$source_path" ]; then
+            # Remove existing directory or symlink if it exists
+            if [ -e "$target_path" ] || [ -L "$target_path" ]; then
+                print_info "Removing existing $dir in ~/.claude..."
+                rm -rf "$target_path"
+            fi
+            
+            # Create symlink
+            ln -s "$source_path" "$target_path"
+            print_success "Linked $dir -> $source_path"
+        else
+            print_warning "Framework directory $dir not found in cloned repository"
+        fi
+    done
+    
+    show_contributor_install_instructions "$abs_target_dir"
+}
+
 # Copy framework to current project
 install_copy_framework() {
     local source_dir="$1"
@@ -483,6 +580,33 @@ show_post_install_instructions() {
     fi
 }
 
+# Show post-installation instructions for contributor setup
+show_contributor_install_instructions() {
+    local clone_path="$1"
+    
+    echo ""
+    print_success "Contributor setup completed!"
+    echo ""
+    print_info "Installation Summary:"
+    echo "  Framework cloned to: $clone_path"
+    echo "  Symlinked to: ~/.claude/[framework_dirs]"
+    echo "  Framework directories: agents, commands, docs, scripts, templates, hooks"
+    echo ""
+    print_info "Contributing workflow:"
+    echo "  • Edit framework files in: $clone_path"
+    echo "  • Changes are instantly available globally via symlinks"
+    echo "  • Your CLAUDE.md and sessions stay in ~/.claude (separate from framework)"
+    echo "  • Commit and push from: $clone_path"
+    echo ""
+    print_info "To contribute:"
+    echo "  cd $clone_path"
+    echo "  # Make your changes"
+    echo "  git add ."
+    echo "  git commit -m 'Your contribution'"
+    echo "  git push origin main"
+    echo ""
+}
+
 # Main installation menu
 show_installation_menu() {
     local current_dir=$(get_current_dir_name)
@@ -523,7 +647,12 @@ show_installation_menu() {
         echo "   - Easy updates with git pull"
         echo "   - ⚠️  WARNING: This modifies your global Claude Code directory"
         echo ""
-        read -p "Please choose installation method (1-3): " method
+        echo "4) Setup as contributor (for framework development)"
+        echo "   - Clone framework for development and contribution"
+        echo "   - Symlink framework directories to ~/.claude"
+        echo "   - Keep your Claude files separate from framework"
+        echo ""
+        read -p "Please choose installation method (1-4): " method
         
         case $method in
             1)
@@ -553,6 +682,9 @@ show_installation_menu() {
                     exit $EXIT_USER_CANCELLED
                 fi
                 ;;
+            4)
+                install_contributor_setup
+                ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
                 exit $EXIT_GENERAL_ERROR
@@ -576,7 +708,12 @@ show_installation_menu() {
         echo "   - Easy updates with git pull"
         echo "   - ⚠️  WARNING: This modifies your global Claude Code directory"
         echo ""
-        read -p "Please choose installation method (1-3): " method
+        echo "4) Setup as contributor (for framework development)"
+        echo "   - Clone framework for development and contribution"
+        echo "   - Symlink framework directories to ~/.claude"
+        echo "   - Keep your Claude files separate from framework"
+        echo ""
+        read -p "Please choose installation method (1-4): " method
         
         case $method in
             1)
@@ -605,6 +742,9 @@ show_installation_menu() {
                     print_info "Installation cancelled"
                     exit $EXIT_USER_CANCELLED
                 fi
+                ;;
+            4)
+                install_contributor_setup
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."

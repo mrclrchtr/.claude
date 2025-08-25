@@ -19,12 +19,10 @@ bash install.sh
 
 ### Installation Options
 
-**Project-Specific (Recommended):**
-- **Submodule**: Git-tracked, updatable framework in your project
-- **Copy**: Standalone integration, manual updates required
-
-**Global (All Projects):**
-- **Global Install**: Installs to `~/.claude` with git tracking, affects all Claude Code sessions
+1. **Submodule** (Project-Specific) - Git-tracked, updatable framework in your project
+2. **Copy** (Project-Specific) - Standalone integration, manual updates required  
+3. **Global Install** - Installs to `~/.claude` with git tracking, affects all Claude Code sessions
+4. **Contributor Setup** - Clone framework for development, symlink to `~/.claude` for global access
 
 ```bash
 # After installation, start Claude Code and create project memory
@@ -142,6 +140,23 @@ cd ~/.claude && git status
 ```
 
 **Note**: If `~/.claude` is already a git repository, installer adds framework as remote `claude-framework` and updates via git pull.
+
+### Contributor Development Workflow
+
+```bash
+# Setup contributor environment (option 4 in installer)
+# Clones to your chosen location and symlinks framework directories
+
+# Make changes in development location
+cd /path/to/your/clone/.claude
+# Edit framework files...
+
+# Changes are instantly available globally via symlinks
+# Commit and push contributions
+git add .
+git commit -m "Your contribution"
+git push origin main
+```
 
 ## 🎨 Key Features & Benefits
 
