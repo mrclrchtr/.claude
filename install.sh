@@ -78,6 +78,12 @@ Installation Methods:
     2) Copy Framework - Creates .claude directory with framework files only
     3) Global Install - Installs to ~/.claude (affects ALL projects)
 
+  Global Installation Notes:
+    - If ~/.claude already exists as a git repository, the installer will add
+      the framework as a remote and continue without stopping
+    - Uses sparse checkout to track only framework files
+    - Your existing Claude Code files are protected by .gitignore
+
 Examples:
   curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
   wget -O- https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
@@ -161,12 +167,13 @@ install_direct_clone() {
         esac
     fi
     
-    if ! git clone "$REPO_URL" "$target_dir"; then
+    print_info "Downloading framework..."
+    if ! git clone "$REPO_URL" "$target_dir" --quiet; then
         print_error "Failed to clone repository. Check your internet connection and try again."
         print_info "Repository URL: $REPO_URL"
         exit $EXIT_NETWORK_ERROR
     fi
-    print_success "Framework cloned successfully"
+    print_success "Framework downloaded successfully"
     
     # Set up required directories
     setup_directories "$target_dir"
@@ -189,8 +196,9 @@ install_as_submodule() {
         return 0
     fi
     
-    git submodule add "$REPO_URL" "$submodule_path"
-    git submodule update --init --recursive
+    print_info "Adding submodule..."
+    git submodule add "$REPO_URL" "$submodule_path" --quiet >/dev/null 2>&1
+    git submodule update --init --recursive --quiet >/dev/null 2>&1
     print_success "Submodule added successfully"
     
     # Set up required directories in parent repo
@@ -226,8 +234,8 @@ install_global_git() {
         # Check if our remote already exists
         if git remote get-url claude-framework >/dev/null 2>&1; then
             print_info "Framework remote already exists. Updating..."
-            git fetch claude-framework
-            git pull claude-framework main --allow-unrelated-histories
+            git fetch claude-framework --quiet
+            git pull claude-framework main --allow-unrelated-histories --quiet
             print_success "Framework updated successfully"
             return 0
         else
@@ -235,7 +243,7 @@ install_global_git() {
         fi
     else
         print_info "Initializing ~/.claude as git repository..."
-        git init
+        git init --quiet
         is_git_repo=true
     fi
     
@@ -304,15 +312,15 @@ EOF
     echo "hooks/" >> .git/info/sparse-checkout
     
     # Fetch and pull framework files
-    print_info "Fetching framework files..."
-    if ! git fetch claude-framework; then
+    print_info "Downloading framework files..."
+    if ! git fetch claude-framework --quiet; then
         print_error "Failed to fetch from remote repository. Check your internet connection."
         exit $EXIT_NETWORK_ERROR
     fi
     
     # Add .gitignore to git index to prevent it from being tracked after merge
     if [ -f .gitignore ]; then
-        git add .gitignore
+        git add .gitignore >/dev/null 2>&1 || true
         git rm --cached .gitignore >/dev/null 2>&1 || true
     fi
     
@@ -338,11 +346,9 @@ EOF
     
     # Install framework files using sparse-checkout
     print_info "Installing framework files..."
-    if git fetch claude-framework main; then
-        if git merge claude-framework/main --allow-unrelated-histories --no-edit; then
-            print_success "Global framework installation completed!"
-            print_info "Framework installed to: $claude_dir"
-            print_info "To update in the future, run: cd ~/.claude && git pull claude-framework main"
+    if git fetch claude-framework main --quiet; then
+        if git merge claude-framework/main --allow-unrelated-histories --no-edit --quiet; then
+            print_success "Framework installation completed!"
         else
             print_error "Failed to merge framework files. Installation may be incomplete."
             print_info "You can try manually resolving conflicts and running:"
@@ -454,6 +460,18 @@ show_installation_menu() {
     echo "Directory name: $current_dir"
     echo ""
     
+    # Check if we're already in ~/.claude directory
+    if [[ "$(pwd)" == "$HOME/.claude" ]]; then
+        print_warning "You are currently in your global ~/.claude directory."
+        print_info "Installing the framework here will modify your global Claude Code configuration."
+        read -p "Continue with global installation? (y/N): " confirm_global
+        if [[ ! $confirm_global =~ ^[Yy]$ ]]; then
+            print_info "Installation cancelled. Consider running this from a project directory."
+            exit $EXIT_USER_CANCELLED
+        fi
+        echo ""
+    fi
+    
     if check_git_repo; then
         print_info "You are currently inside a git repository."
         echo "Choose an installation method:"
@@ -484,7 +502,8 @@ show_installation_menu() {
             2)
                 # First clone to temp directory
                 local temp_dir="/tmp/.claude-temp-$$"
-                if ! git clone "$REPO_URL" "$temp_dir"; then
+                print_info "Downloading framework files..."
+                if ! git clone "$REPO_URL" "$temp_dir" --quiet; then
                     print_error "Failed to clone repository. Check your internet connection."
                     exit $EXIT_NETWORK_ERROR
                 fi
@@ -536,7 +555,8 @@ show_installation_menu() {
             2)
                 # Clone to temp directory and copy
                 local temp_dir="/tmp/.claude-temp-$$"
-                if ! git clone "$REPO_URL" "$temp_dir"; then
+                print_info "Downloading framework files..."
+                if ! git clone "$REPO_URL" "$temp_dir" --quiet; then
                     print_error "Failed to clone repository. Check your internet connection."
                     exit $EXIT_NETWORK_ERROR
                 fi

@@ -244,6 +244,11 @@ cd ~/.claude && ls agents/ commands/ docs/ scripts/ templates/
 cd ~/.claude && git add . && git commit -m "feat: add custom global configuration"
 ```
 
+**Existing Git Repository Handling**: If `~/.claude` is already a git repository, the installer:
+- Detects the existing repository and adds the framework as a remote named `claude-framework`
+- Updates existing installation via `git pull` if the remote already exists
+- Continues installation without stopping or requiring user intervention
+
 ## 🎨 Key Features & Benefits
 
 | Feature                | Standard Claude Code | .claude Framework                       |
