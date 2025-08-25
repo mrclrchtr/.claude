@@ -282,6 +282,7 @@ EOF
     # Set up sparse checkout for framework directories only
     print_info "Configuring sparse checkout for framework directories..."
     git config core.sparseCheckout true
+    git config core.sparseCheckoutCone false  # Explicitly disable cone mode
     
     # Create sparse-checkout file with framework directories
     # Note: Using traditional sparse-checkout (not cone mode) to exclude root files
