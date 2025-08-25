@@ -16,7 +16,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Repository information
-REPO_URL="https://github.com/mrclrchtr/.claude.git"
+REPO_URL=""  # Will be set dynamically based on SSH availability
 FRAMEWORK_NAME="claude-framework"
 PROJECT_DIR_NAME=".claude"
 
@@ -92,6 +92,34 @@ For more information, visit: https://github.com/mrclrchtr/.claude
 EOF
 }
 
+# Test SSH connectivity to GitHub
+test_ssh_github() {
+    print_info "Testing SSH access to GitHub..."
+    
+    # Test SSH connection with a quick ls-remote
+    if git ls-remote git@github.com:mrclrchtr/.claude.git HEAD >/dev/null 2>&1; then
+        print_success "SSH access to GitHub is working"
+        return 0
+    else
+        print_warning "SSH access to GitHub failed, will use HTTPS"
+        return 1
+    fi
+}
+
+# Select repository URL based on SSH availability
+select_repo_url() {
+    local ssh_url="git@github.com:mrclrchtr/.claude.git"
+    local https_url="https://github.com/mrclrchtr/.claude.git"
+    
+    if test_ssh_github; then
+        print_info "Using SSH for faster cloning"
+        echo "$ssh_url"
+    else
+        print_info "Using HTTPS for cloning"
+        echo "$https_url"
+    fi
+}
+
 
 # Check if we're inside a git repository
 check_git_repo() {
@@ -121,6 +149,9 @@ check_prerequisites() {
         print_info "Try: chmod u+w . or run from a directory you own"
         exit $EXIT_PERMISSION_ERROR
     fi
+    
+    # Select repository URL based on SSH availability
+    REPO_URL=$(select_repo_url)
     
     print_success "Prerequisites check passed"
 }

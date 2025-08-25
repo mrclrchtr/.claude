@@ -15,6 +15,8 @@ wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
 bash install.sh
 ```
 
+> **Note**: The installer automatically detects SSH access to GitHub and uses it for cloning. Falls back to HTTPS if SSH is not available.
+
 ### Installation Options
 
 **Project-Specific (Recommended):**
