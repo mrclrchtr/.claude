@@ -279,30 +279,19 @@ EOF
         fi
     fi
     
-    # Set up sparse checkout
+    # Set up sparse checkout for framework directories only
     print_info "Configuring sparse checkout for framework directories..."
     git config core.sparseCheckout true
     
-    # Use modern sparse-checkout if available, fallback to legacy method
-    if git sparse-checkout init --cone 2>/dev/null; then
-        git sparse-checkout set agents commands docs scripts templates hooks 2>/dev/null || {
-            # Fallback to manual sparse-checkout file
-            echo "agents/" > .git/info/sparse-checkout
-            echo "commands/" >> .git/info/sparse-checkout
-            echo "docs/" >> .git/info/sparse-checkout
-            echo "scripts/" >> .git/info/sparse-checkout
-            echo "templates/" >> .git/info/sparse-checkout
-            echo "hooks/" >> .git/info/sparse-checkout
-        }
-    else
-        # Fallback for older git versions
-        echo "agents/" > .git/info/sparse-checkout
-        echo "commands/" >> .git/info/sparse-checkout
-        echo "docs/" >> .git/info/sparse-checkout
-        echo "scripts/" >> .git/info/sparse-checkout
-        echo "templates/" >> .git/info/sparse-checkout
-        echo "hooks/" >> .git/info/sparse-checkout
-    fi
+    # Create sparse-checkout file with framework directories
+    # Note: Using traditional sparse-checkout (not cone mode) to exclude root files
+    mkdir -p .git/info
+    echo "agents/" > .git/info/sparse-checkout
+    echo "commands/" >> .git/info/sparse-checkout
+    echo "docs/" >> .git/info/sparse-checkout
+    echo "scripts/" >> .git/info/sparse-checkout
+    echo "templates/" >> .git/info/sparse-checkout
+    echo "hooks/" >> .git/info/sparse-checkout
     
     # Fetch and pull framework files
     print_info "Fetching framework files..."
