@@ -2,7 +2,7 @@
 
 # Claude Code Customization Framework Installer
 # Installs project-specific customizations and tools for Claude Code
-# Note: This does NOT modify ~/.claude (Claude Code's global config directory)
+# Note: Default installations do NOT modify ~/.claude, but global installation option is available
 
 set -e  # Exit on any error
 
@@ -23,8 +23,8 @@ print_header() {
     echo -e "${BLUE}===========================================${NC}"
     echo -e "${BLUE}  Claude Code Customization Framework    ${NC}"
     echo -e "${BLUE}===========================================${NC}"
-    echo -e "${YELLOW}Note: This installs project customizations${NC}"
-    echo -e "${YELLOW}It does NOT modify ~/.claude (Claude Code config)${NC}"
+    echo -e "${YELLOW}Note: Default installs are project-specific${NC}"
+    echo -e "${YELLOW}Global installation option available for ~/.claude${NC}"
     echo ""
 }
 
@@ -146,8 +146,150 @@ install_as_submodule() {
     setup_directories "."
 }
 
-# This function has been removed - symlink installation was confusing
-# and interfered with Claude Code's ~/.claude directory
+# Install framework globally to ~/.claude using git with sparse checkout
+install_global_git() {
+    local claude_dir="$HOME/.claude"
+    
+    print_info "Installing customization framework globally to ~/.claude..."
+    
+    # Check if ~/.claude exists
+    if [ ! -d "$claude_dir" ]; then
+        print_warning "~/.claude directory doesn't exist. Creating it..."
+        mkdir -p "$claude_dir"
+    fi
+    
+    # Check if we can write to ~/.claude
+    if [ ! -w "$claude_dir" ]; then
+        print_error "Cannot write to ~/.claude directory. Please check permissions."
+        exit 1
+    fi
+    
+    cd "$claude_dir"
+    
+    # Check if already a git repository
+    local is_git_repo=false
+    if [ -d ".git" ]; then
+        is_git_repo=true
+        print_warning "~/.claude is already a git repository"
+        
+        # Check if our remote already exists
+        if git remote get-url claude-framework >/dev/null 2>&1; then
+            print_info "Framework remote already exists. Updating..."
+            git fetch claude-framework
+            git pull claude-framework main --allow-unrelated-histories
+            print_success "Framework updated successfully"
+            return 0
+        else
+            print_info "Adding framework remote to existing repository..."
+        fi
+    else
+        print_info "Initializing ~/.claude as git repository..."
+        git init
+        is_git_repo=true
+    fi
+    
+    # Create .gitignore to exclude Claude Code files
+    print_info "Creating .gitignore to protect Claude Code files..."
+    cat > .gitignore << 'EOF'
+# Ignore all files by default (to protect Claude Code files)
+/*
+
+# But track framework directories
+!/agents/
+!/commands/
+!/docs/
+!/scripts/
+!/templates/
+!/hooks/
+!/.gitignore
+!README.md
+
+# Ignore common Claude Code files/directories
+.claude-sessions/
+temp/
+logs/
+*.log
+*.tmp
+
+# Allow tracking of framework-specific files
+!/agents/**
+!/commands/**
+!/docs/**
+!/scripts/**
+!/templates/**
+!/hooks/**
+EOF
+    
+    # Add framework remote if not exists
+    if ! git remote get-url claude-framework >/dev/null 2>&1; then
+        print_info "Adding framework remote..."
+        git remote add claude-framework "$REPO_URL"
+    fi
+    
+    # Set up sparse checkout
+    print_info "Configuring sparse checkout for framework directories..."
+    git config core.sparseCheckout true
+    
+    # Use modern sparse-checkout if available, fallback to legacy method
+    if git sparse-checkout init --cone 2>/dev/null; then
+        git sparse-checkout set agents commands docs scripts templates hooks .gitignore 2>/dev/null || {
+            # Fallback to manual sparse-checkout file
+            echo "agents/" > .git/info/sparse-checkout
+            echo "commands/" >> .git/info/sparse-checkout
+            echo "docs/" >> .git/info/sparse-checkout
+            echo "scripts/" >> .git/info/sparse-checkout
+            echo "templates/" >> .git/info/sparse-checkout
+            echo "hooks/" >> .git/info/sparse-checkout
+            echo ".gitignore" >> .git/info/sparse-checkout
+        }
+    else
+        # Fallback for older git versions
+        echo "agents/" > .git/info/sparse-checkout
+        echo "commands/" >> .git/info/sparse-checkout
+        echo "docs/" >> .git/info/sparse-checkout
+        echo "scripts/" >> .git/info/sparse-checkout
+        echo "templates/" >> .git/info/sparse-checkout
+        echo "hooks/" >> .git/info/sparse-checkout
+        echo ".gitignore" >> .git/info/sparse-checkout
+    fi
+    
+    # Fetch and pull framework files
+    print_info "Fetching framework files..."
+    git fetch claude-framework
+    
+    # Handle potential conflicts with existing files
+    if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
+        print_warning "Found existing files that might conflict. Backing them up..."
+        local backup_dir="claude-backup-$(date +%Y%m%d-%H%M%S)"
+        mkdir -p "$backup_dir"
+        
+        # Backup existing framework directories
+        for dir in agents commands docs scripts templates hooks; do
+            if [ -d "$dir" ] && [ ! -L "$dir" ]; then
+                mv "$dir" "$backup_dir/" 2>/dev/null || true
+            fi
+        done
+        
+        if [ "$(ls -A $backup_dir 2>/dev/null | wc -l)" -gt 0 ]; then
+            print_success "Backed up existing files to $backup_dir/"
+        else
+            rmdir "$backup_dir"
+        fi
+    fi
+    
+    # Pull framework files
+    print_info "Installing framework files..."
+    if git pull claude-framework main --allow-unrelated-histories --no-edit; then
+        print_success "Global framework installation completed!"
+        print_info "Framework installed to: $claude_dir"
+        print_info "To update in the future, run: cd ~/.claude && git pull claude-framework main"
+    else
+        print_error "Failed to pull framework files. Installation may be incomplete."
+        print_info "You can try manually resolving conflicts and running:"
+        print_info "  cd ~/.claude && git pull claude-framework main"
+        exit 1
+    fi
+}
 
 # Copy framework to current project
 install_copy_framework() {
@@ -168,6 +310,11 @@ install_copy_framework() {
     cp -r "$source_dir/docs" .claude/
     cp -r "$source_dir/scripts" .claude/
     cp -r "$source_dir/templates" .claude/
+    
+    # Copy hooks directory if it exists
+    if [ -d "$source_dir/hooks" ]; then
+        cp -r "$source_dir/hooks" .claude/
+    fi
     
     print_success "Framework copied successfully"
     
@@ -241,8 +388,20 @@ show_post_install_instructions() {
     echo "  Quality: /uncommitted:review, /docs:audit"
     echo "  Commit: /commit:changed, /commit:main"
     echo ""
-    print_info "Documentation: Check .claude/docs/ for guides and templates"
-    print_warning "Note: Your global Claude Code config remains at ~/.claude"
+    
+    if [[ "$install_method" == "Global Git Installation" ]]; then
+        print_info "Global Installation Management:"
+        echo "  Update framework: cd ~/.claude && git pull claude-framework main"
+        echo "  Check status: cd ~/.claude && git status"
+        echo "  Framework files are tracked with sparse checkout"
+        echo "  Your Claude Code files are protected by .gitignore"
+        echo ""
+        print_info "Documentation: Check ~/.claude/docs/ for guides and templates"
+        print_warning "Note: Framework is now available in ALL Claude Code sessions"
+    else
+        print_info "Documentation: Check .claude/docs/ for guides and templates"
+        print_warning "Note: Your global Claude Code config remains at ~/.claude"
+    fi
 }
 
 # Main installation menu
@@ -257,7 +416,7 @@ show_installation_menu() {
         print_info "You are currently inside a git repository."
         echo "Choose an installation method:"
         echo ""
-        echo "1) Add as git submodule (recommended)"
+        echo "1) Add as git submodule (recommended for projects)"
         echo "   - Adds framework as a submodule at './$PROJECT_DIR_NAME'"
         echo "   - Keeps framework updatable via git"
         echo "   - Maintains separation from your codebase"
@@ -267,7 +426,13 @@ show_installation_menu() {
         echo "   - No git tracking, manual updates required"
         echo "   - Fully integrated with your project"
         echo ""
-        read -p "Please choose installation method (1-2): " method
+        echo "3) Install globally to ~/.claude (affects ALL projects)"
+        echo "   - Makes ~/.claude a git repository with sparse checkout"
+        echo "   - Framework available in all Claude Code sessions"
+        echo "   - Easy updates with git pull"
+        echo "   - ⚠️  WARNING: This modifies your global Claude Code directory"
+        echo ""
+        read -p "Please choose installation method (1-3): " method
         
         case $method in
             1)
@@ -281,6 +446,17 @@ show_installation_menu() {
                 install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
                 show_post_install_instructions "Copy Framework Directory" "."
+                ;;
+            3)
+                print_warning "This will modify your global ~/.claude directory!"
+                read -p "Are you sure you want to continue? (y/N): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    install_global_git
+                    show_post_install_instructions "Global Git Installation" "~/.claude"
+                else
+                    print_info "Installation cancelled"
+                    exit 0
+                fi
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
@@ -299,7 +475,13 @@ show_installation_menu() {
         echo "   - Copies just the .claude directory to current location"
         echo "   - No git tracking, manual updates required"
         echo ""
-        read -p "Please choose installation method (1-2): " method
+        echo "3) Install globally to ~/.claude (affects ALL projects)"
+        echo "   - Makes ~/.claude a git repository with sparse checkout"
+        echo "   - Framework available in all Claude Code sessions"
+        echo "   - Easy updates with git pull"
+        echo "   - ⚠️  WARNING: This modifies your global Claude Code directory"
+        echo ""
+        read -p "Please choose installation method (1-3): " method
         
         case $method in
             1)
@@ -313,6 +495,17 @@ show_installation_menu() {
                 install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
                 show_post_install_instructions "Copy Framework Directory" "."
+                ;;
+            3)
+                print_warning "This will modify your global ~/.claude directory!"
+                read -p "Are you sure you want to continue? (y/N): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    install_global_git
+                    show_post_install_instructions "Global Git Installation" "~/.claude"
+                else
+                    print_info "Installation cancelled"
+                    exit 0
+                fi
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."

@@ -2,7 +2,7 @@
 
 A Claude Code customization framework for milestone-driven project management, memory optimization, session tracking, and specialized AI agents.
 
-> **Note**: This framework installs project-specific customizations and does NOT modify Claude Code's global configuration directory (`~/.claude`).
+> **Note**: This framework defaults to project-specific customizations. A global installation option is available that installs to `~/.claude` with sparse checkout protection.
 
 ## 🚀 Quick Start
 
@@ -20,10 +20,12 @@ bash install.sh
 **For Git Repositories:**
 - **Submodule** (recommended): Keeps framework updatable via git
 - **Copy**: Integrates framework directly into your project
+- **Global**: Installs to `~/.claude` with git tracking (affects ALL projects)
 
 **For Non-Git Directories:**
 - **Clone**: Clones framework directly into `.claude/` directory with full git tracking
 - **Copy**: Creates `.claude/` directory with framework files only (no git)
+- **Global**: Installs to `~/.claude` with git tracking (affects ALL projects)
 
 ```bash
 # After installation, start Claude Code and create project memory
@@ -151,15 +153,16 @@ Status orchestration with:
 - **Git Submodule**: Maintains separation, git-tracked updates, recommended for git repos
 - **Framework Copy**: Full integration into project, manual updates required
 - **Direct Clone**: Clones framework directly into `.claude/` directory, git-tracked updates
+- **Global Git**: Installs to `~/.claude` with sparse checkout, affects all Claude Code sessions
 
 ### Important: Framework vs Claude Code Directories
 
-| Directory   | Purpose                                              | Managed By     |
-|-------------|------------------------------------------------------|----------------|
-| `~/.claude` | Claude Code global configuration, settings, projects | Claude Code    |
-| `.claude/`  | Project-specific customization framework             | This framework |
+| Directory   | Purpose                                              | Managed By                      |
+|-------------|------------------------------------------------------|---------------------------------|
+| `~/.claude` | Claude Code global configuration, settings, projects | Claude Code (or Global Install) |
+| `.claude/`  | Project-specific customization framework             | This framework                  |
 
-> ⚠️ **Never modify `~/.claude`** - This is Claude Code's global configuration directory and should not be touched by this framework.
+> ⚠️ **Global Installation Note**: The Global Git installation method makes `~/.claude` a git repository with sparse checkout to track only framework files. Claude Code's own files are protected by `.gitignore`. For project-specific installs, `~/.claude` remains untouched.
 
 ## 🔄 Core Workflows
 
@@ -223,6 +226,22 @@ Status orchestration with:
 # → Deduplicates across files
 # → Creates cross-references
 # → Maintains hierarchy
+```
+
+### Global Installation Management
+
+```bash
+# Update framework globally (affects all projects)
+cd ~/.claude && git pull claude-framework main
+
+# Check global framework status
+cd ~/.claude && git status
+
+# View framework files (only these are tracked)
+cd ~/.claude && ls agents/ commands/ docs/ scripts/ templates/
+
+# Add custom global modifications
+cd ~/.claude && git add . && git commit -m "feat: add custom global configuration"
 ```
 
 ## 🎨 Key Features & Benefits
