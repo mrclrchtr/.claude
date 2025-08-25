@@ -310,6 +310,12 @@ EOF
         exit $EXIT_NETWORK_ERROR
     fi
     
+    # Add .gitignore to git index to prevent it from being tracked after merge
+    if [ -f .gitignore ]; then
+        git add .gitignore
+        git rm --cached .gitignore >/dev/null 2>&1 || true
+    fi
+    
     # Handle potential conflicts with existing files
     if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
         print_warning "Found existing files that might conflict. Backing them up..."
