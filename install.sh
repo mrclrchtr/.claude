@@ -334,6 +334,10 @@ EOF
     # Pull framework files
     print_info "Installing framework files..."
     if git pull claude-framework main --allow-unrelated-histories --no-edit; then
+        # Clean up any files that shouldn't be checked out according to sparse-checkout
+        print_info "Cleaning up unnecessary files..."
+        git sparse-checkout reapply 2>/dev/null || true
+        
         print_success "Global framework installation completed!"
         print_info "Framework installed to: $claude_dir"
         print_info "To update in the future, run: cd ~/.claude && git pull claude-framework main"
