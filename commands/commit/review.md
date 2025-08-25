@@ -1,7 +1,7 @@
 ---
 argument-hint: [commit_hash]
 description: Critically analyze a single commit's changes and impact
-allowed-tools: Bash(git show:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*)
+allowed-tools: Bash(git show:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git --no-pager:*), Bash(git branch:*), Bash(tail:*), Bash(wc:*)
 ---
 
 # Critical Commit Review
