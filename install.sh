@@ -371,23 +371,6 @@ show_post_install_instructions() {
     echo "  Framework Path: $install_path"
     echo "  Project Configuration: .claude/"
     echo ""
-    print_info "Next Steps:"
-    echo "  1. Start Claude Code in this directory"
-    echo "  2. Create project-specific CLAUDE.md:"
-    echo "     /meta:create-memory ."
-    echo "  3. Begin with implementation planning:"
-    echo "     /plan your-vision.md your-requirements.md"
-    echo "  4. Start milestone-driven development:"
-    echo "     /milestone:create M1"
-    echo "     /milestone:next M1"
-    echo ""
-    print_info "Available Custom Commands:"
-    echo "  Planning: /plan, /milestone:create, /milestone:next"
-    echo "  Session: /session:start, /session:update, /session:end"
-    echo "  Memory: /meta:create-memory, /meta:optimize-memory"
-    echo "  Quality: /uncommitted:review, /docs:audit"
-    echo "  Commit: /commit:changed, /commit:main"
-    echo ""
     
     if [[ "$install_method" == "Global Git Installation" ]]; then
         print_info "Global Installation Management:"
@@ -396,11 +379,6 @@ show_post_install_instructions() {
         echo "  Framework files are tracked with sparse checkout"
         echo "  Your Claude Code files are protected by .gitignore"
         echo ""
-        print_info "Documentation: Check ~/.claude/docs/ for guides and templates"
-        print_warning "Note: Framework is now available in ALL Claude Code sessions"
-    else
-        print_info "Documentation: Check .claude/docs/ for guides and templates"
-        print_warning "Note: Your global Claude Code config remains at ~/.claude"
     fi
 }
 
