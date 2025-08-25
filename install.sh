@@ -241,6 +241,13 @@ install_global_git() {
     
     # Create .gitignore to exclude Claude Code files
     print_info "Creating .gitignore to protect Claude Code files..."
+    
+    # If .gitignore exists and is tracked, remove it from tracking
+    if [ -f .gitignore ] && git ls-files --error-unmatch .gitignore >/dev/null 2>&1; then
+        print_info "Removing existing .gitignore from git tracking..."
+        git rm --cached .gitignore >/dev/null 2>&1 || true
+    fi
+    
     cat > .gitignore << 'EOF'
 # Ignore all files by default (to protect Claude Code files)
 /*
