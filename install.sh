@@ -1,5 +1,7 @@
 #!/bin/bash
 
+{ # this ensures the entire script is downloaded #
+
 # Claude Code Customization Framework Installer
 # Installs project-specific customizations and tools for Claude Code
 # Note: Default installations do NOT modify ~/.claude, but global installation option is available
@@ -17,6 +19,15 @@ NC='\033[0m' # No Color
 REPO_URL="https://github.com/mrclrchtr/.claude.git"
 FRAMEWORK_NAME="claude-framework"
 PROJECT_DIR_NAME=".claude"
+
+# Exit codes
+EXIT_SUCCESS=0
+EXIT_GENERAL_ERROR=1
+EXIT_MISSING_DEPENDENCY=2
+EXIT_PERMISSION_ERROR=3
+EXIT_NETWORK_ERROR=4
+EXIT_GIT_ERROR=5
+EXIT_USER_CANCELLED=6
 
 # Utility functions
 print_header() {
@@ -44,6 +55,38 @@ print_info() {
     echo -e "${BLUE}ℹ $1${NC}"
 }
 
+# Show help message
+show_help() {
+    cat << EOF
+Claude Code Customization Framework Installer v${SCRIPT_VERSION}
+
+Usage: bash install.sh [OPTIONS]
+
+Options:
+  -h, --help     Show this help message and exit
+
+Installation Methods:
+  The script will detect if you're in a git repository and show appropriate options:
+  
+  For Git Repositories:
+    1) Git Submodule (recommended) - Keeps framework updatable via git
+    2) Copy Framework - Integrates framework directly into your project
+    3) Global Install - Installs to ~/.claude (affects ALL projects)
+  
+  For Non-Git Directories:
+    1) Direct Clone - Clones framework with full git tracking
+    2) Copy Framework - Creates .claude directory with framework files only
+    3) Global Install - Installs to ~/.claude (affects ALL projects)
+
+Examples:
+  curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
+  wget -O- https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
+  
+For more information, visit: https://github.com/mrclrchtr/.claude
+EOF
+}
+
+
 # Check if we're inside a git repository
 check_git_repo() {
     if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -60,13 +103,17 @@ check_prerequisites() {
     # Check if git is installed
     if ! command -v git >/dev/null 2>&1; then
         print_error "Git is not installed. Please install git first."
-        exit 1
+        print_info "On macOS: brew install git or install Xcode Command Line Tools"
+        print_info "On Ubuntu/Debian: sudo apt-get install git"
+        print_info "On CentOS/RHEL: sudo yum install git"
+        exit $EXIT_MISSING_DEPENDENCY
     fi
     
     # Check if we can write to current directory
     if [ ! -w "." ]; then
         print_error "Cannot write to current directory. Please check permissions."
-        exit 1
+        print_info "Try: chmod u+w . or run from a directory you own"
+        exit $EXIT_PERMISSION_ERROR
     fi
     
     print_success "Prerequisites check passed"
@@ -105,16 +152,20 @@ install_direct_clone() {
                 ;;
             3)
                 print_info "Installation cancelled"
-                exit 0
+                exit $EXIT_USER_CANCELLED
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
-                exit 1
+                exit $EXIT_GENERAL_ERROR
                 ;;
         esac
     fi
     
-    git clone "$REPO_URL" "$target_dir"
+    if ! git clone "$REPO_URL" "$target_dir"; then
+        print_error "Failed to clone repository. Check your internet connection and try again."
+        print_info "Repository URL: $REPO_URL"
+        exit $EXIT_NETWORK_ERROR
+    fi
     print_success "Framework cloned successfully"
     
     # Set up required directories
@@ -223,7 +274,10 @@ EOF
     # Add framework remote if not exists
     if ! git remote get-url claude-framework >/dev/null 2>&1; then
         print_info "Adding framework remote..."
-        git remote add claude-framework "$REPO_URL"
+        if ! git remote add claude-framework "$REPO_URL"; then
+            print_error "Failed to add remote repository."
+            exit $EXIT_GIT_ERROR
+        fi
     fi
     
     # Set up sparse checkout
@@ -255,7 +309,10 @@ EOF
     
     # Fetch and pull framework files
     print_info "Fetching framework files..."
-    git fetch claude-framework
+    if ! git fetch claude-framework; then
+        print_error "Failed to fetch from remote repository. Check your internet connection."
+        exit $EXIT_NETWORK_ERROR
+    fi
     
     # Handle potential conflicts with existing files
     if [ "$(git status --porcelain | wc -l)" -gt 0 ]; then
@@ -287,7 +344,7 @@ EOF
         print_error "Failed to pull framework files. Installation may be incomplete."
         print_info "You can try manually resolving conflicts and running:"
         print_info "  cd ~/.claude && git pull claude-framework main"
-        exit 1
+        exit $EXIT_GIT_ERROR
     fi
 }
 
@@ -420,7 +477,10 @@ show_installation_menu() {
             2)
                 # First clone to temp directory
                 local temp_dir="/tmp/.claude-temp-$$"
-                git clone "$REPO_URL" "$temp_dir"
+                if ! git clone "$REPO_URL" "$temp_dir"; then
+                    print_error "Failed to clone repository. Check your internet connection."
+                    exit $EXIT_NETWORK_ERROR
+                fi
                 install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
                 show_post_install_instructions "Copy Framework Directory" "."
@@ -433,12 +493,12 @@ show_installation_menu() {
                     show_post_install_instructions "Global Git Installation" "~/.claude"
                 else
                     print_info "Installation cancelled"
-                    exit 0
+                    exit $EXIT_USER_CANCELLED
                 fi
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
-                exit 1
+                exit $EXIT_GENERAL_ERROR
                 ;;
         esac
     else
@@ -469,7 +529,10 @@ show_installation_menu() {
             2)
                 # Clone to temp directory and copy
                 local temp_dir="/tmp/.claude-temp-$$"
-                git clone "$REPO_URL" "$temp_dir"
+                if ! git clone "$REPO_URL" "$temp_dir"; then
+                    print_error "Failed to clone repository. Check your internet connection."
+                    exit $EXIT_NETWORK_ERROR
+                fi
                 install_copy_framework "$temp_dir"
                 rm -rf "$temp_dir"
                 show_post_install_instructions "Copy Framework Directory" "."
@@ -482,19 +545,38 @@ show_installation_menu() {
                     show_post_install_instructions "Global Git Installation" "~/.claude"
                 else
                     print_info "Installation cancelled"
-                    exit 0
+                    exit $EXIT_USER_CANCELLED
                 fi
                 ;;
             *)
                 print_error "Invalid choice. Installation cancelled."
-                exit 1
+                exit $EXIT_GENERAL_ERROR
                 ;;
         esac
     fi
 }
 
+# Parse command line arguments
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_help
+                exit $EXIT_SUCCESS
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                print_info "Use --help to see available options."
+                exit $EXIT_GENERAL_ERROR
+                ;;
+        esac
+        shift
+    done
+}
+
 # Main execution
 main() {
+    parse_args "$@"
     print_header
     check_prerequisites
     echo ""
@@ -503,3 +585,5 @@ main() {
 
 # Run main function
 main "$@"
+
+} # this ensures the entire script is downloaded #
