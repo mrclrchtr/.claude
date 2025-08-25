@@ -331,21 +331,22 @@ EOF
         fi
     fi
     
-    # Pull framework files
+    # Install framework files using sparse-checkout
     print_info "Installing framework files..."
-    if git pull claude-framework main --allow-unrelated-histories --no-edit; then
-        # Clean up any files that shouldn't be checked out according to sparse-checkout
-        print_info "Cleaning up unnecessary files..."
-        git sparse-checkout reapply 2>/dev/null || true
-        
-        print_success "Global framework installation completed!"
-        print_info "Framework installed to: $claude_dir"
-        print_info "To update in the future, run: cd ~/.claude && git pull claude-framework main"
+    if git fetch claude-framework main; then
+        if git merge claude-framework/main --allow-unrelated-histories --no-edit; then
+            print_success "Global framework installation completed!"
+            print_info "Framework installed to: $claude_dir"
+            print_info "To update in the future, run: cd ~/.claude && git pull claude-framework main"
+        else
+            print_error "Failed to merge framework files. Installation may be incomplete."
+            print_info "You can try manually resolving conflicts and running:"
+            print_info "  cd ~/.claude && git merge claude-framework/main"
+            exit $EXIT_GIT_ERROR
+        fi
     else
-        print_error "Failed to pull framework files. Installation may be incomplete."
-        print_info "You can try manually resolving conflicts and running:"
-        print_info "  cd ~/.claude && git pull claude-framework main"
-        exit $EXIT_GIT_ERROR
+        print_error "Failed to fetch framework files. Check your internet connection."
+        exit $EXIT_NETWORK_ERROR
     fi
 }
 
