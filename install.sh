@@ -245,6 +245,9 @@ install_global_git() {
 # Ignore all files by default (to protect Claude Code files)
 /*
 
+# Don't track .gitignore changes to prevent modification conflicts
+.gitignore
+
 # But track framework directories
 !/agents/
 !/commands/
@@ -252,7 +255,6 @@ install_global_git() {
 !/scripts/
 !/templates/
 !/hooks/
-!/.gitignore
 
 # Ignore common Claude Code files/directories
 .claude-sessions/
