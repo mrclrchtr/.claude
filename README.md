@@ -59,7 +59,7 @@ Powerful AI specialists with multi-perspective analysis, proactive activation, a
 - **Output**: Executable milestones with verification commands and parallel task notation
 - **Activation**: PROACTIVE when converting IMPLEMENTATION_PLAN.md to milestones
 
-### 📋 Command Library (25+ Commands)
+### 📋 Command Library (24 Commands)
 
 #### Commit Management (4)
 - **`/commit:main`** - Intelligent parent repo commits with submodule pointer updates
@@ -84,12 +84,13 @@ Powerful AI specialists with multi-perspective analysis, proactive activation, a
 - **`/milestone:meta`** - Synchronize MILESTONE_MANAGER.md with sequential numbering
 - **`/milestone:review [name]`** - Validate against success criteria and deliverables
 
-#### Session Management (6)
+#### Session Management (7)
 - **`/session:start [name]`** - Initialize timestamped development session with goals
 - **`/session:end`** - Complete session with summary and documentation updates
 - **`/session:update`** - Track progress and adjust goals mid-session
 - **`/session:current`** - Display active session status and progress
 - **`/session:list`** - Overview of all sessions with status indicators
+- **`/session:load [name]`** - Load and resume a previous session
 - **`/session:help`** - Session management best practices guide
 
 #### Quality Assurance (1)
@@ -254,7 +255,7 @@ cd ~/.claude && git add . && git commit -m "feat: add custom global configuratio
 | Feature                | Standard Claude Code | .claude Framework                       |
 |------------------------|----------------------|-----------------------------------------|
 | **AI Agents**          | Built-in generic     | 3 specialized with proactive activation |
-| **Commands**           | ~10 basic            | 25+ with sophisticated workflows        |
+| **Commands**           | ~10 basic            | 24 with sophisticated workflows         |
 | **Memory Mgmt**        | Manual CLAUDE.md     | 6 optimization commands                 |
 | **Planning**           | Ad-hoc               | Structured milestone system             |
 | **Session Tracking**   | None                 | Complete lifecycle management           |
