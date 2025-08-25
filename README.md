@@ -19,7 +19,7 @@ bash install.sh
 
 ### Installation Options
 
-1. **Submodule** (Project-Specific) - Git-tracked, updatable framework in your project
+1. **Submodule** (recommended) - Git-tracked, updatable framework in your project
 2. **Copy** (Project-Specific) - Standalone integration, manual updates required  
 3. **Global Install** - Installs to `~/.claude` with git tracking, affects all Claude Code sessions
 4. **Contributor Setup** - Clone framework for development, symlink to `~/.claude` for global access
