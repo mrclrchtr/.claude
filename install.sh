@@ -11,22 +11,21 @@ readonly SSH_URL="git@github.com:mrclrchtr/.claude.git"
 readonly HTTPS_URL="https://github.com/mrclrchtr/.claude.git"
 readonly PROJECT_DIR=".claude"
 readonly FRAMEWORK_DIRS=(agents commands docs scripts templates hooks)
-readonly -A COLORS=(
-    [RED]='\033[0;31m'
-    [GREEN]='\033[0;32m'
-    [YELLOW]='\033[1;33m'
-    [BLUE]='\033[0;34m'
-    [NC]='\033[0m'
-)
-readonly -A EXIT_CODES=(
-    [SUCCESS]=0
-    [ERROR]=1
-    [MISSING_DEP]=2
-    [PERMISSION]=3
-    [NETWORK]=4
-    [GIT]=5
-    [CANCELLED]=6
-)
+# Colors (compatible with older bash versions)
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m'
+
+# Exit codes
+readonly EXIT_SUCCESS=0
+readonly EXIT_ERROR=1
+readonly EXIT_MISSING_DEP=2
+readonly EXIT_PERMISSION=3
+readonly EXIT_NETWORK=4
+readonly EXIT_GIT=5
+readonly EXIT_CANCELLED=6
 
 # Globals
 REPO_URL=""
@@ -34,19 +33,19 @@ REPO_URL=""
 # Utility functions
 print_msg() {
     local level="$1" msg="$2"
-    local color="${COLORS[$level]}" nc="${COLORS[NC]}"
-    local prefix
+    local color nc prefix
     case $level in
-        GREEN) prefix="✓" ;;
-        RED) prefix="✗" ;;
-        YELLOW) prefix="⚠" ;;
-        BLUE) prefix="ℹ" ;;
-        *) prefix="•" ;;
+        GREEN) color="$GREEN"; prefix="✓" ;;
+        RED) color="$RED"; prefix="✗" ;;
+        YELLOW) color="$YELLOW"; prefix="⚠" ;;
+        BLUE) color="$BLUE"; prefix="ℹ" ;;
+        *) color=""; prefix="•" ;;
     esac
+    nc="$NC"
     echo -e "${color}${prefix} ${msg}${nc}"
 }
 
-die() { print_msg RED "$1"; exit "${2:-${EXIT_CODES[ERROR]}}"; }
+die() { print_msg RED "$1"; exit "${2:-$EXIT_ERROR}"; }
 
 confirm() { 
     local prompt="$1" default="${2:-N}"
@@ -82,8 +81,8 @@ is_claude_repo() {
 # Installation core
 check_prerequisites() {
     print_msg BLUE "Checking prerequisites..."
-    command -v git >/dev/null || die "Git not installed" "${EXIT_CODES[MISSING_DEP]}"
-    [[ -w . ]] || die "Cannot write to current directory" "${EXIT_CODES[PERMISSION]}"
+    command -v git >/dev/null || die "Git not installed" "$EXIT_MISSING_DEP"
+    [[ -w . ]] || die "Cannot write to current directory" "$EXIT_PERMISSION"
     REPO_URL=$(select_repo_url)
     print_msg GREEN "Prerequisites OK"
 }
@@ -110,7 +109,7 @@ clone_or_update() {
     if [[ -d "$target" ]]; then
         if [[ -d "$target/.git" ]]; then
             if [[ "$update_prompt" == "true" ]] && confirm "Update existing repository?"; then
-                (cd "$target" && git pull origin main) || die "Update failed" "${EXIT_CODES[GIT]}"
+                (cd "$target" && git pull origin main) || die "Update failed" "$EXIT_GIT"
             fi
             return 0
         else
@@ -119,7 +118,7 @@ clone_or_update() {
     fi
     
     print_msg BLUE "Cloning to $target..."
-    git clone "$REPO_URL" "$target" --quiet || die "Clone failed" "${EXIT_CODES[NETWORK]}"
+    git clone "$REPO_URL" "$target" --quiet || die "Clone failed" "$EXIT_NETWORK"
     print_msg GREEN "Clone successful"
 }
 
@@ -195,8 +194,8 @@ install_framework() {
                 confirm "Submodule exists. Update?" && git submodule update --remote "$PROJECT_DIR"
                 return 0
             fi
-            git submodule add "$REPO_URL" "$PROJECT_DIR" --quiet >/dev/null 2>&1
-            git submodule update --init --recursive --quiet >/dev/null 2>&1
+            git submodule add "$REPO_URL" "$PROJECT_DIR" --quiet || die "Submodule add failed" "$EXIT_GIT"
+            git submodule update --init --recursive --quiet || die "Submodule update failed" "$EXIT_GIT"
             setup_directories "."
             ;;
             
@@ -234,11 +233,11 @@ install_framework() {
             
             setup_sparse_checkout "$claude_dir"
             git remote add claude-framework "$REPO_URL" 2>/dev/null || true
-            git fetch claude-framework --quiet || die "Fetch failed" "${EXIT_CODES[NETWORK]}"
+            git fetch claude-framework --quiet || die "Fetch failed" "$EXIT_NETWORK"
             
             manage_existing_files
             git merge claude-framework/main --allow-unrelated-histories --no-edit --quiet || 
-                die "Merge failed" "${EXIT_CODES[GIT]}"
+                die "Merge failed" "$EXIT_GIT"
             ;;
             
         contributor)
@@ -298,7 +297,7 @@ show_installation_menu() {
     echo
     
     if [[ "$in_claude_home" == "true" ]]; then
-        confirm "Install in global ~/.claude directory?" || die "Installation cancelled" "${EXIT_CODES[CANCELLED]}"
+        confirm "Install in global ~/.claude directory?" || die "Installation cancelled" "$EXIT_CANCELLED"
     fi
     
     local -a options methods descriptions
@@ -335,7 +334,7 @@ show_installation_menu() {
         
         if [[ "$method" == "global" ]]; then
             confirm "⚠️  This modifies ~/.claude globally. Continue?" || 
-                die "Installation cancelled" "${EXIT_CODES[CANCELLED]}"
+                die "Installation cancelled" "$EXIT_CANCELLED"
         fi
         
         install_framework "$method"
@@ -395,13 +394,13 @@ EOF
 # Main execution
 main() {
     case "${1:-}" in
-        -h|--help) show_help; exit "${EXIT_CODES[SUCCESS]}" ;;
+        -h|--help) show_help; exit "$EXIT_SUCCESS" ;;
         -*) die "Unknown option: $1" ;;
     esac
     
-    echo -e "${COLORS[BLUE]}=======================================${COLORS[NC]}"
-    echo -e "${COLORS[BLUE]} Claude Code Customization Framework ${COLORS[NC]}"
-    echo -e "${COLORS[BLUE]}=======================================${COLORS[NC]}"
+    echo -e "${BLUE}=======================================${NC}"
+    echo -e "${BLUE} Claude Code Customization Framework ${NC}"
+    echo -e "${BLUE}=======================================${NC}"
     echo
     
     check_prerequisites
