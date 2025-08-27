@@ -42,6 +42,8 @@ $ARGUMENTS handling and clear steps.
 
 ⚠️ **REQUIRED**: Commands using `!` bash execution MUST include `allowed-tools` with appropriate Bash patterns (e.g., `Bash(git:*)`, `Bash(fd:*)`) or the bash commands will fail to execute.
 
+⚠️ **KNOWN ISSUE ([GitHub #6660](https://github.com/anthropics/claude-code/issues/6660))**: Pipe character `|` in regex patterns (e.g., `grep -E '(\.idea|\.claude|bruno)'`) incorrectly triggers bash permission checks. **Workaround**: Replace regex alternations with chained commands (`grep -v '\.idea' | grep -v '\.claude' | grep -v 'bruno'`) until resolved.
+
 ## Frontmatter Reference
 
 ```yaml
@@ -444,6 +446,7 @@ See @.claude/docs/context.md for comprehensive bash command reference and contex
 - ❌ Using all tools when subset would work
 - ❌ Sequential when parallel possible
 - ❌ Missing `--no-pager` on git commands
+- ❌ Using `|` in regex patterns (see https://github.com/anthropics/claude-code/issues/6660) - use chained commands instead
 
 
 ## Command Engineering Formula

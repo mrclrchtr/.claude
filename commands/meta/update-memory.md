@@ -1,6 +1,6 @@
 ---
 description: Update CLAUDE.md with important learnings from current coding session
-allowed-tools: Bash(find:*)
+allowed-tools: Bash(find:*), Bash(git:*), Bash(grep:*), Bash(eza:*)
 argument-hint: [path/to/CLAUDE.md to update]
 ---
 
@@ -10,7 +10,7 @@ argument-hint: [path/to/CLAUDE.md to update]
 
 - Target CLAUDE.md: $ARGUMENTS (if specified)
 - All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
-- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)'`
+- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v '\.idea' | grep -v '\.claude' | grep -v '\.yarn' | grep -v bruno | grep -v CLAUDE.md`
 - Project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
 
 

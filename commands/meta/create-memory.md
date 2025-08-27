@@ -1,6 +1,6 @@
 ---
 description: Create a new CLAUDE.md file following Anthropic's memory best practices
-allowed-tools: Bash(eza:*), Bash(ls:*), Bash(find:*), Bash(cat:*)
+allowed-tools: Bash(eza:*), Bash(ls:*), Bash(find:*), Bash(cat:*), Bash(git:*), Bash(grep:*)
 argument-hint: [target/directory/path for CLAUDE.md]
 ---
 
@@ -9,7 +9,7 @@ argument-hint: [target/directory/path for CLAUDE.md]
 ## Context
 - Target directory: $ARGUMENTS
 - All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
-- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)'`
+- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v '\.idea' | grep -v '\.claude' | grep -v '\.yarn' | grep -v bruno | grep -v CLAUDE.md`
 - Project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
 
 ## Task
