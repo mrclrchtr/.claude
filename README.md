@@ -13,9 +13,12 @@ bash <(curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/insta
 # Or download and run locally
 wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
 bash install.sh
+
+# With verbose output for debugging
+bash install.sh -v
 ```
 
-> **Note**: The installer automatically detects SSH access to GitHub and uses it for cloning. Falls back to HTTPS if SSH is not available.
+> **Note**: The installer automatically detects SSH access to GitHub and uses it for cloning. Falls back to HTTPS if SSH is not available. Use `-v` flag for verbose output when troubleshooting installation issues.
 
 ### Installation Options
 

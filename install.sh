@@ -29,6 +29,7 @@ readonly EXIT_CANCELLED=6
 
 # Globals
 REPO_URL=""
+VERBOSE=false
 
 # Utility functions
 print_msg() {
@@ -47,6 +48,8 @@ print_msg() {
 
 die() { print_msg RED "$1"; exit "${2:-$EXIT_ERROR}"; }
 
+verbose_msg() { [[ "$VERBOSE" == "true" ]] && print_msg BLUE "DEBUG: $1"; }
+
 confirm() { 
     local prompt="$1" default="${2:-N}"
     read -p "$prompt (y/N): " choice
@@ -55,16 +58,16 @@ confirm() {
 
 # Git operations
 test_ssh_github() {
-    print_msg BLUE "Testing SSH access..."
+    print_msg BLUE "Testing SSH access..." >&2
     git ls-remote "$SSH_URL" HEAD >/dev/null 2>&1
 }
 
 select_repo_url() {
     if test_ssh_github; then
-        print_msg GREEN "Using SSH for cloning"
+        print_msg GREEN "Using SSH for cloning" >&2
         echo "$SSH_URL"
     else
-        print_msg YELLOW "SSH failed, using HTTPS"
+        print_msg YELLOW "SSH failed, using HTTPS" >&2
         echo "$HTTPS_URL"
     fi
 }
@@ -103,6 +106,39 @@ setup_directories() {
     print_msg GREEN "Directories setup complete"
 }
 
+clone_with_retry() {
+    local url="$1" target="$2"
+    local error_output
+    
+    verbose_msg "Attempting clone: $url -> $target"
+    
+    if [[ "$VERBOSE" == "true" ]]; then
+        error_output=$(git clone "$url" "$target" 2>&1)
+        local exit_code=$?
+    else
+        error_output=$(git clone "$url" "$target" --quiet 2>&1)
+        local exit_code=$?
+    fi
+    
+    if [[ $exit_code -eq 0 ]]; then
+        return 0
+    fi
+    
+    verbose_msg "Clone failed with: $error_output"
+    
+    # Check for specific error patterns that indicate process substitution issues
+    if [[ "$error_output" == *"remote username contains invalid characters"* ]] || 
+       [[ "$error_output" == *"SSH"* && "$url" == git@* ]]; then
+        verbose_msg "Detected SSH/process substitution issue, will retry with HTTPS"
+        echo "$error_output"
+        return 1
+    fi
+    
+    # For other errors, output and fail immediately
+    echo "$error_output"
+    return $exit_code
+}
+
 clone_or_update() {
     local target="$1" update_prompt="$2"
     
@@ -118,8 +154,23 @@ clone_or_update() {
     fi
     
     print_msg BLUE "Cloning to $target..."
-    git clone "$REPO_URL" "$target" --quiet || die "Clone failed" "$EXIT_NETWORK"
-    print_msg GREEN "Clone successful"
+    
+    # First attempt with selected URL
+    if clone_with_retry "$REPO_URL" "$target"; then
+        print_msg GREEN "Clone successful"
+        return 0
+    fi
+    
+    # If SSH failed and we have HTTPS fallback, try it
+    if [[ "$REPO_URL" == "$SSH_URL" ]]; then
+        print_msg YELLOW "SSH clone failed, retrying with HTTPS..."
+        if clone_with_retry "$HTTPS_URL" "$target"; then
+            print_msg GREEN "Clone successful via HTTPS"
+            return 0
+        fi
+    fi
+    
+    die "Clone failed after retry" "$EXIT_NETWORK"
 }
 
 copy_framework_dirs() {
@@ -376,6 +427,7 @@ Usage: bash install.sh [OPTIONS]
 
 Options:
   -h, --help     Show this help
+  -v, --verbose  Enable verbose/debug output
 
 Installation Methods:
   • Submodule: Git submodule (projects) - updatable
@@ -386,6 +438,7 @@ Installation Methods:
 Examples:
   curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
   wget -O- https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh | bash
+  bash install.sh -v  # with verbose output
 
 More: https://github.com/mrclrchtr/.claude
 EOF
@@ -393,10 +446,15 @@ EOF
 
 # Main execution
 main() {
-    case "${1:-}" in
-        -h|--help) show_help; exit "$EXIT_SUCCESS" ;;
-        -*) die "Unknown option: $1" ;;
-    esac
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -h|--help) show_help; exit "$EXIT_SUCCESS" ;;
+            -v|--verbose) VERBOSE=true; shift ;;
+            -*) die "Unknown option: $1" ;;
+            *) break ;;
+        esac
+    done
     
     echo -e "${BLUE}=======================================${NC}"
     echo -e "${BLUE} Claude Code Customization Framework ${NC}"
