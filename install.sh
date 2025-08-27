@@ -62,6 +62,19 @@ test_ssh_github() {
     git ls-remote "$SSH_URL" HEAD >/dev/null 2>&1
 }
 
+check_repo_has_commits() {
+    git rev-list --count HEAD >/dev/null 2>&1
+}
+
+check_submodule_exists() {
+    local project_dir="$1"
+    [[ -f .gitmodules ]] && git config --file .gitmodules --get-regexp path | grep -q "$project_dir"
+}
+
+check_clean_working_tree() {
+    [[ -z "$(git status --porcelain)" ]]
+}
+
 select_repo_url() {
     if test_ssh_github; then
         print_msg GREEN "Using SSH for cloning" >&2
@@ -241,11 +254,39 @@ install_framework() {
     case $method in
         submodule)
             print_msg BLUE "Installing as submodule..."
-            if git config --file .gitmodules --get-regexp path | grep -q "$PROJECT_DIR"; then
-                confirm "Submodule exists. Update?" && git submodule update --remote "$PROJECT_DIR"
-                return 0
+            
+            # Pre-checks for submodule installation
+            if ! check_repo_has_commits; then
+                die "Repository has no commits. Please make an initial commit first:\n  git add . && git commit -m 'Initial commit'" "$EXIT_GIT"
             fi
-            git submodule add "$REPO_URL" "$PROJECT_DIR" --quiet || die "Submodule add failed" "$EXIT_GIT"
+            
+            if ! check_clean_working_tree; then
+                print_msg YELLOW "Warning: You have uncommitted changes."
+                if ! confirm "Continue with submodule installation? (recommended: commit changes first)"; then
+                    die "Installation cancelled. Please commit your changes first." "$EXIT_CANCELLED"
+                fi
+            fi
+            
+            if check_submodule_exists "$PROJECT_DIR"; then
+                if confirm "Submodule exists. Update?"; then
+                    git submodule update --remote "$PROJECT_DIR" || die "Submodule update failed" "$EXIT_GIT"
+                    return 0
+                else
+                    print_msg YELLOW "Skipping submodule installation"
+                    return 0
+                fi
+            fi
+            
+            if [[ -d "$PROJECT_DIR" ]]; then
+                die "Directory '$PROJECT_DIR' already exists. Remove it or choose a different installation method." "$EXIT_ERROR"
+            fi
+            
+            verbose_msg "Adding submodule: $REPO_URL -> $PROJECT_DIR"
+            if [[ "$VERBOSE" == "true" ]]; then
+                git submodule add "$REPO_URL" "$PROJECT_DIR" || die "Submodule add failed" "$EXIT_GIT"
+            else
+                git submodule add "$REPO_URL" "$PROJECT_DIR" --quiet || die "Submodule add failed" "$EXIT_GIT"
+            fi
             git submodule update --init --recursive --quiet || die "Submodule update failed" "$EXIT_GIT"
             setup_directories "."
             ;;
