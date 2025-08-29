@@ -144,6 +144,13 @@ cd ~/.claude && git status
 
 **Note**: If `~/.claude` is already a git repository, installer adds framework as remote `claude-framework` and updates via git pull.
 
+### Submodule Update
+
+```bash
+# Update submodule to latest version
+git submodule update --remote .claude
+```
+
 ### Contributor Development Workflow
 
 ```bash
