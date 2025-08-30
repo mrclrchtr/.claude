@@ -78,6 +78,13 @@ Token costs by tool count:
 
 ## Design Patterns
 
+### Ultrathink Keyword Usage
+⚠️ **CRITICAL**: `Ultrathink` enables enhanced AI reasoning. **NEVER remove it** from agents, **ALWAYS add it** to complex agents handling debugging, architecture, analysis, or multi-step problem solving.
+
+```markdown
+You are a specialist. Ultrathink about each problem before acting.
+```
+
 ### Pattern 1: Minimal Viable Agent
 For frequent, simple tasks requiring maximum composability.
 

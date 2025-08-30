@@ -113,6 +113,14 @@ Execute simultaneously (7-parallel pattern):
 
 ## Advanced Techniques
 
+### Ultrathink Keyword
+⚠️ **CRITICAL**: `Ultrathink` enables enhanced AI reasoning. **NEVER remove it**, **ALWAYS add it** to complex commands requiring deep analysis, multi-step reasoning, or difficult debugging.
+
+```markdown
+## Task
+Ultrathink about the problem, then [steps...]
+```
+
 ### Output Structuring
 ```markdown
 Generate component for $ARGUMENTS:
