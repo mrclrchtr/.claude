@@ -4,15 +4,21 @@ A Claude Code customization framework for milestone-driven project management, m
 
 ## 🚀 Quick Start
 
+### One-Line Install
 ```bash
-# Quick install (auto-detects git repo and shows appropriate options)
 bash <(curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh)
+```
 
-# Or download and run locally
+### Alternative Install Methods
+
+Download and run locally:
+```bash
 wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
 bash install.sh
+```
 
-# Or run with help for options
+View all installation options:
+```bash
 bash install.sh --help
 ```
 
@@ -24,8 +30,8 @@ bash install.sh --help
 2. **Direct Clone** - Full git repo in `.claude/` with updates
 3. **Copy** - Standalone integration, manual updates required
 
+### Initialize Project Memory
 ```bash
-# After installation, start Claude Code and create project memory
 /meta:create-memory .
 ```
 
