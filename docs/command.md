@@ -42,6 +42,8 @@ $ARGUMENTS handling and clear steps.
 
 ⚠️ **REQUIRED**: Commands using `!` bash execution MUST include `allowed-tools` with appropriate Bash patterns (e.g., `Bash(git:*)`, `Bash(fd:*)`) or the bash commands will fail to execute.
 
+⚠️ **IMPORTANT**: Each command type requires its own separate `Bash()` block. Use `Bash(fd:*),Bash(rg:*),Bash(git:*)` not just `Bash`. Each tool (fd, rg, git, npm, etc.) must be explicitly specified with its own pattern.
+
 ⚠️ **KNOWN ISSUE ([GitHub #6660](https://github.com/anthropics/claude-code/issues/6660))**: Pipe character `|` in regex patterns (e.g., `grep -E '(\.idea|\.claude|bruno)'`) incorrectly triggers bash permission checks. **Workaround**: Replace regex alternations with chained commands (`grep -v '\.idea' | grep -v '\.claude' | grep -v 'bruno'`) until resolved.
 
 ## Frontmatter Reference
