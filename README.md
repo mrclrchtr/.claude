@@ -2,8 +2,6 @@
 
 A Claude Code customization framework for milestone-driven project management, memory optimization, session tracking, and specialized AI agents.
 
-> **Note**: This framework defaults to project-specific customizations. A global installation option is available that installs to `~/.claude` with sparse checkout protection.
-
 ## 🚀 Quick Start
 
 ```bash
@@ -14,18 +12,17 @@ bash <(curl -fsSL https://raw.githubusercontent.com/mrclrchtr/.claude/main/insta
 wget https://raw.githubusercontent.com/mrclrchtr/.claude/main/install.sh
 bash install.sh
 
-# With verbose output for debugging
-bash install.sh -v
+# Or run with help for options
+bash install.sh --help
 ```
 
-> **Note**: The installer automatically detects SSH access to GitHub and uses it for cloning. Falls back to HTTPS if SSH is not available. Use `-v` flag for verbose output when troubleshooting installation issues.
+> **Note**: The installer automatically detects SSH access to GitHub and uses it for cloning. Falls back to HTTPS if SSH is not available.
 
 ### Installation Options
 
-1. **Submodule** (recommended) - Git-tracked, updatable framework in your project
-2. **Copy** (Project-Specific) - Standalone integration, manual updates required  
-3. **Global Install** - Installs to `~/.claude` with git tracking, affects all Claude Code sessions
-4. **Contributor Setup** - Clone framework for development, symlink to `~/.claude` for global access
+1. **Submodule** (recommended for git projects) - Git-tracked, updatable framework
+2. **Direct Clone** - Full git repo in `.claude/` with updates
+3. **Copy** - Standalone integration, manual updates required
 
 ```bash
 # After installation, start Claude Code and create project memory
@@ -90,7 +87,7 @@ Specialized AI agents with proactive activation:
 - `/session:load [name]` - Load and resume previous session
 - `/session:help` - Session management guide
 
-#### Quality & Planning (2)
+#### Quality & Planning (3)
 - `/uncommitted:review` - Pre-commit analysis with security checks
 - `/plan [files...]` - Transform vision into IMPLEMENTATION_PLAN.md
 - `/docs:audit` - Comprehensive markdown audit
@@ -132,41 +129,21 @@ Specialized AI agents with proactive activation:
 /meta:consolidate-memory backend    # Deduplicate, create cross-references
 ```
 
-### Global Installation Management
 
-```bash
-# Update framework globally
-cd ~/.claude && git pull claude-framework main
+### Framework Updates
 
-# Check framework status  
-cd ~/.claude && git status
-```
-
-**Note**: If `~/.claude` is already a git repository, installer adds framework as remote `claude-framework` and updates via git pull.
-
-### Submodule Update
-
+#### Submodule Method
 ```bash
 # Update submodule to latest version
 git submodule update --remote .claude
 ```
 
-### Contributor Development Workflow
-
+#### Direct Clone Method
 ```bash
-# Setup contributor environment (option 4 in installer)
-# Clones to your chosen location and symlinks framework directories
-
-# Make changes in development location
-cd /path/to/your/clone/.claude
-# Edit framework files...
-
-# Changes are instantly available globally via symlinks
-# Commit and push contributions
-git add .
-git commit -m "Your contribution"
-git push origin main
+# Update direct clone to latest version
+cd .claude && git pull
 ```
+
 
 ## 🎨 Key Features & Benefits
 
