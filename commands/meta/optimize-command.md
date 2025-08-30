@@ -24,6 +24,17 @@ Optimization = Making commands MORE EFFECTIVE through:
 3. **Clarity** (Priority 3) - Fix genuinely confusing instructions
 4. **Conciseness** (Priority 4) - Remove TRUE redundancy (not just wordiness)
 
+### 🎯 Core Principle: Preserve Command Purpose
+
+**Before optimizing:** Understand what the command returns (list vs count, content vs summary)
+
+**Never break purpose by:**
+- Converting listings to counts when files need processing (`ls files` → `wc -l`)
+- Replacing detailed output with summaries when details are required
+- Removing context that enables the command's goal
+
+**Example:** `git ls-files '*.md'` returns paths for analysis. Don't change to `| wc -l` (just a count).
+
 ### Optimization Decision Tree
 
 Ask these questions IN ORDER:
