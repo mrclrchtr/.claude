@@ -26,14 +26,16 @@ Optimization = Making commands MORE EFFECTIVE through:
 
 ### 🎯 Core Principle: Preserve Command Purpose
 
-**Before optimizing:** Understand what the command returns (list vs count, content vs summary)
+**CRITICAL: Understand OUTPUT TYPE before optimizing:**
+- **Paths** → For processing (NEVER → count)
+- **Content** → For analysis (NEVER → summary)  
+- **Count** → For metrics (OK to optimize)
+- **Diff** → For review (NEVER → stats only)
 
-**Never break purpose by:**
-- Converting listings to counts when files need processing (`ls files` → `wc -l`)
-- Replacing detailed output with summaries when details are required
-- Removing context that enables the command's goal
-
-**Example:** `git ls-files '*.md'` returns paths for analysis. Don't change to `| wc -l` (just a count).
+**DON'T BREAK PURPOSE:**
+- `git ls-files '*.md'` → `| wc -l` ❌ (needs paths, not count)
+- `git diff` → `--stat` ❌ (needs full diff for review)
+- `rg "TODO"` → `--count` ❌ (needs locations, not total)
 
 ### Optimization Decision Tree
 
@@ -130,20 +132,13 @@ Context: @.claude/docs/context.md for comprehensive git commands.
    - See available agents in @.claude/agents directory.
 
 7. **Bash command handling**:
-   - Test and optimize each bash command that the command executes
-   - Use `@.claude/docs/context.md` as reference for context gathering patterns
+   - **FIRST: Know what each command RETURNS and HOW IT'S USED**
    - Apply context.md principles:
-     * Use modern tools (fd, rg, eza) for 3-10x faster execution
-     * Replace find→fd, grep→rg, ls→eza
-     * Always use --no-pager for git commands
-     * Pre-assess scope before full execution (e.g., `git diff --stat` before full diff)
-     * Filter before limiting depth (use excludes/ignore-globs first)
-     * Prefer machine-readable formats (--porcelain) over human-readable
-     * **Use simple pipes** for counting/filtering (`| wc -l`, `| grep pattern`)
-     * **Remove artificial limits by default** - Delete head/tail/depth limits unless genuinely needed
-       - Remove: `git log -5` → `git log --oneline` (if checking full history)
-       - Remove: `rg "TODO" | head -10` → `rg "TODO" | wc -l` (simple pipe for counting)
-       - Keep: Large unbounded operations that need sampling
+     * Modern tools: find→fd, grep→rg, ls→eza (3-10x faster)
+     * Git: Always --no-pager, pre-assess with --stat
+     * Filter before limit, prefer --porcelain format
+     * **Pipes match purpose:** `| wc -l` for counts only, `| grep` for filtering
+     * Remove artificial limits unless sampling needed
 
 8. **Script handling**:
    - Check script contents
