@@ -1,6 +1,6 @@
 ---
 description: Optimize CLAUDE.md following Anthropic's memory best practices
-allowed-tools: Bash(eza:*)
+allowed-tools: Bash(fd:*),Bash(eza:*),Bash(git:*)
 argument-hint: [path/to/CLAUDE.md to optimize]
 ---
 
@@ -8,9 +8,9 @@ argument-hint: [path/to/CLAUDE.md to optimize]
 
 ## Context
 - Path to the CLAUDE.md to optimize: $ARGUMENTS
-- All CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "./.idea/*" -not -path "./.claude/*"`
-- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | grep -v -E '(\.idea|\.claude|bruno|\.yarn|CLAUDE\.md)'`
-- Project structure: !`eza . --tree --all --git-ignore --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
+- All CLAUDE.md files: !`fd --follow -g "CLAUDE.md" . --exclude ".idea" --exclude ".claude"`
+- All documentation: !`git ls-files '*.md' --cached --others --exclude-standard`
+- Project structure: !`eza . --tree --all --git-ignore --follow-symlinks --ignore-glob=".*|node_modules|dist|build"`
 
 ## Task
 
