@@ -33,21 +33,79 @@ confirm() {
     [[ ${choice:-N} =~ ^[Yy]$ ]]
 }
 
+# Function to handle existing directory by creating backup
+handle_existing_dir() {
+    local target="$1"
+    
+    if [[ -d "$target" ]]; then
+        # Check if it's already a git repo
+        if [[ -d "$target/.git" ]] || [[ -f "$target/.git" ]]; then
+            die "Directory '$target' is already a git repository. Remove it first or choose a different location."
+        fi
+        
+        local backup="${target}.backup"
+        
+        # Check for existing backup
+        if [[ -d "$backup" ]]; then
+            log WARN "Backup directory already exists: $backup"
+            
+            if confirm "Overwrite existing backup?"; then
+                log INFO "Removing old backup..."
+                rm -rf "$backup"
+            else
+                die "Cannot proceed without overwriting backup. Remove $backup manually or choose a different approach."
+            fi
+        fi
+        
+        mv "$target" "$backup" || die "Failed to create backup"
+        log INFO "Existing directory moved to $backup"
+        echo "$backup"  # Return backup path
+    fi
+    echo ""  # Return empty if no backup needed
+}
+
+# Function to restore user files from backup
+restore_from_backup() {
+    local target="$1"
+    local backup="$2"
+    
+    [[ -z "$backup" || ! -d "$backup" ]] && return 0
+    
+    if confirm "Restore your files from backup?"; then
+        log INFO "Restoring user files..."
+        # Copy back user's custom files
+        for file in "$backup"/*; do
+            [[ ! -e "$file" ]] && continue  # Skip if no files
+            basename=$(basename "$file")
+            # Skip framework directories
+            if [[ ! " agents commands docs scripts templates hooks " =~ " $basename " ]]; then
+                cp -r "$file" "$target/"
+                log INFO "Restored: $basename"
+            fi
+        done
+        log SUCCESS "Your files restored. Backup kept at: $backup"
+    else
+        log INFO "Backup preserved at: $backup"
+        log INFO "To restore files manually: cp -r $backup/yourfile $target/"
+    fi
+}
+
 # Clone with SSH/HTTPS fallback
 clone_repo() {
     local target="$1"
     local temp_mode="${2:-false}"
+    local backup_path=""
     
-    if [[ "$temp_mode" == "true" ]]; then
-        log INFO "Cloning to $target..."
-    else
-        [[ -d "$target" ]] && die "Directory '$target' already exists. Remove it first."
-        log INFO "Cloning to $target..."
+    if [[ "$temp_mode" != "true" ]]; then
+        backup_path=$(handle_existing_dir "$target")
     fi
+    
+    log INFO "Cloning to $target..."
     
     # Try SSH first
     if git clone "$SSH_URL" "$target" --quiet 2>/dev/null; then
         log SUCCESS "Clone successful"
+        [[ -n "$backup_path" ]] && restore_from_backup "$target" "$backup_path"
         return 0
     fi
     
@@ -55,7 +113,14 @@ clone_repo() {
     log WARN "SSH failed, trying HTTPS..."
     if git clone "$HTTPS_URL" "$target" --quiet 2>/dev/null; then
         log SUCCESS "Clone successful via HTTPS"
+        [[ -n "$backup_path" ]] && restore_from_backup "$target" "$backup_path"
         return 0
+    fi
+    
+    # Restore backup on failure
+    if [[ -n "$backup_path" ]]; then
+        log WARN "Clone failed, restoring backup..."
+        mv "$backup_path" "$target"
     fi
     
     die "Clone failed with both SSH and HTTPS"
@@ -66,11 +131,6 @@ setup_framework() {
     local base_dir="$1"
     log INFO "Setting up directories..."
     
-    # Run milestone structure creation if available
-    local claude_dir="${base_dir}/$PROJECT_DIR"
-    if [[ -f "$claude_dir/scripts/create-milestone-structure.sh" ]]; then
-        (cd "$base_dir" && bash "$claude_dir/scripts/create-milestone-structure.sh" 2>/dev/null) || true
-    fi
     
     log SUCCESS "Directories setup complete"
 }
@@ -102,16 +162,26 @@ install_submodule() {
         fi
     fi
     
-    [[ -d "$PROJECT_DIR" ]] && die "Directory '$PROJECT_DIR' already exists"
+    local backup_path=$(handle_existing_dir "$PROJECT_DIR")
     
     # Add submodule
     if git ls-remote "$SSH_URL" HEAD >/dev/null 2>&1; then
-        git submodule add --quiet "$SSH_URL" "$PROJECT_DIR" || die "Submodule add failed"
+        git submodule add --quiet "$SSH_URL" "$PROJECT_DIR" || {
+            [[ -n "$backup_path" ]] && mv "$backup_path" "$PROJECT_DIR"
+            die "Submodule add failed"
+        }
     else
-        git submodule add --quiet "$HTTPS_URL" "$PROJECT_DIR" || die "Submodule add failed"
+        git submodule add --quiet "$HTTPS_URL" "$PROJECT_DIR" || {
+            [[ -n "$backup_path" ]] && mv "$backup_path" "$PROJECT_DIR"
+            die "Submodule add failed"
+        }
     fi
     
     git submodule update --init --recursive --quiet || die "Submodule update failed"
+    
+    # Restore user files after successful submodule creation
+    [[ -n "$backup_path" ]] && restore_from_backup "$PROJECT_DIR" "$backup_path"
+    
     setup_framework "."
     log SUCCESS "Installation complete: submodule"
     echo "Update: git submodule update --remote $PROJECT_DIR"
@@ -128,11 +198,7 @@ install_copy() {
     local temp_dir="/tmp/.claude-temp-$$"
     clone_repo "$temp_dir" "true"
     
-    # Backup existing directory if present
-    if [[ -d "$PROJECT_DIR" ]]; then
-        log WARN "Backing up existing $PROJECT_DIR"
-        mv "$PROJECT_DIR" "$PROJECT_DIR.backup"
-    fi
+    local backup_path=$(handle_existing_dir "$PROJECT_DIR")
     
     # Copy framework directories
     mkdir -p "$PROJECT_DIR"
@@ -143,6 +209,10 @@ install_copy() {
     
     rm -rf "$temp_dir"
     log SUCCESS "Framework copied"
+    
+    # Restore user files after copying
+    [[ -n "$backup_path" ]] && restore_from_backup "$PROJECT_DIR" "$backup_path"
+    
     log WARN "Manual updates required for copy installations"
     setup_framework "."
     log SUCCESS "Installation complete: copy"
