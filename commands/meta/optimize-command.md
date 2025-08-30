@@ -168,7 +168,7 @@ Context: @.claude/docs/context.md for comprehensive git commands.
 
 ### Optimization Value Metrics
 
-**Always Optimize:**
+**Always Optimize (100% improvement):**
 - Broken bash commands or API calls
 - Missing critical error handling
 - Duplicate operations (same data gathered twice)
