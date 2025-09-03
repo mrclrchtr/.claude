@@ -15,7 +15,7 @@ The session system helps document development work for future reference.
 
 ### How It Works:
 
-1. Sessions are markdown files in `.claude/sessions/`
+1. Sessions are markdown files in `.sessions/`
 2. Files use `YYYY-MM-DD-HHMM-name.md` format
 3. Only one session can be active at a time
 4. Sessions track progress, issues, solutions, and learnings
