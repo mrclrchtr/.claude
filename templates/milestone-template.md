@@ -1,122 +1,95 @@
-# Milestone: {ID} {Title} {Weight-Class-Emoji} [P/S/B]
-
-**Parallel Track**: {Track Name if applicable}  
-**Dependencies**: {Upstream milestone IDs}  
-**Can Run In Parallel With**: {Other milestone IDs}  
-**Status**: {pending/in_progress/completed}
-
-## Prerequisites
-{List any critical blockers or setup requirements that must be resolved before this milestone can begin}
-- [ ] {Blocker 1: Description and resolution approach}
-- [ ] {Environment requirement: e.g., Docker setup, API keys}
-- [ ] {Previous milestone completion: Specific deliverables needed}
+# Milestone: `Backend: [service] - M{X}.{Y} - {Title}`
 
 ## Overview
-Brief description of the milestone's purpose and its role in the larger project context.
-
-## Objectives
-- [ ] Clear, measurable objective 1
-- [ ] Clear, measurable objective 2
-- [ ] Clear, measurable objective 3
-
-## Deliverables
-- [ ] Specific deliverable 1 (est. tokens: {X})
-- [ ] Specific deliverable 2 (est. tokens: {Y})
-- [ ] Specific deliverable 3 (est. tokens: {Z})
-
-## Success Criteria
-- **Automated tests**: {specific test suite/coverage requirements}
-- **Manual validation**: {specific validation procedures}
-- **Performance metrics**: {measurable performance requirements}
-- **Quality metrics**: {code quality, documentation standards}
-
-## Timeline
-- **Start**: {Condition or date}
-- **Duration**: {Base estimate} ({Adjusted with integration multipliers if applicable})
-- **Buffer**: {20% minimum, specify additional days for complex work}
-- **Blocker Resolution Time**: {Additional time if prerequisites not met}
-- **Parallel Speedup**: {X% if run concurrently with specified milestones}
-- **Critical Path**: {Yes/No - does this block other work?}
-
-## Risk Factors
-| Risk | Impact | Likelihood | Mitigation Strategy | Owner |
-|------|--------|------------|-------------------|--------|
-| {Risk description} | H/M/L | H/M/L | {Specific mitigation} | {Team/Person} |
-
-## Resource Allocation
-| Team/Resource | Tasks | Capacity | Conflicts |
-|---------------|-------|----------|-----------|
-| {Team name} | {Task list} | {Hours/Points} | {Other milestones needing same resource} |
+{Brief description of what this milestone accomplishes and why it matters for the project}
 
 ## Dependencies
-### Upstream Dependencies
-- {Milestone ID}: {What it provides}
-- {External system}: {Integration requirements}
+- {Previous milestone IDs that must be completed first}
+- {External requirements like environment setup, API keys, etc.}
 
-### Downstream Impact
-- {Milestone ID}: {What this enables}
-- {Feature/Component}: {How it's affected}
+## User Story {if applicable}
+As a {role}, I need {capability} so that {business value}.
 
-## Technical Specifications
-### Architecture Decisions
-- {Key technical choices and rationale}
+## Prerequisites
+Critical blockers that must be resolved before starting:
+- [ ] {Environment requirement: Docker, database, API keys}
+- [ ] {Previous milestone deliverable needed}
+- [ ] {External service dependency}
 
-### Integration Points
-- {External APIs/Services with error handling approach}
-- {Internal interfaces with contract definitions}
+## Tasks
 
-### Implementation Notes
-- {Critical technical details}
-- {Performance considerations}
-- {Security considerations}
+### {Functional Group 1}
+- [ ] {Specific actionable task}
+- [ ] {Another specific task}
+- [ ] {Task with clear completion criteria}
+
+### {Functional Group 2}
+- [ ] {Task description}
+- [ ] {Implementation requirement}
+- [ ] {Configuration or setup task}
+
+## Acceptance Criteria
+- [ ] {Measurable outcome that proves completion}
+- [ ] {Functional requirement met}
+- [ ] {Integration working end-to-end}
+- [ ] {Performance/quality standard met}
+
+## Success Criteria
+- **Automated tests**: {Specific test coverage or test cases required}
+- **Manual validation**: {How to verify it works manually}
+- **Performance**: {Response times, throughput, or other metrics}
+- **Integration**: {External systems working properly}
+
+## Business Rules
+- **{Rule Category}**: {Clear explanation of business logic or constraints}
+- **{Another Category}**: {Key behavior or limitation to understand}
 
 ## Testing Requirements
-- **Unit Tests**: {Coverage target, specific test cases}
-- **Integration Tests**: {API contracts, system boundaries}
-- **E2E Tests**: {User flows, critical paths}
-- **Performance Tests**: {Load targets, response times}
-- **Security Tests**: {Vulnerability scans, penetration tests}
+- **Unit Tests**: {What needs unit test coverage}
+- **Integration Tests**: {API endpoints, database operations, external services}
+- **End-to-End Tests**: {User flows or scenarios to automate}
+- **Manual Testing**: {User scenarios to verify manually}
 
-## Documentation Requirements
-- [ ] Code documentation (inline comments, function docs)
-- [ ] API documentation (if applicable)
-- [ ] Architecture decision records (ADRs)
-- [ ] User-facing documentation
-- [ ] Runbook/operational guide
-
-## Troubleshooting
-**Common Issues and Solutions:**
-1. **{Issue 1}**
-   - Error: {Specific error message}
-   - Solution: {Step-by-step resolution with code/commands}
-   
-2. **{Issue 2}**
-   - Error: {Specific error message}
-   - Solution: {Step-by-step resolution with code/commands}
-
-**Fallback Strategies:**
-- If {primary approach} fails: {Alternative approach}
-- If {dependency} unavailable: {Workaround}
+## Technical Notes
+- {Key technical decisions or approaches}
+- {Important implementation details}
+- {Performance or security considerations}
+- {Integration patterns to follow}
 
 ## Implementation Examples
 ```bash
-# Example commands for setup/testing
-{command 1}
-{command 2}
+# Key commands for development/testing
+{setup command}
+{test command}
+{validation command}
 ```
 
-```{language}
-// Example code snippet showing key implementation
-{code example}
+```kotlin
+// Example of key implementation pattern
+{code snippet showing the approach}
 ```
 
-## Notes
-- **Token Budget**: {lightweight <3K / medium 10-15K / heavy 25K+}
-- **Integration Multipliers Applied**: {2x CLI, 3x complex API, 1.5x documented library, 2x blocker resolution}
-- **Parallel Execution Notes**: {Specific coordination requirements}
+## Environment Setup
+- {Environment variables needed}
+- {Configuration files to create}
+- {External services to configure}
 
-# Outcomes
-> To be updated after milestone completion with important information about the milestone's outcome, like:
-> - Implementation Details
-> - Learning Takeaways
-> - Possible improvements
+## Troubleshooting
+**Common Issues:**
+1. **{Issue Description}**
+    - Problem: {What goes wrong}
+    - Solution: {Step-by-step fix}
+
+2. **{Another Issue}**
+    - Problem: {Symptom}
+    - Solution: {Resolution steps}
+
+**Fallback Strategies:**
+- If {primary approach} fails: {Alternative approach}
+- If {external dependency} unavailable: {Workaround}
+
+## Validation
+How to verify the milestone is truly complete:
+- [ ] {Specific test or demo that proves it works}
+- [ ] {Integration point verified}
+- [ ] {Quality standard met}

@@ -1,6 +1,6 @@
 ---
 description: Sync milestone manager with existing milestone files
-allowed-tools: Bash(.claude/scripts/create-milestone-structure.sh), Bash(find:*)
+allowed-tools: Bash(.claude/scripts/create-milestone-structure.sh), Bash(find:*), Bash(fd:*), Bash(test:*), Read, Write, Edit, TodoWrite
 ---
 
 # Sync Milestone Manager
