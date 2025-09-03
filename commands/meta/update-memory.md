@@ -10,7 +10,7 @@ argument-hint: [path/to/CLAUDE.md to update]
 
 - Target CLAUDE.md: $ARGUMENTS (if specified)
 - All CLAUDE.md files: !`fd -L CLAUDE.md --type f --exclude .idea --exclude .claude`
-- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | rg -v '(\.idea|\.claude|\.yarn|bruno|CLAUDE\.md)'`
+- All documentation: !`git ls-files --cached --others --exclude-standard '*.md' | rg -v '\.idea' | rg -v '\.claude' | rg -v '\.yarn' | rg -v 'bruno' | rg -v 'CLAUDE\.md'`
 - Project structure: !`eza . --tree --all --git-ignore --follow-symlinks --ignore-glob=".idea|.claude|bruno|.yarn|node_modules"`
 
 ## Target Detection
